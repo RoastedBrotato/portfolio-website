@@ -39,7 +39,16 @@ export function Hero() {
           <p className="hero-kicker" data-hero-copy>
             {profile.location} / Creative direction meets engineering
           </p>
-          <h1 data-hero-copy>{profile.name}</h1>
+          <h1 aria-label={profile.name}>
+            {profile.name.split("").map((char, i) => (
+              <span
+                key={i}
+                className="hero-char"
+              >
+                {char === " " ? "\u00A0" : char}
+              </span>
+            ))}
+          </h1>
           <h2 data-hero-copy>{profile.title}</h2>
           <p className="hero-tagline" data-hero-copy>
             {profile.tagline}

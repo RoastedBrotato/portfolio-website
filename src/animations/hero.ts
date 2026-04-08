@@ -3,38 +3,40 @@ import { baseDuration, easeOut } from "./presets";
 
 
 export function animateHero(root: HTMLElement) {
+  const heroChars = root.querySelectorAll(".hero-char");
   const textTargets = root.querySelectorAll("[data-hero-copy]");
+  const heroBadge = root.querySelector(".hero-badge");
   const badgeDot = root.querySelector(".hero-badge-dot");
   const heroInner = root.querySelector(".hero-inner");
   const heroVisual = root.querySelector(".hero-visual");
 
-  set(textTargets, {
-    opacity: 0,
-    translateY: 20,
-    filter: "blur(8px)"
-  });
+  // Initial hidden state
+  set(heroChars, { opacity: 0, translateY: 64, rotateZ: 8 });
+  set(textTargets, { opacity: 0, translateY: 22, filter: "blur(8px)" });
   if (badgeDot) {
-    set(badgeDot, {
-      scale: 0.6,
-      opacity: 0.4
-    });
+    set(badgeDot, { scale: 0.6, opacity: 0.4 });
   }
 
-  const timeline = createTimeline({
-    duration: baseDuration
-  });
+  const timeline = createTimeline({ duration: baseDuration });
 
   timeline
-    .add(
-      textTargets,
-      {
-        opacity: [0, 1],
-        translateY: [20, 0],
-        filter: ["blur(8px)", "blur(0px)"],
-        easing: easeOut,
-        delay: stagger(200, { start: 500 })
-      }
-    );
+    // Characters cascade in letter-by-letter
+    .add(heroChars, {
+      opacity: [0, 1],
+      translateY: [64, 0],
+      rotateZ: [8, 0],
+      duration: 900,
+      easing: "outExpo",
+      delay: stagger(38, { start: 300 })
+    })
+    // Rest of the copy fades in after
+    .add(textTargets, {
+      opacity: [0, 1],
+      translateY: [22, 0],
+      filter: ["blur(8px)", "blur(0px)"],
+      easing: easeOut,
+      delay: stagger(160, { start: 0 })
+    }, "-=320");
 
   const pulse = badgeDot
     ? animate(badgeDot, {
@@ -47,8 +49,19 @@ export function animateHero(root: HTMLElement) {
       })
     : undefined;
 
+  let floatAnim: ReturnType<typeof animate> | undefined;
+
   timeline.then(() => {
     pulse?.play();
+    // Continuous gentle float on the badge
+    if (heroBadge) {
+      floatAnim = animate(heroBadge, {
+        translateY: [0, -9, 0],
+        duration: 3400,
+        ease: "inOutSine",
+        loop: true
+      });
+    }
   });
 
   let frame = 0;
@@ -89,6 +102,7 @@ export function animateHero(root: HTMLElement) {
     pause() {
       timeline.pause();
       pulse?.pause();
+      floatAnim?.pause();
       window.removeEventListener("scroll", handleScroll);
       if (frame) {
         window.cancelAnimationFrame(frame);
@@ -152,8 +166,14 @@ export function startHeroCanvas(canvas: HTMLCanvasElement, interactionRoot?: HTM
   const draw = () => {
     const width = canvas.clientWidth || window.innerWidth;
     const height = canvas.clientHeight || window.innerHeight;
+    const styles = getComputedStyle(document.documentElement);
+    const canvasBg = styles.getPropertyValue("--canvas-bg").trim() || "#09090d";
+    const canvasNode = styles.getPropertyValue("--canvas-node").trim() || "rgba(232, 220, 255, 0.98)";
+    const canvasLink = styles.getPropertyValue("--canvas-link").trim() || "rgba(201, 154, 255, 0.72)";
+    const canvasLinkActive =
+      styles.getPropertyValue("--canvas-link-active").trim() || "rgba(255, 255, 255, 0.82)";
 
-    context.fillStyle = "black";
+    context.fillStyle = canvasBg;
     context.fillRect(0, 0, width, height);
 
     for (const p of particles) {
@@ -176,7 +196,7 @@ export function startHeroCanvas(canvas: HTMLCanvasElement, interactionRoot?: HTM
 
       context.beginPath();
       context.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      context.fillStyle = "rgba(191, 128, 255, 0.8)";
+      context.fillStyle = canvasNode;
       context.fill();
     }
 
@@ -204,8 +224,8 @@ export function startHeroCanvas(canvas: HTMLCanvasElement, interactionRoot?: HTM
         }
 
         context.strokeStyle = nearMouse
-          ? `rgba(255, 255, 255, ${opacity})`
-          : `rgba(200, 150, 255, ${opacity})`;
+          ? applyOpacity(canvasLinkActive, opacity)
+          : applyOpacity(canvasLink, opacity);
         context.lineWidth = 1;
         context.beginPath();
         context.moveTo(a.x, a.y);
@@ -245,4 +265,15 @@ export function startHeroCanvas(canvas: HTMLCanvasElement, interactionRoot?: HTM
     pointerTarget.removeEventListener("pointerleave", handlePointerLeave);
     window.cancelAnimationFrame(animationFrame);
   };
+}
+
+function applyOpacity(color: string, opacity: number) {
+  const rgbaMatch = color.match(/rgba?\(([^)]+)\)/);
+
+  if (!rgbaMatch) {
+    return color;
+  }
+
+  const channels = rgbaMatch[1].split(",").slice(0, 3).map((channel) => channel.trim());
+  return `rgba(${channels.join(", ")}, ${opacity})`;
 }
