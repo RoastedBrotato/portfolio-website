@@ -1,0 +1,17 @@
+:root {
+  --bg: #111111;
+  --bg-soft: #181818;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 248, 236, 0.1);
+  --text: #f6efe5;
+  --muted: #b9b0a4;
+  --line: rgba(246, 239, 229, 0.12);
+  --accent: #e0a458;
+  --accent-soft: rgba(224, 164, 88, 0.18);
+  --hero-glow: radial-gradient(circle at top right, rgba(224, 164, 88, 0.18), transparent 34%);
+  --section-glow: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 46%);
+  --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --max-width: 1220px;
+  --gutter: clamp(1.2rem, 2vw, 2rem);
+}
