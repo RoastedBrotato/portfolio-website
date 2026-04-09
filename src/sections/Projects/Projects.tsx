@@ -64,7 +64,7 @@ export function Projects() {
         style={{ height: `calc(${projectList.length} * 100svh)` }}
       >
         <div className="projects-sticky-stage" style={{ top: NAV_H }}>
-          <div className="projects-file-stack content-section">
+          <div className="projects-file-stack">
             {projectList.map((project, i) => {
               const state = getFileState(i, activeIdx, projectList.length);
 
@@ -104,7 +104,7 @@ export function Projects() {
           </div>
 
           {/* Progress indicator */}
-          <div className="projects-progress content-section" aria-hidden="true">
+          <div className="projects-progress" aria-hidden="true">
             {projectList.map((_, i) => (
               <div
                 key={i}

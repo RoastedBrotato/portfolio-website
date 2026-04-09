@@ -6,6 +6,24 @@ html {
   scroll-behavior: smooth;
 }
 
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 60;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent-secondary);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text-strong);
+  transform: translateY(-140%);
+  transition: transform 180ms ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 ::selection {
   background: color-mix(in srgb, var(--accent-secondary) 26%, transparent);
   color: var(--text-strong);
@@ -26,7 +44,15 @@ a {
 
 button,
 a {
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent-secondary) 88%, white 12%);
+  outline-offset: 3px;
 }
 
 .site-shell {
@@ -87,6 +113,12 @@ a {
   letter-spacing: 0.08em;
 }
 
+/* nav-cta size tuned for the nav pill */
+.nav-cta {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
 .icon-button {
   width: 2.2rem;
   height: 2.2rem;
@@ -122,6 +154,10 @@ a {
   padding-right: var(--gutter);
 }
 
+main:focus {
+  outline: none;
+}
+
 .hero {
   position: relative;
   width: 100%;
@@ -145,7 +181,7 @@ a {
 .hero-copy {
   position: relative;
   max-width: 720px;
-  padding: 2rem 0;
+  padding: 1.25rem 0 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -163,37 +199,26 @@ a {
   pointer-events: none;
 }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.55rem 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--accent-secondary) 24%, transparent);
-  border-radius: 999px;
-  background: var(--accent-secondary-soft);
-  color: var(--text);
-  font-size: 0.84rem;
-  letter-spacing: 0.02em;
-  backdrop-filter: blur(10px);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 10%, transparent);
-}
-
-.hero-badge-dot {
-  width: 0.58rem;
-  height: 0.58rem;
-  border-radius: 50%;
-  background: var(--accent-secondary);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--accent-secondary) 75%, transparent);
-}
-
 .hero-kicker,
 .meta,
 .contact-kicker,
 .section-heading span {
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--muted);
   font-size: 0.78rem;
+}
+
+:root[data-theme="light"] .hero-kicker,
+:root[data-theme="light"] .meta,
+:root[data-theme="light"] .contact-kicker,
+:root[data-theme="light"] .section-heading span {
+  color: var(--accent);
+}
+
+/* Ash-colored variant for kicker labels */
+.hero-kicker--ash {
+  color: var(--ash);
 }
 
 .hero h1,
@@ -219,7 +244,7 @@ a {
 }
 
 .hero h2 {
-  margin-top: 0.35rem;
+  margin-top: 0.45rem;
   font-size: clamp(1.5rem, 3vw, 2.4rem);
   color: var(--muted);
 }
@@ -239,7 +264,47 @@ a {
   margin-top: 2rem;
 }
 
-.hero-actions a,
+/* ── Shared CTA — ash pill in dark mode, red in light ── */
+.hero-cta,
+.nav-cta,
+.contact-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.3rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--ash);
+  color: var(--onyx);
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.hero-cta:hover,
+.nav-cta:hover,
+.contact-primary:hover {
+  transform: translateY(-2px);
+  background: var(--dust);
+  box-shadow: 0 12px 28px rgba(185, 186, 163, 0.22);
+}
+
+:root[data-theme="light"] .hero-cta,
+:root[data-theme="light"] .nav-cta,
+:root[data-theme="light"] .contact-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+:root[data-theme="light"] .hero-cta:hover,
+:root[data-theme="light"] .nav-cta:hover,
+:root[data-theme="light"] .contact-primary:hover {
+  background: var(--chestnut);
+  box-shadow: 0 12px 28px rgba(162, 44, 41, 0.24);
+}
+
 .contact-links a,
 .project-file-link {
   width: fit-content;
@@ -254,20 +319,14 @@ a {
   font-size: 0.88rem;
   letter-spacing: 0.03em;
   transition: background 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 6%, transparent);
 }
 
-.hero-actions a:hover,
 .contact-links a:hover,
 .project-file-link:hover {
   transform: translateY(-3px);
   background: var(--accent-soft);
   border-color: color-mix(in srgb, var(--accent) 36%, transparent);
   box-shadow: var(--shadow-soft);
-}
-
-.hero-actions .secondary {
-  color: var(--muted);
 }
 
 .hero-metadata {
@@ -442,7 +501,7 @@ a {
   display: grid;
   grid-template-columns: 1.1fr 1.4fr 1fr auto;
   gap: 1.4rem;
-  align-items: start;
+  align-items: center;
   padding: 1.5rem 0;
   border-top: 1px solid var(--line);
   transition: border-color 220ms ease;
@@ -472,34 +531,44 @@ a {
 
 .puzzle-piece {
   position: absolute;
-  width: 238px;
-  height: 238px;
+  appearance: none;
+  width: 244px;
+  height: 244px;
   cursor: grab;
   touch-action: none;
   z-index: var(--piece-z, 1);
   filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.18));
-  left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 182px) + var(--piece-x, 0px));
-  top: calc(var(--puzzle-origin-y, 0px) + (var(--piece-row, 0) * 182px) + var(--piece-y, 0px));
+  left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 188px) + var(--piece-x, 0px));
+  top: calc(var(--puzzle-origin-y, 0px) + (var(--piece-row, 0) * 188px) + var(--piece-y, 0px));
   transform: rotate(var(--piece-rotate, 0deg));
   transition: filter 180ms ease, transform 180ms ease;
-  will-change: left, top, transform;
+  will-change: transform;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
 }
 
 .puzzle-piece span {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 2.95rem;
+  top: 50%;
+  left: 50%;
+  width: calc(100% - 6.6rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
   text-align: center;
   font-family: var(--serif);
-  font-size: 1.36rem;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: 1.08rem;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
   color: var(--text-strong);
   z-index: 1;
   pointer-events: none;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+  text-shadow: none;
 }
 
 .puzzle-piece-svg {
@@ -509,30 +578,36 @@ a {
 }
 
 .puzzle-piece-shadow {
-  fill: rgba(5, 7, 12, 0.28);
-  transform: translate(9px, 14px);
+  fill: rgba(5, 7, 12, 0.34);
+  transform: translate(10px, 14px);
 }
 
 .puzzle-piece-underlay {
-  fill: color-mix(in srgb, var(--piece-tone, var(--accent-soft)) 86%, var(--bg) 14%);
+  fill: color-mix(in srgb, var(--piece-tone, var(--accent-soft)) 96%, #0a0b0f 4%);
 }
 
 .puzzle-piece-shape {
-  fill: color-mix(in srgb, var(--piece-tone, var(--accent-soft)) 70%, rgba(255, 248, 236, 0.2));
-  stroke: color-mix(in srgb, var(--piece-accent, var(--accent)) 62%, rgba(255, 255, 255, 0.26));
-  stroke-width: 2.2;
+  fill: color-mix(in srgb, var(--piece-tone, var(--accent-soft)) 88%, rgba(255, 248, 236, 0.08));
+  stroke: color-mix(in srgb, var(--text) 22%, transparent);
+  stroke-width: 2.4;
   vector-effect: non-scaling-stroke;
 }
 
 .puzzle-piece-stroke {
   fill: none;
-  stroke: color-mix(in srgb, white 18%, transparent);
+  stroke: color-mix(in srgb, white 12%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
 .puzzle-piece:hover {
   filter: drop-shadow(0 34px 52px rgba(0, 0, 0, 0.24));
+}
+
+.puzzle-piece:focus-visible {
+  filter:
+    drop-shadow(0 34px 52px rgba(0, 0, 0, 0.24))
+    drop-shadow(0 0 0.65rem color-mix(in srgb, var(--piece-accent, var(--accent-secondary)) 22%, transparent));
 }
 
 .puzzle-piece.is-dragging {
@@ -563,7 +638,6 @@ a {
   text-transform: uppercase;
 }
 
-:root[data-theme="light"] .hero-badge,
 :root[data-theme="light"] .hero-actions a,
 :root[data-theme="light"] .contact-links a,
 :root[data-theme="light"] .theme-toggle,
@@ -580,27 +654,28 @@ a {
   position: relative;
   padding-top: var(--section-space);
   padding-bottom: var(--section-space);
+  scroll-margin-top: 7rem;
 }
 
 .scene-about {
-  padding-bottom: calc(var(--section-space) * 0.5);
-  background: color-mix(in srgb, var(--bg) 92%, var(--bg-soft));
+  padding-bottom: calc(var(--section-space) * 0.8);
+  background: color-mix(in srgb, var(--bg) 90%, var(--accent-tertiary-soft));
 }
 
 .scene-projects {
-  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 94%, var(--surface));
 }
 
 .scene-puzzle {
-  background: color-mix(in srgb, var(--bg) 94%, var(--bg-soft));
+  background: color-mix(in srgb, var(--bg-soft) 88%, var(--accent-secondary-soft));
 }
 
 .scene-skills {
-  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 90%, var(--bg-soft));
 }
 
 .scene-experience {
-  background: color-mix(in srgb, var(--bg) 95%, var(--bg-soft));
+  background: color-mix(in srgb, var(--bg-soft) 90%, var(--accent-tertiary-soft));
 }
 
 .scene-frame,
@@ -731,11 +806,15 @@ a {
 .wf-node {
   position: absolute;
   width: 220px;
+  appearance: none;
   padding: 1rem 1.1rem;
   border: 1px solid color-mix(in srgb, var(--node-accent, var(--accent)) 22%, var(--line));
   background: var(--bg-elevated);
   backdrop-filter: blur(14px);
   cursor: grab;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   user-select: none;
   transition: border-color 180ms ease, box-shadow 180ms ease;
   will-change: transform;
@@ -746,6 +825,13 @@ a {
 .wf-node:hover {
   border-color: color-mix(in srgb, var(--node-accent, var(--accent)) 45%, transparent);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.wf-node:focus-visible {
+  border-color: color-mix(in srgb, var(--node-accent, var(--accent)) 62%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent-secondary) 24%, transparent),
+    0 8px 32px rgba(0, 0, 0, 0.24);
 }
 
 .wf-node:active {
@@ -783,6 +869,7 @@ a {
 }
 
 .wf-node-title {
+  display: block;
   margin: 0 0 0.35rem;
   font-size: 0.88rem;
   font-weight: 600;
@@ -792,6 +879,7 @@ a {
 }
 
 .wf-node-desc {
+  display: block;
   margin: 0;
   font-size: 0.74rem;
   color: var(--muted);
@@ -814,7 +902,7 @@ a {
 /* ── Projects — folder / file stack ── */
 
 .projects-header {
-  padding-top: 0;
+  padding-top: 0.35rem;
   padding-bottom: var(--section-gap);
 }
 
@@ -837,6 +925,8 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
 }
 
 .projects-file-stack {
@@ -997,10 +1087,6 @@ a {
   background: var(--accent-secondary);
 }
 
-.scene-puzzle {
-  min-height: 96svh;
-}
-
 .puzzle-shell {
   display: grid;
   grid-template-columns: minmax(22rem, 0.95fr) minmax(0, 1.05fr);
@@ -1012,6 +1098,15 @@ a {
   position: sticky;
   top: 8rem;
   max-width: 38rem;
+}
+
+.puzzle-copy h2 {
+  max-width: 10.8ch;
+}
+
+.puzzle-line {
+  display: block;
+  white-space: nowrap;
 }
 
 .puzzle-copy p {
@@ -1040,28 +1135,23 @@ a {
   border-color: color-mix(in srgb, var(--accent-secondary) 34%, transparent);
 }
 
+.puzzle-reset:focus-visible {
+  border-color: color-mix(in srgb, var(--accent-secondary) 42%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, var(--accent-secondary-soft));
+}
+
 .puzzle-reset:disabled {
   opacity: 0.46;
   cursor: default;
 }
 
 .puzzle-board {
-  min-height: 700px;
-  --puzzle-origin-x: calc(50% - 301px);
-  --puzzle-origin-y: calc(50% - 210px);
+  min-height: 660px;
+  --puzzle-origin-x: calc(50% - 310px);
+  --puzzle-origin-y: calc(50% - 216px);
   border: 1px solid var(--line);
-  border-radius: 2.25rem;
+  border-radius: 1rem;
   background: color-mix(in srgb, var(--bg) 90%, var(--bg-soft));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent);
-}
-
-.puzzle-board::before {
-  position: absolute;
-  inset: 1.1rem;
-  content: "";
-  border: 1px solid color-mix(in srgb, var(--line) 44%, transparent);
-  border-radius: 1.55rem;
-  pointer-events: none;
 }
 
 .puzzle-board::after {
@@ -1077,43 +1167,39 @@ a {
 
 .scene-skills {
   display: grid;
-  gap: 2rem;
-}
-
-.skills-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem 2.5rem;
+  grid-template-columns: 0.72fr 1.28fr;
+  gap: var(--section-gap);
+  align-items: start;
 }
 
 .skills-copy {
-  max-width: none;
+  position: sticky;
+  top: 7.5rem;
+  max-width: 28rem;
 }
 
 .skills-copy h2 {
   margin: 0;
-  white-space: nowrap;
 }
 
-.skills-intro {
-  margin: 0;
-  max-width: 32rem;
+.skills-copy p:not(.meta) {
+  margin: 1rem 0 0;
+  max-width: 38ch;
   color: var(--muted);
-  line-height: 1.6;
-  text-align: right;
+  font-size: 1rem;
+  line-height: 1.8;
 }
 
 .skills-groups {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem;
+  gap: var(--section-gap);
   align-items: start;
 }
 
 .skill-row {
   display: grid;
-  gap: 0.95rem;
+  gap: 1.15rem;
 }
 
 .skill-row-label {
@@ -1128,7 +1214,7 @@ a {
 .skill-icon-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .skill-icon-tile {
@@ -1139,9 +1225,9 @@ a {
   justify-items: center;
   gap: 0.55rem;
   padding: 0.75rem;
-  border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--line) 92%, transparent);
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+  background: color-mix(in srgb, var(--bg-elevated) 74%, var(--bg) 26%);
   color: color-mix(in srgb, var(--muted) 84%, var(--text));
   transition:
     transform 180ms ease,
@@ -1165,7 +1251,7 @@ a {
   height: 2.1rem;
   display: grid;
   place-items: center;
-  color: color-mix(in srgb, var(--skill-brand, var(--accent-secondary)) 82%, white 18%);
+  color: var(--skill-brand, var(--accent-secondary));
   transition: transform 180ms ease, color 180ms ease, filter 180ms ease;
 }
 
@@ -1186,13 +1272,28 @@ a {
   letter-spacing: 0.02em;
   text-align: center;
   color: var(--text);
-  opacity: 0.78;
+  opacity: 0.88;
   transition: opacity 180ms ease, color 180ms ease;
 }
 
 .skill-icon-tile:hover .skill-icon-name {
   color: var(--text);
   opacity: 0.96;
+}
+
+:root[data-theme="light"] .skill-icon-tile {
+  background: color-mix(in srgb, var(--bg-elevated) 80%, var(--bg));
+  border-color: var(--line);
+}
+
+:root[data-theme="light"] .skill-icon-name {
+  color: var(--text-strong);
+}
+
+:root[data-theme="light"] .skill-icon-tile:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .experience-list {
@@ -1208,8 +1309,8 @@ a {
 .scene-contact {
   padding-top: 0;
   padding-bottom: 0;
-  background: color-mix(in srgb, var(--bg) 92%, var(--bg-soft));
-  border-top: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  background: var(--bg-soft);
+  border-top: 1px solid var(--line);
 }
 
 .contact-shell {
@@ -1225,7 +1326,10 @@ a {
   grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
   gap: var(--section-gap);
   align-items: end;
-  background: color-mix(in srgb, var(--bg-soft) 88%, var(--bg));
+  background:
+    radial-gradient(circle at 78% 20%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 28%),
+    radial-gradient(circle at 18% 80%, color-mix(in srgb, var(--accent-tertiary) 8%, transparent), transparent 30%),
+    var(--bg-soft);
   overflow: hidden;
 }
 
@@ -1269,26 +1373,9 @@ a {
   z-index: 1;
 }
 
+/* contact-primary extends the shared .hero-cta / .nav-cta definition */
 .contact-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   min-width: 14rem;
-  padding: 0.95rem 1.35rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
-  background: color-mix(in srgb, var(--text-strong) 92%, transparent);
-  color: var(--bg);
-  font-size: 0.88rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
-}
-
-.contact-primary:hover {
-  transform: translateY(-2px);
-  background: #fff;
-  box-shadow: 0 18px 34px rgba(255, 255, 255, 0.12);
 }
 
 .scene-contact .contact-links {
@@ -1312,12 +1399,12 @@ a {
   font-family: var(--serif);
   font-size: clamp(7rem, 16vw, 12rem);
   line-height: 0.82;
-  color: color-mix(in srgb, var(--text-strong) 10%, transparent);
+  color: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .contact-brand-lockup p {
   margin: 0;
-  color: color-mix(in srgb, var(--text) 42%, transparent);
+  color: color-mix(in srgb, var(--muted) 50%, transparent);
   font-size: 0.74rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -1350,6 +1437,32 @@ a {
 
 .contact-footer-nav a:hover {
   color: var(--text);
+}
+
+:root[data-theme="light"] .scene-contact {
+  color: var(--text-strong);
+}
+
+:root[data-theme="light"] .contact-brand-lockup span {
+  color: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+:root[data-theme="light"] .contact-brand-lockup p {
+  color: color-mix(in srgb, var(--muted) 55%, transparent);
+}
+
+
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 960px) {
@@ -1386,18 +1499,8 @@ a {
     min-height: auto;
   }
 
-  .skills-head {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .skills-groups {
     grid-template-columns: 1fr;
-  }
-
-  .skills-intro {
-    max-width: 36rem;
-    text-align: left;
   }
 
   .project-file--behind-1 { transform: translate(12px, 10px) scale(0.975); }
@@ -1415,16 +1518,35 @@ a {
 
   .puzzle-board {
     min-height: 620px;
-    --puzzle-origin-x: calc(50% - 266px);
-    --puzzle-origin-y: calc(50% - 184px);
+    --puzzle-origin-x: calc(50% - 274px);
+    --puzzle-origin-y: calc(50% - 190px);
   }
 
   .puzzle-piece {
     width: 212px;
     height: 212px;
-    left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 162px) + var(--piece-x, 0px));
-    top: calc(var(--puzzle-origin-y, 0px) + (var(--piece-row, 0) * 162px) + var(--piece-y, 0px));
+    left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 168px) + var(--piece-x, 0px));
+    top: calc(var(--puzzle-origin-y, 0px) + (var(--piece-row, 0) * 168px) + var(--piece-y, 0px));
   }
+
+  .puzzle-piece span {
+    width: calc(100% - 5.9rem);
+    font-size: 0.98rem;
+  }
+}
+
+:root[data-theme="light"] .puzzle-piece {
+  filter: none;
+}
+
+:root[data-theme="light"] .puzzle-piece:hover,
+:root[data-theme="light"] .puzzle-piece:focus-visible,
+:root[data-theme="light"] .puzzle-piece.is-dragging {
+  filter: none;
+}
+
+:root[data-theme="light"] .puzzle-piece-shadow {
+  fill: rgba(32, 25, 18, 0.18);
 }
 
 @media (max-width: 640px) {
@@ -1483,10 +1605,6 @@ a {
   .contact-card {
     padding: 1.5rem;
     gap: 2rem;
-  }
-
-  .skills-copy h2 {
-    white-space: normal;
   }
 
   .skill-icon-grid {
@@ -1560,5 +1678,19 @@ a {
   .puzzle-piece span {
     padding: 2.2rem;
     font-size: 1.08rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+
+  .wf-status-dot {
+    animation: none;
   }
 }

@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
-import type { HTMLAttributes } from "react";
+import type { ButtonHTMLAttributes } from "react";
 
 type Edge = -1 | 0 | 1;
 
-type PuzzlePieceProps = HTMLAttributes<HTMLDivElement> & {
+type PuzzlePieceProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   label: string;
   top: Edge;
   right: Edge;
@@ -111,7 +111,7 @@ function createPath(top: Edge, right: Edge, bottom: Edge, left: Edge) {
   ].join(" ");
 }
 
-export const PuzzlePiece = forwardRef<HTMLDivElement, PuzzlePieceProps>(function PuzzlePiece(
+export const PuzzlePiece = forwardRef<HTMLButtonElement, PuzzlePieceProps>(function PuzzlePiece(
   {
     label,
     top,
@@ -124,7 +124,7 @@ export const PuzzlePiece = forwardRef<HTMLDivElement, PuzzlePieceProps>(function
   ref
 ) {
   return (
-    <div className={className} {...rest} ref={ref}>
+    <button className={className} {...rest} ref={ref} type="button">
       <svg
         className="puzzle-piece-svg"
         viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
@@ -136,6 +136,6 @@ export const PuzzlePiece = forwardRef<HTMLDivElement, PuzzlePieceProps>(function
         <path className="puzzle-piece-stroke" d={createPath(top, right, bottom, left)} />
       </svg>
       <span>{label}</span>
-    </div>
+    </button>
   );
 });

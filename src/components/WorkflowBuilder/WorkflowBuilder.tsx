@@ -90,7 +90,7 @@ const NODES: NodeDef[] = [
     label: "Strategy",
     title: "Technical Direction",
     desc: "Architecture, stack choices, and engineering decisions that won't bite you later.",
-    accent: "var(--accent-tertiary)",
+    accent: "var(--accent)",
     icon: <IconGitBranch />,
     initPos: { x: 640, y: 46 },
   },
@@ -125,6 +125,8 @@ type Positions = Record<string, { x: number; y: number }>;
 
 const initPositions = (): Positions =>
   Object.fromEntries(NODES.map((n) => [n.id, { ...n.initPos }]));
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 function ConnectionLine({ from, to, positions }: { from: string; to: string; positions: Positions }) {
   const a = positions[from];
@@ -198,7 +200,7 @@ export function WorkflowBuilder() {
   }, [reduceMotion]);
 
   // Pointer drag
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>, id: string) => {
+  const onPointerDown = (e: React.PointerEvent<HTMLElement>, id: string) => {
     e.currentTarget.setPointerCapture(e.pointerId);
     hasDraggedRef.current = true;
     drag.current = {
@@ -210,7 +212,7 @@ export function WorkflowBuilder() {
     };
   };
 
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (!drag.current) return;
     const { id, startClientX, startClientY, origX, origY } = drag.current;
     const nx = Math.max(0, origX + e.clientX - startClientX);
@@ -221,6 +223,59 @@ export function WorkflowBuilder() {
   };
 
   const onPointerUp = () => { drag.current = null; };
+
+  const nudgeNode = (id: string, dx: number, dy: number) => {
+    hasDraggedRef.current = true;
+    setPositions((current) => {
+      const nextX = clamp((current[id]?.x ?? 0) + dx, 0, Math.max(0, canvasW - NODE_W));
+      const nextY = clamp((current[id]?.y ?? 0) + dy, 0, Math.max(0, canvasH - NODE_H));
+
+      return {
+        ...current,
+        [id]: { x: nextX, y: nextY }
+      };
+    });
+  };
+
+  const resetNode = (id: string) => {
+    const initial = NODES.find((node) => node.id === id)?.initPos;
+    if (!initial) return;
+
+    hasDraggedRef.current = false;
+    setPositions((current) => ({
+      ...current,
+      [id]: { ...initial }
+    }));
+  };
+
+  const onNodeKeyDown = (event: React.KeyboardEvent<HTMLElement>, id: string) => {
+    const step = event.shiftKey ? 48 : 24;
+
+    switch (event.key) {
+      case "ArrowLeft":
+        event.preventDefault();
+        nudgeNode(id, -step, 0);
+        break;
+      case "ArrowRight":
+        event.preventDefault();
+        nudgeNode(id, step, 0);
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        nudgeNode(id, 0, -step);
+        break;
+      case "ArrowDown":
+        event.preventDefault();
+        nudgeNode(id, 0, step);
+        break;
+      case "Home":
+        event.preventDefault();
+        resetNode(id);
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     const wrap = canvasRef.current;
@@ -268,7 +323,7 @@ export function WorkflowBuilder() {
           <span className="wf-status-dot" aria-hidden="true" />
           <span className="meta">How I work</span>
         </div>
-        <p className="wf-hint">Drag nodes to explore</p>
+        <p className="wf-hint" id="workflow-hint">Drag nodes to explore. Use arrow keys when focused.</p>
       </div>
 
       <div
@@ -297,24 +352,27 @@ export function WorkflowBuilder() {
           {NODES.map((node) => {
             const pos = positions[node.id];
             return (
-              <div
+              <button
                 key={node.id}
+                type="button"
                 className="wf-node"
                 style={{
                   "--node-accent": node.accent,
                   transform: `translate(${pos.x}px, ${pos.y}px)`,
                 } as CSSProperties}
                 onPointerDown={(e) => onPointerDown(e, node.id)}
+                onKeyDown={(event) => onNodeKeyDown(event, node.id)}
+                aria-describedby="workflow-hint"
               >
-                <div className="wf-node-top">
-                  <div className="wf-node-icon" aria-hidden="true">
+                <span className="wf-node-top">
+                  <span className="wf-node-icon" aria-hidden="true">
                     {node.icon}
-                  </div>
+                  </span>
                   <span className="wf-node-label">{node.label}</span>
-                </div>
-                <h4 className="wf-node-title">{node.title}</h4>
-                <p className="wf-node-desc">{node.desc}</p>
-              </div>
+                </span>
+                <span className="wf-node-title">{node.title}</span>
+                <span className="wf-node-desc">{node.desc}</span>
+              </button>
             );
           })}
         </div>

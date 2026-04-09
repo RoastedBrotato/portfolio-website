@@ -30,8 +30,11 @@ export default function App() {
 
   return (
     <div className="site-shell">
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
       <Nav theme={theme} toggleTheme={toggleTheme} />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <Hero />
         <Marquee />
         <About />

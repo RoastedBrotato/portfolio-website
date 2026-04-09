@@ -1,4 +1,4 @@
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PuzzlePiece } from "../../components/PuzzlePiece/PuzzlePiece";
 
@@ -21,8 +21,8 @@ const puzzlePieces: PuzzleDatum[] = [
     column: 0,
     edges: { top: 0, right: 1, bottom: -1, left: 0 },
     scatter: { x: -96, y: -74, rotate: -16 },
-    accent: "var(--accent-secondary)",
-    tone: "rgba(111, 119, 201, 0.2)"
+    accent: "var(--accent)",
+    tone: "rgba(162, 44, 41, 0.22)"
   },
   {
     label: "User behavior",
@@ -30,8 +30,8 @@ const puzzlePieces: PuzzleDatum[] = [
     column: 1,
     edges: { top: 0, right: -1, bottom: 1, left: -1 },
     scatter: { x: 0, y: -92, rotate: 10 },
-    accent: "var(--accent)",
-    tone: "rgba(184, 131, 77, 0.18)"
+    accent: "var(--accent-tertiary)",
+    tone: "rgba(185, 186, 163, 0.16)"
   },
   {
     label: "Technical constraints",
@@ -39,8 +39,8 @@ const puzzlePieces: PuzzleDatum[] = [
     column: 2,
     edges: { top: 0, right: 0, bottom: -1, left: 1 },
     scatter: { x: 98, y: -70, rotate: 14 },
-    accent: "var(--accent-tertiary)",
-    tone: "rgba(147, 164, 184, 0.18)"
+    accent: "var(--accent)",
+    tone: "rgba(162, 44, 41, 0.22)"
   },
   {
     label: "Interface clarity",
@@ -48,8 +48,8 @@ const puzzlePieces: PuzzleDatum[] = [
     column: 0,
     edges: { top: 1, right: -1, bottom: 0, left: 0 },
     scatter: { x: -88, y: 84, rotate: 12 },
-    accent: "var(--accent)",
-    tone: "rgba(184, 131, 77, 0.2)"
+    accent: "var(--accent-tertiary)",
+    tone: "rgba(185, 186, 163, 0.16)"
   },
   {
     label: "Speed to ship",
@@ -57,8 +57,8 @@ const puzzlePieces: PuzzleDatum[] = [
     column: 1,
     edges: { top: -1, right: 1, bottom: 0, left: 1 },
     scatter: { x: 0, y: 102, rotate: -10 },
-    accent: "var(--accent-secondary)",
-    tone: "rgba(111, 119, 201, 0.18)"
+    accent: "var(--accent)",
+    tone: "rgba(162, 44, 41, 0.22)"
   },
   {
     label: "Visual direction",
@@ -67,7 +67,7 @@ const puzzlePieces: PuzzleDatum[] = [
     edges: { top: 1, right: 0, bottom: 0, left: -1 },
     scatter: { x: 92, y: 76, rotate: -12 },
     accent: "var(--accent-tertiary)",
-    tone: "rgba(147, 164, 184, 0.22)"
+    tone: "rgba(185, 186, 163, 0.16)"
   }
 ];
 
@@ -79,7 +79,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 export function PuzzleSystem() {
   const rootRef = useRef<HTMLElement | null>(null);
   const boardRef = useRef<HTMLDivElement | null>(null);
-  const pieceRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const pieceRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const assembledOverrideRef = useRef(false);
   const dragState = useRef<{
     index: number;
@@ -156,7 +156,7 @@ export function PuzzleSystem() {
     return hasDraggedOffsets || progress < 0.995;
   }, [offsets, progress]);
 
-  const handlePointerDown = (index: number, event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerDown = (index: number, event: ReactPointerEvent<HTMLElement>) => {
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     assembledOverrideRef.current = false;
@@ -190,7 +190,7 @@ export function PuzzleSystem() {
     setDraggingIndex(index);
   };
 
-  const handlePointerMove = (index: number, event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerMove = (index: number, event: ReactPointerEvent<HTMLElement>) => {
     const drag = dragState.current;
 
     if (!drag || drag.index !== index || drag.pointerId !== event.pointerId) {
@@ -214,7 +214,7 @@ export function PuzzleSystem() {
     );
   };
 
-  const finishDrag = (index: number, event: ReactPointerEvent<HTMLDivElement>) => {
+  const finishDrag = (index: number, event: ReactPointerEvent<HTMLElement>) => {
     const drag = dragState.current;
 
     if (!drag || drag.index !== index || drag.pointerId !== event.pointerId) {
@@ -236,12 +236,71 @@ export function PuzzleSystem() {
     setAssembledOverride(true);
   };
 
+  const handlePieceKeyDown = (index: number, event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    const board = boardRef.current;
+    const piece = pieceRefs.current[index];
+    const boardRect = board?.getBoundingClientRect();
+    const pieceRect = piece?.getBoundingClientRect();
+
+    if (!boardRect || !pieceRect) {
+      return;
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      setOffsets((current) =>
+        current.map((offset, currentIndex) =>
+          currentIndex === index ? { x: 0, y: 0, rotate: 0 } : offset
+        )
+      );
+      return;
+    }
+
+    const step = event.shiftKey ? 36 : 18;
+    const deltaByKey: Record<string, { x: number; y: number } | undefined> = {
+      ArrowLeft: { x: -step, y: 0 },
+      ArrowRight: { x: step, y: 0 },
+      ArrowUp: { x: 0, y: -step },
+      ArrowDown: { x: 0, y: step }
+    };
+
+    const delta = deltaByKey[event.key];
+
+    if (!delta) {
+      return;
+    }
+
+    event.preventDefault();
+    assembledOverrideRef.current = false;
+    setAssembledOverride(false);
+
+    const currentLeft = pieceRect.left - boardRect.left;
+    const currentTop = pieceRect.top - boardRect.top;
+    const nextLeft = clamp(currentLeft + delta.x, 0, Math.max(0, boardRect.width - pieceRect.width));
+    const nextTop = clamp(currentTop + delta.y, 0, Math.max(0, boardRect.height - pieceRect.height));
+
+    setOffsets((current) =>
+      current.map((offset, currentIndex) =>
+        currentIndex === index
+          ? {
+              x: offset.x + (nextLeft - currentLeft),
+              y: offset.y + (nextTop - currentTop),
+              rotate: clamp(offset.rotate + delta.x * 0.08, -26, 26)
+            }
+          : offset
+      )
+    );
+  };
+
   return (
     <section className="content-section scene scene-puzzle" id="approach" ref={rootRef}>
       <div className="puzzle-shell">
         <div className="puzzle-copy">
           <p className="meta" data-reveal>Approach</p>
-          <h2 data-reveal>Move the pieces. Keep the shape.</h2>
+          <h2 data-reveal>
+            <span className="puzzle-line">Move the pieces.</span>
+            <span className="puzzle-line">Keep the shape.</span>
+          </h2>
           <p data-reveal>
             Strategy, speed, interface clarity, and visual direction never arrive in order. The work is
             organizing pressure until the product locks together.
@@ -249,6 +308,10 @@ export function PuzzleSystem() {
         </div>
 
         <div className="puzzle-board" aria-label="Interactive puzzle board" ref={boardRef}>
+          <p className="sr-only" id="puzzle-help">
+            Drag pieces with a pointer or use arrow keys when a piece is focused. Press Home to snap a
+            piece back into place.
+          </p>
           <div className="puzzle-actions">
             <button
               type="button"
@@ -283,6 +346,8 @@ export function PuzzleSystem() {
                 onPointerMove={(event) => handlePointerMove(index, event)}
                 onPointerUp={(event) => finishDrag(index, event)}
                 onPointerCancel={(event) => finishDrag(index, event)}
+                onKeyDown={(event) => handlePieceKeyDown(index, event)}
+                aria-describedby="puzzle-help"
                 style={
                   {
                     "--piece-column": piece.column,

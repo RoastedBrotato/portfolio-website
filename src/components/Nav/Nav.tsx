@@ -9,7 +9,6 @@ const navItems = [
   { label: "Work", href: "#projects" },
   { label: "Method", href: "#approach" },
   { label: "Stack", href: "#skills" },
-  { label: "Contact", href: "#contact" }
 ];
 
 function IconSun() {

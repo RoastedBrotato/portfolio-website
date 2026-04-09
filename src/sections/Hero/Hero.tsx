@@ -9,7 +9,7 @@ export function Hero() {
   const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (!rootRef.current) {
+    if (!rootRef.current || reduceMotion) {
       return;
     }
 
@@ -26,18 +26,16 @@ export function Hero() {
 
   return (
     <section className="hero" id="top" ref={rootRef}>
-      <div className="hero-visual" aria-hidden="true">
-        <canvas className="hero-canvas" ref={canvasRef} />
-      </div>
+      {!reduceMotion ? (
+        <div className="hero-visual" aria-hidden="true">
+          <canvas className="hero-canvas" ref={canvasRef} />
+        </div>
+      ) : null}
 
       <div className="hero-inner">
         <div className="hero-copy">
-          <div className="hero-badge" data-hero-copy>
-            <span className="hero-badge-dot" />
-            Full Stack Engineer
-          </div>
-          <p className="hero-kicker" data-hero-copy>
-            {profile.location}
+          <p className="hero-kicker hero-kicker--ash" data-hero-copy>
+            {profile.title}
           </p>
           <h1 aria-label={profile.name}>
             {profile.name.split("").map((char, i) => (
@@ -46,13 +44,11 @@ export function Hero() {
               </span>
             ))}
           </h1>
-          <h2 data-hero-copy>{profile.title}</h2>
           <p className="hero-tagline" data-hero-copy>
             {profile.tagline}
           </p>
           <div className="hero-actions" data-hero-copy>
-            <a href="#projects">View work</a>
-            <a className="secondary" href="#contact">
+            <a className="hero-cta" href="#contact">
               Start a conversation
             </a>
           </div>

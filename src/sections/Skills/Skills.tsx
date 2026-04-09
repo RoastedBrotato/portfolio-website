@@ -122,14 +122,10 @@ const iconMap: Record<string, SkillIcon> = {
 export function Skills() {
   return (
     <section className="content-section scene scene-skills" id="skills">
-      <div className="skills-head" data-reveal>
-        <div className="skills-copy">
-          <p className="meta">Skills</p>
-          <h2>Things I know.</h2>
-        </div>
-        <p className="skills-intro">
-          Production stack across frontend, backend, cloud, and AI systems.
-        </p>
+      <div className="skills-copy">
+        <p className="meta" data-reveal>Skills</p>
+        <h2 data-reveal>Things I know.</h2>
+        <p data-reveal>Production stack across frontend, backend, cloud, and AI systems.</p>
       </div>
 
       <div className="skills-groups" data-reveal>
@@ -143,7 +139,7 @@ export function Skills() {
                   className="skill-icon-tile"
                   title={skill}
                   aria-label={skill}
-                  style={{ "--skill-brand": (iconMap[skill]?.color ?? "var(--accent-secondary)") } as CSSProperties}
+                  style={{ "--skill-brand": (iconMap[skill]?.color ?? "var(--accent)") } as CSSProperties}
                 >
                   <span className="skill-icon-glyph">
                     {iconMap[skill]?.icon ?? <IconCodeBrackets />}
