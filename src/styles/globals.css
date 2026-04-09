@@ -1546,7 +1546,11 @@ main:focus {
 }
 
 :root[data-theme="light"] .puzzle-piece-shadow {
-  fill: rgba(32, 25, 18, 0.18);
+  fill: none;
+}
+
+:root[data-theme="light"] .puzzle-piece-stroke {
+  display: none;
 }
 
 @media (max-width: 640px) {
