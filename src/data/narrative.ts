@@ -1,80 +1,93 @@
 export const profile = {
   name: "Waleed",
-  title: "Creative Developer",
-  tagline: "Full stack creative developer building sharp interfaces, motion-led experiences, and digital systems that turn complexity into something usable.",
-  location: "Qatar"
+  title: "Full Stack Engineer",
+  tagline: "Building scalable platforms and AI-powered systems.",
+  location: "Doha, Qatar"
 };
 
 export const projectList = [
   {
-    name: "Realtime Audio Translator",
-    type: "Speech + Collaboration Tool",
+    name: "Multilingual Meeting Translator",
+    type: "AI / Real-Time Systems",
     summary:
-      "A live meeting product that transcribes and translates conversations into a selected language in real time.",
-    stack: ["React", "TypeScript", "Speech APIs", "Realtime Processing"],
+      "Live meeting platform with real-time transcription and translation across 10+ languages. Integrates Faster-Whisper for ASR and XTTS v2 for voice cloning, with speaker diarization, RAG-powered Q&A, and auto meeting minutes.",
+    stack: ["Go", "Python", "Hugging Face", "Docker", "PostgreSQL"],
     image:
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
     accent: "rgba(111, 119, 201, 0.34)",
     link: "#"
   },
   {
-    name: "Editorial Brand Site",
-    type: "Website",
+    name: "Legacy .NET Auditor",
+    type: "Developer Tooling",
     summary:
-      "A high-contrast marketing experience with motion-led navigation and modular storytelling.",
-    stack: ["Frontend", "Motion Design", "Responsive Systems"],
+      "Python static analysis CLI for auditing ASP.NET MVC and WebForms applications. Detects anti-patterns, N+1 queries, and missing async — generates phased modernization roadmaps with Mermaid architecture diagrams.",
+    stack: ["Python", "AST Analysis", "CLI", "Mermaid"],
     image:
       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
     accent: "rgba(184, 131, 77, 0.28)",
-    link: "#"
+    link: "https://github.com/RoastedBrotato/legacy-dotnet-auditor"
   },
   {
-    name: "Experimental Web Lab",
-    type: "Creative Coding",
+    name: "Rust Language Interpreter",
+    type: "Systems / Creative Coding",
     summary:
-      "A collection of small interaction studies exploring animation, rhythm, and interface feel.",
-    stack: ["JavaScript", "Canvas", "Prototyping"],
+      "A custom programming language interpreter built in Rust from scratch — full lexer, recursive-descent parser, and AST evaluator with TDD coverage across variable scoping, control flow, and function calls.",
+    stack: ["Rust", "Lexer", "Parser", "AST"],
     image:
       "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=80",
     accent: "rgba(147, 164, 184, 0.3)",
-    link: "#"
+    link: "https://github.com/RoastedBrotato/Projects"
   }
 ];
 
 export const experienceList = [
   {
-    period: "Selected Work",
-    title: "Creative Developer",
-    company: "Independent / Placeholder",
+    period: "Dec 2025 – Present",
+    title: "Full Stack Developer",
+    company: "Daixara Technology",
     description:
-      "Designed and built modern web experiences across product, storytelling, and front-end systems."
+      "Auditing legacy .NET systems and delivering modernization roadmaps. Built a real-time multilingual meeting platform with Hugging Face ASR/TTS models, async job queues, and a Dockerized Go + Python microservices stack."
   },
   {
-    period: "Previous Role",
-    title: "Frontend Engineer",
-    company: "Placeholder Studio",
+    period: "Mar 2020 – Jun 2025",
+    title: "Software Developer",
+    company: "Qatar Charity",
     description:
-      "Worked across interface architecture, performance, and implementation quality for client-facing products."
+      "Modernized a .NET MVC monolith serving 50K+ users into modular APIs, cutting load time by 35%. Built React component libraries, optimized EF/LINQ queries, and architected zero-downtime CI/CD pipelines on Azure."
+  },
+  {
+    period: "Sep 2019 – Dec 2019",
+    title: "Software Developer",
+    company: "Mirwad Fragrances",
+    description:
+      "Deployed a customized Odoo ERP with Python logistics modules, Azure serverless functions for real-time order tracking, and a Scrapy pipeline extracting 10K+ product records for the recommendation engine."
+  },
+  {
+    period: "Sep 2018 – May 2019",
+    title: "Junior Software Developer",
+    company: "Smart Village",
+    description:
+      "Delivered 4 cross-platform applications in C#.NET, Java, and Python. Built React front-ends with secure REST API integrations, automating manual workflows across 3 client engagements."
   }
 ];
 
-// ── Update these with your actual skills ──
 export const skillGroups = [
   {
     label: "Languages",
-    skills: ["TypeScript", "JavaScript", "Python", "HTML", "CSS", "GLSL"],
+    skills: ["TypeScript", "Python", "C#", "Go", "Rust", "JavaScript"],
   },
   {
-    label: "Frontend & UI",
-    skills: ["React", "Next.js", "Vite", "CSS Modules", "Tailwind", "Framer"],
+    label: "Application Stack",
+    skills: ["React", "Next.js", "Node.js", ".NET Core", "Express", "GraphQL"],
   },
   {
-    label: "Creative Dev",
-    skills: ["Canvas API", "WebGL", "Three.js", "GSAP", "SVG", "Anime.js"],
+    label: "Cloud & Data",
+    skills: ["Azure", "Docker", "PostgreSQL", "SQL Server", "MongoDB", "GitHub Actions"],
   },
   {
-    label: "Tooling & Systems",
-    skills: ["Git", "Node.js", "Figma", "Storybook", "Vite", "Docker"],
+    label: "AI & Systems",
+    skills: ["Hugging Face", "RAG", "WebSockets", "Microservices", "REST", "Power BI"],
   },
 ];
 

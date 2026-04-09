@@ -34,10 +34,10 @@ export function Hero() {
         <div className="hero-copy">
           <div className="hero-badge" data-hero-copy>
             <span className="hero-badge-dot" />
-            Dynamic rendering for product stories
+            Full Stack Engineer
           </div>
           <p className="hero-kicker" data-hero-copy>
-            {profile.location} / Creative direction meets engineering
+            {profile.location}
           </p>
           <h1 aria-label={profile.name}>
             {profile.name.split("").map((char, i) => (
@@ -55,11 +55,6 @@ export function Hero() {
             <a className="secondary" href="#contact">
               Start a conversation
             </a>
-          </div>
-          <div className="hero-metadata" data-hero-copy>
-            <span>Interfaces that feel alive</span>
-            <span>Realtime systems</span>
-            <span>Motion with intent</span>
           </div>
         </div>
       </div>

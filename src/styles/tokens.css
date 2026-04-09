@@ -19,23 +19,21 @@
   --accent-secondary-soft: rgba(111, 119, 201, 0.12);
   --accent-tertiary: var(--brand-sky);
   --accent-tertiary-soft: rgba(147, 164, 184, 0.12);
-  --hero-glow: radial-gradient(circle at top right, rgba(111, 119, 201, 0.12), transparent 34%);
-  --section-glow: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 46%);
-  --hero-overlay:
-    linear-gradient(90deg, rgba(11, 13, 18, 0.58) 0%, rgba(11, 13, 18, 0.34) 22%, rgba(11, 13, 18, 0.08) 52%, rgba(11, 13, 18, 0.48) 100%),
-    linear-gradient(180deg, rgba(11, 13, 18, 0.02) 0%, rgba(11, 13, 18, 0.16) 100%);
+  --hero-glow: none;
+  --section-glow: none;
+  --hero-overlay: none;
   --hero-vignette-center: rgba(11, 13, 18, 0.16);
   --canvas-bg: #0b0d12;
   --canvas-node: rgba(231, 224, 216, 0.98);
   --canvas-link: rgba(154, 164, 196, 0.72);
   --canvas-link-active: rgba(255, 255, 255, 0.82);
   --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.24);
-  --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --serif: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+  --sans: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
   --max-width: 1220px;
   --gutter: clamp(1.4rem, 4vw, 5rem);
-  --section-space: clamp(6rem, 8vw, 9rem);
-  --section-gap: clamp(2rem, 3vw, 3rem);
+  --section-space: clamp(4.75rem, 6vw, 7rem);
+  --section-gap: clamp(1.75rem, 2.5vw, 2.5rem);
 }
 
 :root[data-theme="light"] {
@@ -53,11 +51,9 @@
   --accent-soft: rgba(184, 131, 77, 0.14);
   --accent-secondary-soft: rgba(111, 119, 201, 0.08);
   --accent-tertiary-soft: rgba(147, 164, 184, 0.08);
-  --hero-glow: radial-gradient(circle at top right, rgba(147, 164, 184, 0.1), transparent 38%);
-  --section-glow: radial-gradient(circle at center, rgba(18, 19, 26, 0.06), transparent 46%);
-  --hero-overlay:
-    linear-gradient(90deg, rgba(246, 240, 231, 0.52) 0%, rgba(246, 240, 231, 0.3) 22%, rgba(246, 240, 231, 0.08) 52%, rgba(246, 240, 231, 0.46) 100%),
-    linear-gradient(180deg, rgba(246, 240, 231, 0.02) 0%, rgba(246, 240, 231, 0.14) 100%);
+  --hero-glow: none;
+  --section-glow: none;
+  --hero-overlay: none;
   --hero-vignette-center: rgba(246, 240, 231, 0.12);
   --canvas-bg: #f6f0e7;
   --canvas-node: rgba(58, 51, 67, 0.82);
