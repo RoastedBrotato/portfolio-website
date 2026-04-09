@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import type { HTMLAttributes } from "react";
 
 type Edge = -1 | 0 | 1;
@@ -10,8 +11,8 @@ type PuzzlePieceProps = HTMLAttributes<HTMLDivElement> & {
   left: Edge;
 };
 
-const size = 120;
-const tab = 18;
+const size = 184;
+const tab = 28;
 const inset = tab;
 const viewBoxSize = size + tab * 2;
 
@@ -110,26 +111,31 @@ function createPath(top: Edge, right: Edge, bottom: Edge, left: Edge) {
   ].join(" ");
 }
 
-export function PuzzlePiece({
-  label,
-  top,
-  right,
-  bottom,
-  left,
-  className,
-  ...rest
-}: PuzzlePieceProps) {
+export const PuzzlePiece = forwardRef<HTMLDivElement, PuzzlePieceProps>(function PuzzlePiece(
+  {
+    label,
+    top,
+    right,
+    bottom,
+    left,
+    className,
+    ...rest
+  },
+  ref
+) {
   return (
-    <div className={className} {...rest}>
+    <div className={className} {...rest} ref={ref}>
       <svg
         className="puzzle-piece-svg"
         viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
         aria-hidden="true"
       >
         <path className="puzzle-piece-shadow" d={createPath(top, right, bottom, left)} />
+        <path className="puzzle-piece-underlay" d={createPath(top, right, bottom, left)} />
         <path className="puzzle-piece-shape" d={createPath(top, right, bottom, left)} />
+        <path className="puzzle-piece-stroke" d={createPath(top, right, bottom, left)} />
       </svg>
       <span>{label}</span>
     </div>
   );
-}
+});

@@ -12,6 +12,9 @@ export const projectList = [
     summary:
       "A live meeting product that transcribes and translates conversations into a selected language in real time.",
     stack: ["React", "TypeScript", "Speech APIs", "Realtime Processing"],
+    image:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+    accent: "rgba(111, 119, 201, 0.34)",
     link: "#"
   },
   {
@@ -20,6 +23,9 @@ export const projectList = [
     summary:
       "A high-contrast marketing experience with motion-led navigation and modular storytelling.",
     stack: ["Frontend", "Motion Design", "Responsive Systems"],
+    image:
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+    accent: "rgba(184, 131, 77, 0.28)",
     link: "#"
   },
   {
@@ -28,6 +34,9 @@ export const projectList = [
     summary:
       "A collection of small interaction studies exploring animation, rhythm, and interface feel.",
     stack: ["JavaScript", "Canvas", "Prototyping"],
+    image:
+      "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=80",
+    accent: "rgba(147, 164, 184, 0.3)",
     link: "#"
   }
 ];
@@ -49,17 +58,24 @@ export const experienceList = [
   }
 ];
 
-export const skills = [
-  "Creative Development",
-  "Frontend Architecture",
-  "Motion Systems",
-  "React",
-  "TypeScript",
-  "UI Engineering",
-  "Design Systems",
-  "Rapid Prototyping",
-  "Interaction Design",
-  "Performance"
+// ── Update these with your actual skills ──
+export const skillGroups = [
+  {
+    label: "Languages",
+    skills: ["TypeScript", "JavaScript", "Python", "HTML", "CSS", "GLSL"],
+  },
+  {
+    label: "Frontend & UI",
+    skills: ["React", "Next.js", "Vite", "CSS Modules", "Tailwind", "Framer"],
+  },
+  {
+    label: "Creative Dev",
+    skills: ["Canvas API", "WebGL", "Three.js", "GSAP", "SVG", "Anime.js"],
+  },
+  {
+    label: "Tooling & Systems",
+    skills: ["Git", "Node.js", "Figma", "Storybook", "Vite", "Docker"],
+  },
 ];
 
 export const puzzlePoints = [

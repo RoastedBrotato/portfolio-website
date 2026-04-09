@@ -1,47 +1,30 @@
-import { useEffect, useRef } from "react";
-import { animate, set } from "animejs";
-import { skills } from "../../data/narrative";
-import { startSkillsNetwork } from "../../animations/skills-network";
-import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
-import { useScrollReveal } from "../../hooks/useScrollReveal";
+import { skillGroups } from "../../data/narrative";
 
 export function Skills() {
-  const rootRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const reduceMotion = usePrefersReducedMotion();
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    set(canvas, { opacity: 0 });
-    const cleanup = startSkillsNetwork(canvas, skills);
-    return cleanup;
-  }, []);
-
-  useScrollReveal(rootRef, (root) => {
-    const canvas = root.querySelector(".skills-canvas");
-    if (canvas) {
-      animate(canvas, {
-        opacity: [0, 1],
-        duration: 1200,
-        easing: "outCubic"
-      });
-    }
-  }, reduceMotion);
-
   return (
-    <section className="content-section scene scene-skills" id="skills" ref={rootRef}>
+    <section className="content-section scene scene-skills" id="skills">
       <div className="skills-copy">
         <p className="meta" data-reveal>Skills</p>
-        <h2 data-reveal>Interface craft. Technical depth. Product sense.</h2>
-        <p data-reveal>A capability map — not a badge wall.</p>
+        <h2 data-reveal>Things I know.</h2>
+        <p data-reveal>
+          Tools, languages, and systems I reach for — update this list with your actual stack.
+        </p>
       </div>
-      <canvas
-        ref={canvasRef}
-        className="skills-canvas"
-        aria-hidden="true"
-      />
+
+      <div className="skills-groups">
+        {skillGroups.map((group) => (
+          <div key={group.label} className="skill-group" data-reveal>
+            <p className="skill-group-label">{group.label}</p>
+            <div className="skill-tiles">
+              {group.skills.map((skill) => (
+                <div key={skill} className="skill-tile">
+                  <span>{skill}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

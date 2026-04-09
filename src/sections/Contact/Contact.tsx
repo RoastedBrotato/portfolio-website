@@ -27,14 +27,39 @@ export function Contact() {
   }, reduceMotion);
 
   return (
-    <section className="content-section scene scene-contact contact-section" id="contact" ref={rootRef}>
-      <p className="contact-kicker">Contact</p>
-      <h2>Let's build something worth shipping.</h2>
-      <p>Available for projects, roles, and the right kind of collaboration.</p>
-      <div className="contact-links">
-        <a href="mailto:hello@example.com">hello@example.com</a>
-        <a href="https://github.com/example">GitHub</a>
-        <a href="https://linkedin.com/in/example">LinkedIn</a>
+    <section className="scene scene-contact contact-section" id="contact" ref={rootRef}>
+      <div className="contact-shell">
+        <div className="contact-lead">
+          <p className="contact-kicker">Get in touch</p>
+          <h2>Got a project in mind?</h2>
+          <p>
+            Available for freelance projects, full-time roles, and the right kind of collaboration.
+            Reach out and let&apos;s see if there&apos;s a fit.
+          </p>
+        </div>
+
+        <div className="contact-actions">
+          <div className="contact-links">
+            <a href="mailto:hello@example.com">hello@example.com</a>
+            <a href="https://github.com/example" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://linkedin.com/in/example" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </div>
+          <div className="contact-meta">
+            <span>Based in Qatar</span>
+            <span>Open to remote &amp; on-site</span>
+          </div>
+        </div>
+
+        <div className="contact-footer-bar">
+          <span>© {new Date().getFullYear()} Waleed</span>
+          <nav className="contact-footer-nav" aria-label="Footer navigation">
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#skills">Skills</a>
+            <a href="#experience">Experience</a>
+          </nav>
+          <span>Qatar · Creative Developer</span>
+        </div>
       </div>
     </section>
   );

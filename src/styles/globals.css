@@ -40,34 +40,44 @@ a {
 }
 
 .site-nav {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem var(--gutter);
+  width: min(calc(100% - (var(--gutter) * 2)), 780px);
+  padding: 0.65rem 0.85rem 0.65rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   backdrop-filter: blur(18px);
-  background: var(--bg-elevated);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  transition: transform 220ms ease, opacity 220ms ease, border-color 180ms ease;
+}
+
+.site-nav.is-hidden {
+  transform: translate(-50%, calc(-100% - 0.75rem));
+  opacity: 0;
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 .site-nav nav {
   display: flex;
-  gap: 1.2rem;
+  gap: 0.95rem;
   flex-wrap: wrap;
 }
 
 .site-nav a {
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   transition: color 180ms ease;
 }
 
@@ -78,15 +88,16 @@ a {
 .site-nav .brand {
   color: var(--text-strong);
   font-family: var(--serif);
-  font-size: 1.15rem;
+  font-size: 1.02rem;
 }
 
 .theme-toggle {
-  padding: 0.55rem 0.85rem;
+  padding: 0.45rem 0.72rem;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--text);
   font: inherit;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent);
@@ -409,8 +420,7 @@ a {
 
 .section-heading p,
 .contact-section p,
-.experience-item p,
-.showcase-band span {
+.experience-item p {
   color: var(--muted);
   line-height: 1.7;
 }
@@ -449,17 +459,24 @@ a {
 
 .puzzle-board {
   position: relative;
-  min-height: 390px;
+  min-height: 560px;
   isolation: isolate;
+  user-select: none;
 }
 
 .puzzle-piece {
   position: absolute;
-  width: 156px;
-  height: 156px;
-  filter: drop-shadow(var(--shadow-soft));
-  left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 118px));
-  top: calc(var(--puzzle-origin-y, 0px) + (var(--piece-row, 0) * 118px));
+  width: 238px;
+  height: 238px;
+  cursor: grab;
+  touch-action: none;
+  z-index: var(--piece-z, 1);
+  filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.18));
+  left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 182px) + var(--piece-x, 0px));
+  top: calc(var(--puzzle-origin-y, 0px) + (var(--piece-row, 0) * 182px) + var(--piece-y, 0px));
+  transform: rotate(var(--piece-rotate, 0deg));
+  transition: filter 180ms ease, transform 180ms ease;
+  will-change: left, top, transform;
 }
 
 .puzzle-piece span {
@@ -467,14 +484,16 @@ a {
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 2rem;
+  padding: 2.95rem;
   text-align: center;
   font-family: var(--serif);
-  font-size: 1.05rem;
+  font-size: 1.36rem;
   line-height: 1.1;
-  color: var(--text);
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
   z-index: 1;
   pointer-events: none;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .puzzle-piece-svg {
@@ -484,47 +503,38 @@ a {
 }
 
 .puzzle-piece-shadow {
-  fill: color-mix(in srgb, var(--bg) 88%, transparent);
-  transform: translate(4px, 8px);
+  fill: rgba(5, 7, 12, 0.28);
+  transform: translate(9px, 14px);
+}
+
+.puzzle-piece-underlay {
+  fill: color-mix(in srgb, var(--piece-tone, var(--accent-soft)) 86%, var(--bg) 14%);
 }
 
 .puzzle-piece-shape {
-  fill: color-mix(in srgb, var(--text) 8%, transparent);
-  stroke: color-mix(in srgb, var(--accent) 72%, transparent);
-  stroke-width: 1.5;
+  fill: color-mix(in srgb, var(--piece-tone, var(--accent-soft)) 70%, rgba(255, 248, 236, 0.2));
+  stroke: color-mix(in srgb, var(--piece-accent, var(--accent)) 62%, rgba(255, 255, 255, 0.26));
+  stroke-width: 2.2;
   vector-effect: non-scaling-stroke;
 }
 
-/* Dot grid — Showcase section */
-.dot-grid {
-  display: grid;
-  gap: 0.9rem;
-  margin-top: 3.5rem;
-  padding: 2rem;
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 92%, var(--bg-soft));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent);
+.puzzle-piece-stroke {
+  fill: none;
+  stroke: color-mix(in srgb, white 18%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 
-.dot-cell {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent-secondary);
-  margin: auto;
-  opacity: 0;
-  transform: scale(0);
-  will-change: transform, opacity;
+.puzzle-piece:hover {
+  filter: drop-shadow(0 34px 52px rgba(0, 0, 0, 0.24));
 }
 
-.skills-canvas {
-  display: block;
-  width: 100%;
-  height: 420px;
-  margin-top: 3rem;
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 94%, var(--bg-soft));
+.puzzle-piece.is-dragging {
+  cursor: grabbing;
+  filter: drop-shadow(0 40px 64px rgba(0, 0, 0, 0.28));
+  transition: none;
 }
+
 
 .contact-section {
   padding-bottom: 8rem;
@@ -537,14 +547,22 @@ a {
   margin-top: 2rem;
 }
 
+.contact-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 :root[data-theme="light"] .hero-badge,
 :root[data-theme="light"] .hero-actions a,
 :root[data-theme="light"] .contact-links a,
 :root[data-theme="light"] .theme-toggle,
 :root[data-theme="light"] .hero-metadata span,
-:root[data-theme="light"] .marquee-band,
-:root[data-theme="light"] .dot-grid,
-:root[data-theme="light"] .skills-canvas {
+:root[data-theme="light"] .marquee-band {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
 }
 
@@ -557,22 +575,44 @@ a {
 
 .scene {
   position: relative;
-  padding-top: 9rem;
-  padding-bottom: 9rem;
+  padding-top: var(--section-space);
+  padding-bottom: var(--section-space);
+}
+
+.scene-about {
+  background:
+    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--accent-secondary) 8%, transparent), transparent 26%),
+    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg-soft) 42%, transparent) 100%);
+}
+
+.scene-projects {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 95%, transparent) 0%, color-mix(in srgb, var(--bg-soft) 56%, transparent) 100%);
+}
+
+.scene-puzzle {
+  background:
+    radial-gradient(circle at 78% 26%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 24%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-soft) 36%, transparent) 0%, transparent 100%);
+}
+
+.scene-skills {
+  background:
+    radial-gradient(circle at 20% 24%, color-mix(in srgb, var(--accent-tertiary) 9%, transparent), transparent 22%),
+    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg-soft) 46%, transparent) 100%);
+}
+
+.scene-experience {
+  background:
+    radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent-secondary) 7%, transparent), transparent 22%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 96%, transparent) 0%, color-mix(in srgb, var(--bg-soft) 34%, transparent) 100%);
 }
 
 .scene-frame,
 .puzzle-shell,
-.showcase-copy,
 .skills-copy,
 .experience-copy {
   position: relative;
-}
-
-.scene-about {
-  min-height: 120svh;
-  display: flex;
-  align-items: center;
 }
 
 .about-frame {
@@ -584,12 +624,11 @@ a {
   grid-template-columns: 1fr 0.55fr;
   gap: clamp(2rem, 5vw, 6rem);
   align-items: start;
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
 .about-grid h2,
 .puzzle-copy h2,
-.showcase-copy h2,
 .skills-copy h2,
 .experience-copy h2 {
   margin: 0;
@@ -617,132 +656,365 @@ a {
   line-height: 1.8;
 }
 
-/* ── Projects — sticky stacking cards ── */
+/* ── About workflow ── */
 
-.scene-projects {
-  padding-top: 0;
-  padding-bottom: 0;
+.scene-about {
+  min-height: auto;
+  align-items: flex-start;
 }
 
+.about-workflow {
+  margin-top: var(--section-gap);
+  padding-top: var(--section-gap);
+  border-top: 1px solid var(--line);
+  margin-left: calc(-1 * var(--gutter));
+  margin-right: calc(-1 * var(--gutter));
+}
+
+.wf-root {
+  width: 100%;
+}
+
+.wf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.wf-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.wf-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-secondary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-secondary) 60%, transparent);
+  animation: wf-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes wf-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.wf-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.wf-canvas-wrap {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.wf-canvas {
+  position: relative;
+  width: 100%;
+}
+
+.wf-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  color: var(--muted);
+  overflow: visible;
+}
+
+.wf-node {
+  position: absolute;
+  width: 220px;
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--node-accent, var(--accent)) 22%, var(--line));
+  background: var(--bg-elevated);
+  backdrop-filter: blur(14px);
+  cursor: grab;
+  user-select: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+  will-change: transform;
+  top: 0;
+  left: 0;
+}
+
+.wf-node:hover {
+  border-color: color-mix(in srgb, var(--node-accent, var(--accent)) 45%, transparent);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.wf-node:active {
+  cursor: grabbing;
+}
+
+.wf-node-top {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.55rem;
+}
+
+.wf-node-icon {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--node-accent, var(--accent)) 28%, transparent);
+  background: color-mix(in srgb, var(--node-accent, var(--accent)) 10%, transparent);
+  color: var(--node-accent, var(--accent));
+}
+
+.wf-node-icon svg {
+  width: 13px;
+  height: 13px;
+}
+
+.wf-node-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--node-accent, var(--accent));
+}
+
+.wf-node-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.wf-node-desc {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.wf-footer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.75rem var(--gutter);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Projects — scroll stage ── */
+
+/* ── Projects — folder / file stack ── */
+
 .projects-header {
-  padding-top: 7rem;
-  padding-bottom: 3rem;
+  padding-top: 0;
+  padding-bottom: var(--section-gap);
 }
 
 .projects-header h2 {
   margin: 0.4rem 0 0;
   font-family: var(--serif);
-  font-size: clamp(2.4rem, 5vw, 4.8rem);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.8rem, 6vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
   color: var(--text-strong);
 }
 
-.project-cards {
+.projects-track {
   position: relative;
 }
 
-.project-card-wrap {
-  height: 100svh;
-}
-
-.project-card {
+.projects-sticky-stage {
   position: sticky;
-  top: 64px;
   height: calc(100svh - 64px);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  border-top: 1px solid var(--line);
-  background: var(--bg);
-  z-index: calc(1 + var(--card-index, 0));
+  justify-content: center;
 }
 
-.project-card-wrap:nth-child(1) .project-card { background: var(--bg); }
-.project-card-wrap:nth-child(2) .project-card { background: color-mix(in srgb, var(--bg) 94%, var(--accent-secondary)); }
-.project-card-wrap:nth-child(3) .project-card { background: color-mix(in srgb, var(--bg) 94%, var(--accent)); }
+.projects-file-stack {
+  position: relative;
+  height: 68svh;
+}
 
-.project-card-bg {
+/* ── Individual file card ── */
+
+.project-file {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  background: var(--section-glow);
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.project-card-inner {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  height: 100%;
-  padding-top: 3rem;
-  padding-bottom: 3.5rem;
-}
-
-.project-card-top {
   display: flex;
-  align-items: baseline;
-  gap: 1.5rem;
+  flex-direction: column;
+  will-change: transform, opacity;
+  transition:
+    transform 560ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 420ms ease;
 }
 
-.project-card-num {
+.project-file-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--line);
+  border-bottom: none;
+  background: var(--bg-soft);
+  align-self: flex-start;
+}
+
+.project-file-num {
   font-family: var(--serif);
-  font-size: clamp(4rem, 8vw, 7rem);
-  line-height: 0.9;
-  color: color-mix(in srgb, var(--accent-secondary) 50%, var(--text-strong));
-  font-weight: 400;
+  font-size: 1.05rem;
+  color: var(--accent-secondary);
+  line-height: 1;
 }
 
-.project-card-title {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: clamp(3rem, 7vw, 7.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
-  color: var(--text-strong);
-  font-weight: 400;
-  align-self: center;
+.project-file-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  padding: clamp(1.8rem, 3vw, 3rem);
+  transition: border-color 300ms ease, background 300ms ease;
+  overflow: hidden;
 }
 
-.project-card-bottom {
+.project-file-top {
+  flex: 1;
   display: flex;
   align-items: flex-end;
-  gap: 3rem;
+}
+
+.project-file-top h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(3rem, 6vw, 6.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+  font-weight: 400;
+  max-width: 14ch;
+}
+
+.project-file-summary {
+  margin: 1.8rem 0 0;
+  max-width: 36rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.project-file-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
   flex-wrap: wrap;
 }
 
-.project-card-desc {
+.project-file-stack {
   margin: 0;
-  max-width: 30rem;
   color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.65;
-}
-
-.project-card-stack {
-  margin: 0;
-  color: var(--text);
-  font-size: 0.85rem;
-  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.project-card-link {
-  padding: 0.8rem 1.4rem;
+.project-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
   border: 1px solid var(--line);
   background: var(--surface);
-  font-size: 0.9rem;
-  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+  font-size: 0.88rem;
+  color: var(--text-strong);
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
   white-space: nowrap;
 }
 
-.project-card-link:hover {
+.project-file-link:hover {
   transform: translateY(-2px);
   background: var(--accent-soft);
-  border-color: color-mix(in srgb, var(--accent) 36%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* ── Stack states ── */
+
+.project-file--active {
+  transform: translate(0, 0) scale(1);
+  opacity: 1;
+  z-index: 10;
+}
+
+.project-file--active .project-file-body {
+  border-color: color-mix(in srgb, var(--accent-secondary) 28%, var(--line));
+}
+
+.project-file--behind-1 {
+  transform: translate(18px, 14px) scale(0.975);
+  opacity: 1;
+  z-index: 9;
+}
+
+.project-file--behind-2 {
+  transform: translate(34px, 26px) scale(0.95);
+  opacity: 0.6;
+  z-index: 8;
+}
+
+.project-file--behind-3 {
+  transform: translate(48px, 36px) scale(0.925);
+  opacity: 0.3;
+  z-index: 7;
+}
+
+.project-file--gone {
+  transform: translate(0, -110%) scale(0.96);
+  opacity: 0;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.project-file--hidden {
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+  transform: translate(56px, 44px) scale(0.9);
+}
+
+/* Progress pips */
+.projects-progress {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 1.5rem;
+}
+
+.projects-progress-pip {
+  width: 20px;
+  height: 2px;
+  background: var(--line);
+  transition: background 300ms ease, width 300ms ease;
+}
+
+.projects-progress-pip.is-active {
+  width: 36px;
+  background: var(--accent-secondary);
 }
 
 .scene-puzzle {
@@ -751,51 +1023,93 @@ a {
 
 .puzzle-shell {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 2rem;
+  grid-template-columns: minmax(22rem, 0.95fr) minmax(0, 1.05fr);
+  gap: var(--section-gap);
   align-items: start;
 }
 
 .puzzle-copy {
   position: sticky;
   top: 8rem;
-  max-width: 28rem;
+  max-width: 38rem;
 }
 
 .puzzle-copy p {
   margin-top: 1rem;
 }
 
+.puzzle-actions {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 20;
+}
+
+.puzzle-reset {
+  padding: 0.95rem 1.25rem;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(10px);
+  color: var(--text-strong);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, opacity 180ms ease;
+}
+
+.puzzle-reset:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent-secondary) 34%, transparent);
+}
+
+.puzzle-reset:disabled {
+  opacity: 0.46;
+  cursor: default;
+}
+
 .puzzle-board {
-  min-height: 640px;
+  min-height: 820px;
+  --puzzle-origin-x: calc(50% - 301px);
+  --puzzle-origin-y: calc(50% - 210px);
+  border: 1px solid var(--line);
+  border-radius: 2.25rem;
+  background:
+    radial-gradient(circle at 28% 24%, color-mix(in srgb, var(--accent-secondary) 10%, transparent), transparent 22%),
+    radial-gradient(circle at 76% 68%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 26%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 95%, var(--bg-soft)) 0%, color-mix(in srgb, var(--bg) 88%, var(--bg-soft)) 100%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent);
 }
 
-.scene-showcase {
-  padding-top: 4rem;
+.puzzle-board::before {
+  position: absolute;
+  inset: 1.1rem;
+  content: "";
+  border: 1px dashed color-mix(in srgb, var(--line) 84%, transparent);
+  border-radius: 1.7rem;
+  pointer-events: none;
 }
 
-.showcase-copy {
-  max-width: 920px;
+.puzzle-board::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 100% 110px, 110px 100%;
+  mask-image: radial-gradient(circle at center, black 44%, transparent 92%);
+  opacity: 0.34;
+  pointer-events: none;
 }
 
-.showcase-copy h2 {
-  max-width: 14ch;
-}
+/* ── Skills ── */
 
-.dot-grid {
-  margin-top: 4rem;
-}
-
-.scene-skills,
-.scene-experience {
+.scene-skills {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 2rem;
+  grid-template-columns: 0.72fr 1.28fr;
+  gap: clamp(2rem, 4vw, 5rem);
   align-items: start;
 }
 
-.skills-copy,
-.experience-copy {
+.skills-copy {
   position: sticky;
   top: 7.5rem;
   max-width: 28rem;
@@ -805,13 +1119,60 @@ a {
   margin-top: 1rem;
 }
 
-.skills-canvas,
-.experience-list {
-  margin-top: 0;
+.skills-groups {
+  display: grid;
+  gap: var(--section-gap);
+}
+
+.skill-group {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.skill-group-label {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+}
+
+.skill-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-tile {
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 0.4rem;
+  cursor: default;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.skill-tile span {
+  font-size: 0.68rem;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  word-break: break-word;
+}
+
+.skill-tile:hover {
+  border-color: color-mix(in srgb, var(--accent-secondary) 42%, transparent);
+  background: var(--accent-secondary-soft);
+  transform: translateY(-2px);
 }
 
 .experience-list {
   gap: 0;
+  margin-top: 0;
 }
 
 .experience-item {
@@ -820,40 +1181,96 @@ a {
 }
 
 .scene-contact {
-  padding-top: 12rem;
-  padding-bottom: 12rem;
-  text-align: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 6rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-secondary) 18%, var(--bg-soft)) 0%, color-mix(in srgb, var(--accent) 14%, var(--bg)) 100%);
+  border-top: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+}
+
+.contact-shell {
+  width: 100%;
+  min-height: 88svh;
+  padding: var(--section-space) var(--gutter) 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+  gap: var(--section-gap);
+  align-items: end;
+}
+
+.contact-lead {
+  max-width: 56rem;
 }
 
 .scene-contact h2 {
-  max-width: 14ch;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: clamp(3rem, 7vw, 6rem);
+  max-width: 9ch;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-size: clamp(3.8rem, 9vw, 8.6rem);
+  line-height: 0.9;
 }
 
 .scene-contact p {
-  max-width: 42rem;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 34rem;
+  margin-top: 1.25rem;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.contact-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-self: end;
+  gap: 1.5rem;
 }
 
 .scene-contact .contact-links {
-  justify-content: center;
+  justify-content: flex-start;
+}
+
+.contact-footer-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  color: color-mix(in srgb, var(--text) 55%, transparent);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact-footer-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.contact-footer-nav a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-footer-nav a:hover {
+  color: var(--text);
 }
 
 @media (max-width: 960px) {
   .hero,
   .puzzle-section,
-  .experience-item,
-  .showcase-band {
+  .experience-item {
     grid-template-columns: 1fr;
   }
 
   .about-grid,
   .puzzle-shell,
   .scene-skills,
-  .scene-experience {
+  .scene-experience,
+  .contact-shell {
     grid-template-columns: 1fr;
   }
 
@@ -864,13 +1281,22 @@ a {
     max-width: none;
   }
 
-  .project-card-title {
-    font-size: clamp(2.4rem, 8vw, 5rem);
+  .projects-file-stack {
+    height: 60svh;
   }
 
-  .project-card-bottom {
-    gap: 1.5rem;
+  .contact-actions {
+    justify-self: start;
   }
+
+  .contact-shell {
+    min-height: auto;
+    padding-top: var(--section-space);
+  }
+
+  .project-file--behind-1 { transform: translate(12px, 10px) scale(0.975); }
+  .project-file--behind-2 { transform: translate(22px, 18px) scale(0.95); }
+  .project-file--behind-3 { transform: translate(30px, 24px) scale(0.925); }
 
   .hero {
     min-height: auto;
@@ -882,26 +1308,49 @@ a {
   }
 
   .puzzle-board {
-    min-height: 520px;
-    --puzzle-origin-x: 24px;
+    min-height: 700px;
+    --puzzle-origin-x: calc(50% - 266px);
+    --puzzle-origin-y: calc(50% - 184px);
+  }
+
+  .puzzle-piece {
+    width: 212px;
+    height: 212px;
+    left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 162px) + var(--piece-x, 0px));
+    top: calc(var(--puzzle-origin-y, 0px) + (var(--piece-row, 0) * 162px) + var(--piece-y, 0px));
   }
 }
 
 @media (max-width: 640px) {
   .site-nav {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.8rem;
+    top: 0.75rem;
+    width: calc(100% - (var(--gutter) * 2));
+    padding: 0.55rem 0.7rem 0.55rem 0.85rem;
+    gap: 0.5rem;
   }
 
   .nav-actions {
-    width: 100%;
-    align-items: flex-start;
-    flex-direction: column;
+    min-width: 0;
+    gap: 0.55rem;
   }
 
   .site-nav nav {
-    gap: 0.9rem;
+    gap: 0.6rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+
+  .site-nav nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    white-space: nowrap;
+  }
+
+  .theme-toggle {
+    flex-shrink: 0;
   }
 
   .hero h1 {
@@ -910,35 +1359,73 @@ a {
 
   .about-grid h2,
   .puzzle-copy h2,
-  .showcase-copy h2,
   .skills-copy h2,
   .experience-copy h2,
   .scene-contact h2 {
     font-size: clamp(2.4rem, 12vw, 4rem);
   }
 
-  .project-card-title {
-    font-size: clamp(2rem, 10vw, 3.5rem);
+  .contact-shell {
+    padding: var(--section-space) var(--gutter) 1.5rem;
+    gap: 2rem;
   }
 
-  .project-card-num {
-    font-size: clamp(2.8rem, 10vw, 4.5rem);
+  .scene-contact h2 {
+    max-width: none;
+    font-size: clamp(3rem, 14vw, 4.8rem);
   }
 
-  .project-card-bottom {
-    flex-direction: column;
+  .contact-footer-bar {
     align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .contact-footer-nav {
+    flex-wrap: wrap;
     gap: 1rem;
   }
 
+  .projects-header h2 {
+    font-size: clamp(2.4rem, 12vw, 4rem);
+  }
+
+  .projects-file-stack {
+    height: 74svh;
+  }
+
+  .project-file-top h3 {
+    font-size: clamp(2rem, 11vw, 3.4rem);
+  }
+
+  .project-file-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .project-file--behind-1 { transform: translate(10px, 8px) scale(0.975); }
+  .project-file--behind-2 { transform: translate(18px, 14px) scale(0.95); }
+
+  .puzzle-actions {
+    top: 1rem;
+    right: 1rem;
+  }
+
   .puzzle-board {
-    min-height: 980px;
-    --puzzle-origin-x: 24px;
-    --puzzle-origin-y: 12px;
+    min-height: 1080px;
+    --puzzle-origin-x: calc(50% - 90px);
+    --puzzle-origin-y: 38px;
   }
 
   .puzzle-piece {
-    left: calc(var(--puzzle-origin-x, 0px) + (var(--piece-column, 0) * 0px));
-    top: calc(var(--puzzle-origin-y, 0px) + ((var(--piece-row, 0) * 3 + var(--piece-column, 0)) * 122px));
+    width: 194px;
+    height: 194px;
+    left: calc(var(--puzzle-origin-x, 0px) + var(--piece-x, 0px));
+    top: calc(var(--puzzle-origin-y, 0px) + ((var(--piece-row, 0) * 3 + var(--piece-column, 0)) * 166px) + var(--piece-y, 0px));
+  }
+
+  .puzzle-piece span {
+    padding: 2.2rem;
+    font-size: 1.08rem;
   }
 }
