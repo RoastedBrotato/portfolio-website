@@ -41,10 +41,7 @@ export function Hero() {
           </p>
           <h1 aria-label={profile.name}>
             {profile.name.split("").map((char, i) => (
-              <span
-                key={i}
-                className="hero-char"
-              >
+              <span key={i} className="hero-char">
                 {char === " " ? "\u00A0" : char}
               </span>
             ))}

@@ -27,13 +27,10 @@ export function Contact() {
   }, reduceMotion);
 
   return (
-    <section className="content-section contact-section" id="contact" ref={rootRef}>
+    <section className="content-section scene scene-contact contact-section" id="contact" ref={rootRef}>
       <p className="contact-kicker">Contact</p>
-      <h2>If you need someone to untangle the brief and ship the thing, let's talk.</h2>
-      <p>
-        Placeholder links for now. Once you send the final contact details, this section can
-        become the clean close to the page.
-      </p>
+      <h2>Let's build something worth shipping.</h2>
+      <p>Available for projects, roles, and the right kind of collaboration.</p>
       <div className="contact-links">
         <a href="mailto:hello@example.com">hello@example.com</a>
         <a href="https://github.com/example">GitHub</a>

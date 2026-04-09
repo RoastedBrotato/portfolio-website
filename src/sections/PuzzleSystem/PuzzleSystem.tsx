@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
-import { SectionHeading } from "../../components/SectionHeading/SectionHeading";
 import { PuzzlePiece } from "../../components/PuzzlePiece/PuzzlePiece";
 import { animatePuzzleSystem } from "../../animations/puzzle-system";
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
@@ -87,38 +86,38 @@ export function PuzzleSystem() {
   }, [reduceMotion]);
 
   return (
-    <section className="content-section puzzle-section" id="approach" ref={rootRef}>
-      <div className="puzzle-copy">
-        <SectionHeading
-          eyebrow="Approach"
-          title="Some teams see scattered constraints. I look for the shape that lets them work together."
-          description="This section is the one explicit metaphor on the page: not a gimmick, but a visual expression of how product, design, engineering, and business pressure start to make sense when the system is assembled properly."
-        />
-      </div>
+    <section className="content-section scene scene-puzzle" id="approach" ref={rootRef}>
+      <div className="puzzle-shell">
+        <div className="puzzle-copy">
+          <p className="meta" data-reveal>Approach</p>
+          <h2 data-reveal>Six pressures. One shape.</h2>
+          <p data-reveal>Product, interface, and business constraints arrive separately. The job is making them behave like one thing.</p>
+        </div>
 
-      <div className="puzzle-board" aria-hidden="true">
-        {puzzlePieces.map((piece) => (
-          <PuzzlePiece
-            key={piece.label}
-            className="puzzle-piece"
-            label={piece.label}
-            top={piece.edges.top}
-            right={piece.edges.right}
-            bottom={piece.edges.bottom}
-            left={piece.edges.left}
-            style={
-              {
-                "--piece-column": piece.column,
-                "--piece-row": piece.row
-              } as CSSProperties
-            }
-            data-column={piece.column}
-            data-row={piece.row}
-            data-scatter-rotate={piece.scatter.rotate}
-            data-scatter-x={piece.scatter.x}
-            data-scatter-y={piece.scatter.y}
-          />
-        ))}
+        <div className="puzzle-board" aria-hidden="true">
+          {puzzlePieces.map((piece) => (
+            <PuzzlePiece
+              key={piece.label}
+              className="puzzle-piece"
+              label={piece.label}
+              top={piece.edges.top}
+              right={piece.edges.right}
+              bottom={piece.edges.bottom}
+              left={piece.edges.left}
+              style={
+                {
+                  "--piece-column": piece.column,
+                  "--piece-row": piece.row
+                } as CSSProperties
+              }
+              data-column={piece.column}
+              data-row={piece.row}
+              data-scatter-rotate={piece.scatter.rotate}
+              data-scatter-x={piece.scatter.x}
+              data-scatter-y={piece.scatter.y}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

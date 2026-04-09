@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { animate, set } from "animejs";
-import { SectionHeading } from "../../components/SectionHeading/SectionHeading";
 import { skills } from "../../data/narrative";
 import { startSkillsNetwork } from "../../animations/skills-network";
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
@@ -32,12 +31,12 @@ export function Skills() {
   }, reduceMotion);
 
   return (
-    <section className="content-section skills-section" id="skills" ref={rootRef}>
-      <SectionHeading
-        eyebrow="Skills"
-        title="A blended stack of interface craft, technical execution, and product sense."
-        description="These are placeholders for now, grouped visually as a capability field rather than a badge wall."
-      />
+    <section className="content-section scene scene-skills" id="skills" ref={rootRef}>
+      <div className="skills-copy">
+        <p className="meta" data-reveal>Skills</p>
+        <h2 data-reveal>Interface craft. Technical depth. Product sense.</h2>
+        <p data-reveal>A capability map — not a badge wall.</p>
+      </div>
       <canvas
         ref={canvasRef}
         className="skills-canvas"

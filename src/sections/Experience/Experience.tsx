@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { animate, set, stagger } from "animejs";
-import { SectionHeading } from "../../components/SectionHeading/SectionHeading";
 import { experienceList } from "../../data/narrative";
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
@@ -29,13 +28,11 @@ export function Experience() {
   }, reduceMotion);
 
   return (
-    <section className="content-section experience-section" id="experience" ref={rootRef}>
-      <SectionHeading
-        eyebrow="Experience"
-        title="The experience section is scaffolded now and can be tightened once you send the resume details."
-        description="I've kept the visual treatment strong enough to evaluate the page rhythm without pretending placeholder content is final."
-      />
-
+    <section className="content-section scene scene-experience" id="experience" ref={rootRef}>
+      <div className="experience-copy">
+        <p className="meta" data-reveal>Experience</p>
+        <h2 data-reveal>Momentum, not a résumé.</h2>
+      </div>
       <div className="experience-list">
         {experienceList.map((item) => (
           <article className="experience-item" key={`${item.company}-${item.title}`}>

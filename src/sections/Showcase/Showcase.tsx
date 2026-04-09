@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { animate, stagger } from "animejs";
-import { SectionHeading } from "../../components/SectionHeading/SectionHeading";
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 
@@ -19,7 +18,6 @@ export function Showcase() {
 
     const dots = grid.querySelectorAll(".dot-cell");
 
-    // Initial reveal: dots pop in from center outward
     animate(dots, {
       scale: [0, 1],
       opacity: [0, 1],
@@ -27,7 +25,6 @@ export function Showcase() {
       easing: "outBack(1.5)",
       delay: stagger(45, { grid: [COLS, ROWS], from: "center" })
     }).then(() => {
-      // Then loop a continuous ripple wave forever
       animate(dots, {
         scale: [0.6, 1.3, 0.6],
         opacity: [0.25, 1, 0.25],
@@ -40,12 +37,11 @@ export function Showcase() {
   }, reduceMotion);
 
   return (
-    <section className="content-section showcase-section" id="showcase" ref={rootRef}>
-      <SectionHeading
-        eyebrow="Showcase"
-        title="Motion, interaction studies, and visual experiments can sit here once we decide how far to push the site."
-        description="For now this acts as a visual breathing point between the process story and the more practical credentials below."
-      />
+    <section className="content-section scene scene-showcase" id="showcase" ref={rootRef}>
+      <div className="showcase-copy">
+        <p className="meta" data-reveal>Showcase</p>
+        <h2 data-reveal>Motion with authorship.</h2>
+      </div>
 
       <div
         ref={gridRef}
