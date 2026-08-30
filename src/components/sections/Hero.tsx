@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
@@ -15,12 +16,59 @@ const fadeUp = {
   }),
 };
 
+const headline: { text: string; emphasis?: boolean }[] = [
+  { text: "I" },
+  { text: "build" },
+  { text: "software" },
+  { text: "that" },
+  { text: "solves" },
+  { text: "real", emphasis: true },
+  { text: "business" },
+  { text: "problems." },
+];
+
 export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (
+      !window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    const spotlight = spotlightRef.current;
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (!spotlight) return;
+    spotlight.style.setProperty("--x", `${e.clientX - rect.left}px`);
+    spotlight.style.setProperty("--y", `${e.clientY - rect.top}px`);
+    spotlight.style.opacity = "1";
+  };
+
+  const handleMouseLeave = () => {
+    if (spotlightRef.current) spotlightRef.current.style.opacity = "0";
+  };
+
   return (
-    <section className="relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative overflow-hidden"
+    >
       <div
         aria-hidden
         className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
+      />
+      <div
+        ref={spotlightRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden opacity-0 transition-opacity duration-500 sm:block"
+        style={{
+          background:
+            "radial-gradient(560px circle at var(--x, 50%) var(--y, 0%), var(--accent-soft), transparent 70%)",
+        }}
       />
       <span
         aria-hidden
@@ -40,16 +88,24 @@ export function Hero() {
           {siteConfig.role}
         </motion.span>
 
-        <motion.h1
-          custom={1}
-          initial="hidden"
-          animate="show"
-          variants={fadeUp}
-          className="font-display mt-6 max-w-4xl text-4xl font-medium leading-[1.08] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
-        >
-          I build software that solves <em className="italic text-accent">real</em> business
-          problems.
-        </motion.h1>
+        <h1 className="font-display mt-6 max-w-4xl text-4xl font-medium leading-[1.15] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+          {headline.map((word, i) => (
+            <span
+              key={i}
+              className="-mb-[0.18em] inline-block overflow-hidden pb-[0.18em] align-bottom"
+            >
+              <motion.span
+                className="inline-block"
+                initial={{ y: "110%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.75, delay: 0.35 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {word.emphasis ? <em className="italic text-accent">{word.text}</em> : word.text}
+                {i < headline.length - 1 ? " " : ""}
+              </motion.span>
+            </span>
+          ))}
+        </h1>
 
         <motion.p
           custom={2}

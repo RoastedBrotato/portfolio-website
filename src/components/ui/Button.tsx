@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "secondary" | "ghost";
@@ -45,25 +46,33 @@ export function Button(props: ButtonAsLink | ButtonAsButton) {
     className
   );
 
+  // "w-full" needs to reach the wrapper too, or the magnetic span (inline-block, content-sized)
+  // won't stretch to match a caller that expects the button to fill its container.
+  const wrapperClassName = className?.includes("w-full") ? "w-full" : undefined;
+
   if ("href" in props && props.href) {
     const { href, external, onClick } = props;
     if (external) {
       return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={classes}
-          onClick={onClick}
-        >
-          {children}
-        </a>
+        <Magnetic className={wrapperClassName}>
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes}
+            onClick={onClick}
+          >
+            {children}
+          </a>
+        </Magnetic>
       );
     }
     return (
-      <Link href={href} className={classes} onClick={onClick}>
-        {children}
-      </Link>
+      <Magnetic className={wrapperClassName}>
+        <Link href={href} className={classes} onClick={onClick}>
+          {children}
+        </Link>
+      </Magnetic>
     );
   }
 
@@ -75,8 +84,10 @@ export function Button(props: ButtonAsLink | ButtonAsButton) {
   void _h;
 
   return (
-    <button className={classes} {...buttonProps}>
-      {children}
-    </button>
+    <Magnetic className={wrapperClassName}>
+      <button className={classes} {...buttonProps}>
+        {children}
+      </button>
+    </Magnetic>
   );
 }
