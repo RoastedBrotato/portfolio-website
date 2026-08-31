@@ -5,6 +5,20 @@ import { ExperienceItem } from "@/types";
  */
 export const experience: ExperienceItem[] = [
   {
+    company: "Al Sufun Trading",
+    role: "Senior Software Engineer",
+    startDate: "May 2026",
+    endDate: "Present",
+    location: "Qatar",
+    current: true,
+    accomplishments: [
+      "Joined as a technical partner — own client acquisition, run technical discovery meetings, and scope, build, and ship custom software end to end for each engagement",
+      "Built and shipped moementum.fit, a full-stack fitness coaching platform for a personal trainer — workout and calorie logging, daily metrics, trainer feedback, progress photos/video, and stats — now running with 10 active clients",
+      "Leading development of a food-delivery marketplace MVP for a client, currently in active build (confidential)",
+      "Delivered two smaller client engagements: an inventory management system for Al Faitri, and a full digitalization of a caravan dealership — product catalog, marketing channels, and SEO/AEO",
+    ],
+  },
+  {
     company: "Daixara Technology",
     role: "Full Stack Developer",
     startDate: "Dec 2025",

@@ -111,8 +111,9 @@ Any Next.js host works. The easiest path:
 **Vercel** (zero-config):
 1. Push this repo to GitHub.
 2. Import it at [vercel.com/new](https://vercel.com/new).
-3. Set the `siteUrl` in `src/data/config.ts` to your real domain before your final deploy —
-   it feeds `metadataBase`, the sitemap, and OpenGraph tags.
+3. After the first deploy, confirm the assigned `.vercel.app` URL (or your custom domain once
+   added) matches `siteUrl` in `src/data/config.ts` — it feeds `metadataBase`, the sitemap, and
+   OpenGraph tags. Update and redeploy if it doesn't match.
 
 **Self-hosted / Docker / any Node host:**
 ```bash
@@ -125,13 +126,17 @@ npm run start   # serves on port 3000 by default
 Name, email, GitHub/LinkedIn, work history, tech stack, and resume are filled in with real
 information. Search `src/data/` for `TODO` to find what's still open:
 
-- **`src/data/config.ts`** — `siteUrl` still points at `https://yourdomain.com`; set it to your
-  real domain before your final deploy (it feeds `metadataBase`, the sitemap, and OpenGraph tags).
+- **`src/data/config.ts`** — `siteUrl` is set to the expected Vercel default
+  (`https://portfolio-website.vercel.app`); confirm it matches the real deployment URL after your
+  first deploy, or swap in a custom domain later.
 - **`src/data/projects.ts`** — all three case studies (AI Meeting Intelligence, Real-Time Task &
   Notification Platform, Donor & Campaign Platform Modernization) are written from real work, but
   none have a live demo URL, GitHub link, or screenshot — add those in `links` / `image` if/when
   available. The realtime platform is a generalized architecture pattern rather than a named past
-  project; swap in a real one if you have it.
-- **Favicon** — `src/app/favicon.ico` is the default Next.js icon; replace it with your own.
+  project; swap in a real one if you have it. Note: moementum.fit (built at Al Sufun Trading, live,
+  with a GitHub repo and 10 active clients) is a strong candidate for a 4th case study with real
+  demo/GitHub links — worth adding as a full write-up later.
+- **Favicon** — `src/app/icon.tsx` now generates one from the site's own palette (dark background,
+  accent-colored "WA" monogram), replacing the old default Next.js icon.
 - **OG image** — `src/app/opengraph-image.tsx` generates the social preview from `siteConfig`, no
   action needed unless you want a different design.

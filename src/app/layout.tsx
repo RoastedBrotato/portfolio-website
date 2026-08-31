@@ -60,9 +60,6 @@ export const metadata: Metadata = {
     title,
     description,
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
   robots: {
     index: true,
     follow: true,
