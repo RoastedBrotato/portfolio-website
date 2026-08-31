@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Container } from "@/components/ui/Container";
@@ -9,6 +10,7 @@ import { ArchitectureDiagram } from "@/components/case-study/ArchitectureDiagram
 import { Project } from "@/types";
 
 const visualVariant: Record<string, "ai" | "realtime" | "business"> = {
+  "moementum-fit": "business",
   "ai-meeting-intelligence": "ai",
   "realtime-platform": "realtime",
   "donor-platform": "business",
@@ -109,6 +111,25 @@ export function CaseStudyLayout({
               title={project.title}
             />
           </div>
+
+          {project.gallery && project.gallery.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 pb-14 sm:grid-cols-2 lg:pb-16">
+              {project.gallery.map((src) => (
+                <div
+                  key={src}
+                  className="overflow-hidden rounded-2xl border border-border bg-background-elevated"
+                >
+                  <Image
+                    src={src}
+                    alt={`${project.title} — product screenshot`}
+                    width={1200}
+                    height={900}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="divide-y divide-border">
             <CaseStudySection eyebrow="Overview" title="What this is">

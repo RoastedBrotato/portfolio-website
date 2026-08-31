@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const visualVariant: Record<string, "ai" | "realtime" | "business"> = {
+  "moementum-fit": "business",
   "ai-meeting-intelligence": "ai",
   "realtime-platform": "realtime",
   "donor-platform": "business",

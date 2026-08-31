@@ -129,13 +129,19 @@ information. Search `src/data/` for `TODO` to find what's still open:
 - **`src/data/config.ts`** — `siteUrl` is set to the expected Vercel default
   (`https://portfolio-website.vercel.app`); confirm it matches the real deployment URL after your
   first deploy, or swap in a custom domain later.
-- **`src/data/projects.ts`** — all three case studies (AI Meeting Intelligence, Real-Time Task &
-  Notification Platform, Donor & Campaign Platform Modernization) are written from real work, but
-  none have a live demo URL, GitHub link, or screenshot — add those in `links` / `image` if/when
-  available. The realtime platform is a generalized architecture pattern rather than a named past
-  project; swap in a real one if you have it. Note: moementum.fit (built at Al Sufun Trading, live,
-  with a GitHub repo and 10 active clients) is a strong candidate for a 4th case study with real
-  demo/GitHub links — worth adding as a full write-up later.
+- **`src/data/projects.ts`** — Moementum now leads the list with a real screenshot, gallery, and
+  live demo link (`links.github` still needs the repo URL — it's a `TODO` in the file). The other
+  three case studies (AI Meeting Intelligence, Real-Time Task & Notification Platform, Donor &
+  Campaign Platform Modernization) are written from real work, but still have no live demo URL,
+  GitHub link, or screenshot — add those in `links` / `image` if/when available. The realtime
+  platform is a generalized architecture pattern rather than a named past project; swap in a real
+  one if you have it.
+- **Screenshots** — Moementum's cover and gallery images
+  (`public/images/projects/moementum-fit/`) were cropped from small browser captures
+  (~720–790px wide), not the recommended 1600×1000. They work but will look soft on large/retina
+  screens — swap in full-resolution captures when convenient. A project's `gallery` field
+  (`src/types/index.ts`) renders extra screenshots on its case-study page beneath the main cover
+  image; `image` alone is enough if you don't have extras.
 - **Favicon** — `src/app/icon.tsx` now generates one from the site's own palette (dark background,
   accent-colored "WA" monogram), replacing the old default Next.js icon.
 - **OG image** — `src/app/opengraph-image.tsx` generates the social preview from `siteConfig`, no

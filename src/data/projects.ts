@@ -11,6 +11,115 @@ import { Project } from "@/types";
  */
 export const projects: Project[] = [
   {
+    slug: "moementum-fit",
+    category: "Full-Stack / SaaS",
+    title: "Moementum",
+    outcome:
+      "A fitness coaching platform trainers and clients actually use daily — live in production with 10 active clients.",
+    description:
+      "A full-stack coaching platform built for an independent personal trainer — clients log workouts, morning and night metrics, and progress photos and video, while the trainer reviews and leaves feedback directly against each logged session.",
+    features: [
+      "Daily workout logging (sets, reps, weight)",
+      "Morning & night metric check-ins (weight, sleep, recovery)",
+      "Weekly measurements & progress photo/video uploads",
+      "Trainer feedback threaded on individual sessions",
+      "Weight, sleep, and lift-progression trend charts",
+      "Streaks & daily/weekly checklists",
+      "Per-client data isolation (Postgres RLS)",
+      "Authentication & per-client dashboards",
+    ],
+    techStack: ["Next.js 16", "TypeScript", "Tailwind CSS", "shadcn/ui", "Supabase", "PostgreSQL", "Recharts", "Mux"],
+    links: {
+      demo: "https://moementum.fit",
+      github: undefined, // TODO: add the GitHub repo URL
+    },
+    image: "/images/projects/moementum-fit/cover.png",
+    gallery: [
+      "/images/projects/moementum-fit/training-log.png",
+      "/images/projects/moementum-fit/metrics.png",
+    ],
+    featured: true,
+    caseStudy: {
+      overview:
+        "Moementum is a coaching platform built for an independent personal trainer running an online program — it replaces the spreadsheet-and-DM workflow most trainers default to with a single place where clients log their training and daily metrics, and the trainer reviews and responds directly against that data.",
+      problem:
+        "Coaching clients remotely usually means a mess of spreadsheets, screenshots, and DMs — clients forget to log, trainers can't see trends at a glance, and feedback ends up disconnected from the session it's actually about. There was no lightweight, habit-forming way for a client to check in daily and for a trainer to review that data in context, without building a heavyweight fitness-tracking app clients wouldn't stick with.",
+      solution:
+        "Clients log a session, morning metrics (weight, sleep), and a nightly check-in through short, focused forms designed to take under a minute, with a running streak to keep the habit alive. Weekly cadence items — body measurements, progress photos, and video uploads — sit alongside the daily checklist so nothing falls through. Every logged session becomes something the trainer can review and leave feedback directly against, so a note about a lift ties back to the exact set and weight it refers to instead of living in a separate chat thread. Weight, sleep, and lift-progression charts turn the accumulated logs into something both sides can actually read at a glance.",
+      architecture: {
+        primary: {
+          label: "Application flow",
+          steps: [
+            "Client / Trainer Browser",
+            "Next.js App Router (Server Components + Route Handlers)",
+            "Supabase (Postgres + Auth + RLS)",
+            "Recharts Dashboards",
+          ],
+        },
+        secondary: {
+          label: "Workout video flow",
+          steps: ["Video Upload", "Mux (encoding & adaptive streaming)", "Playback in Training Log"],
+        },
+      },
+      challenges: [
+        {
+          title: "Making daily logging a habit, not a chore",
+          description:
+            "The platform is only useful if clients actually log in every day. Forms had to be short enough to fill in under a minute, with streaks and a daily/weekly checklist giving immediate feedback on consistency rather than a wall of fields to fill in whenever someone remembered.",
+        },
+        {
+          title: "Keeping trainer feedback attached to context",
+          description:
+            "Feedback that lives in a separate chat thread loses the specific set, weight, or session it's actually about. Coach notes needed to attach directly to the logged session they refer to, so a client sees the feedback right next to the numbers it's commenting on.",
+        },
+        {
+          title: "Per-client data isolation without a custom auth layer",
+          description:
+            "Every client's metrics, photos, and videos needed to be visible only to that client and their trainer — never to other clients on the platform. Supabase Row Level Security policies enforce that isolation at the database layer rather than trusting application code to filter every query correctly.",
+        },
+        {
+          title: "Reliable video without building video infrastructure",
+          description:
+            "Form-check videos need to upload reliably from a phone on a mediocre connection and play back smoothly regardless of device. Rather than build encoding and adaptive streaming from scratch, video handling was delegated to Mux, taking transcoding, thumbnails, and playback off the table as a problem to solve.",
+        },
+        {
+          title: "Turning raw logs into readable trends",
+          description:
+            "A table of daily weight and sleep entries is hard to read at a glance. Data needed to roll up into daily, weekly, and monthly views so both the client and trainer could see a trend instead of scrolling a log.",
+        },
+      ],
+      techDecisions: [
+        {
+          decision: "Next.js 16 App Router with Server Components",
+          reasoning:
+            "Data-heavy dashboard pages (charts, logs, checklists) render server-side by default, keeping the client bundle small and avoiding a separate API layer for most reads — Route Handlers cover the rest.",
+        },
+        {
+          decision: "Supabase for Auth, Postgres, and Storage",
+          reasoning:
+            "A single provider for auth, the relational data model, and file storage (photos, progress uploads) meant shipping a full backend without standing up and wiring together separate services — and Postgres Row Level Security enforces per-client data isolation directly in the database.",
+        },
+        {
+          decision: "Mux for workout video",
+          reasoning:
+            "Encoding, adaptive bitrate streaming, and thumbnails for user-uploaded video is a deep, solved problem elsewhere — building that in-house wasn't worth it for a coaching app, so video handling was delegated entirely to Mux.",
+        },
+        {
+          decision: "Recharts for trend visualization",
+          reasoning:
+            "A composable, React-native charting library was a better fit than a heavier dashboarding tool for a handful of focused trend charts (weight, sleep, lift progression) embedded directly in the dashboard.",
+        },
+        {
+          decision: "shadcn/ui + Tailwind CSS v4",
+          reasoning:
+            "Component primitives owned directly in the codebase rather than pulled from a closed component library, so the UI could be shaped around the coaching workflow instead of a generic dashboard template.",
+        },
+      ],
+      outcome:
+        "Moementum is live in production at moementum.fit with 10 active clients logging daily — replacing the spreadsheet-and-DM workflow with a single habit-forming logging surface and a feedback loop the trainer actually uses to coach.",
+    },
+  },
+  {
     slug: "ai-meeting-intelligence",
     category: "AI / RAG / Full Stack",
     title: "AI Meeting Intelligence",

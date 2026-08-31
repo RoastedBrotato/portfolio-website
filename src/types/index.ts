@@ -42,6 +42,8 @@ export interface Project {
   links: ProjectLinks;
   /** Path under /public, e.g. "/images/projects/slug/cover.png". Leave undefined to use the generated abstract visual. */
   image?: string;
+  /** Additional screenshots under /public, rendered as a gallery on the case-study page. */
+  gallery?: string[];
   featured: boolean;
   caseStudy: CaseStudyContent;
 }
