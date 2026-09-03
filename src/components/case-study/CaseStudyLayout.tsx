@@ -12,6 +12,7 @@ import { Project } from "@/types";
 
 const visualVariant: Record<string, "ai" | "realtime" | "business"> = {
   "moementum-fit": "business",
+  "ai-knowledge-assistant": "ai",
   "ai-meeting-intelligence": "ai",
   "realtime-platform": "realtime",
   "donor-platform": "business",

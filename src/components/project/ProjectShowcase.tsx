@@ -13,6 +13,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const visualVariant: Record<string, "ai" | "realtime" | "business"> = {
   "moementum-fit": "business",
+  "ai-knowledge-assistant": "ai",
   "ai-meeting-intelligence": "ai",
   "realtime-platform": "realtime",
   "donor-platform": "business",

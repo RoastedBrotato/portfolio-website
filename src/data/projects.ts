@@ -120,6 +120,133 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: "ai-knowledge-assistant",
+    category: "AI / RAG / Full-Stack",
+    title: "KnowledgeOS",
+    outcome:
+      "A multi-tenant RAG platform where admins scope custom AI assistants to specific documents and roles, with every answer traceable back to its source.",
+    description:
+      "A self-hostable knowledge-assistant platform for internal company documents — admins upload PDFs and DOCX files, spin up chat assistants scoped to specific documents and employee roles, and every answer comes back grounded and cited against the exact document and page it came from.",
+    features: [
+      "Multi-tenant organizations with admin/employee roles",
+      "PDF & DOCX ingestion with page-aware chunking",
+      "pgvector semantic search (OpenAI embeddings)",
+      "Assistants scoped to specific documents and roles",
+      "Custom system prompt per assistant",
+      "Grounded chat with inline, numbered citations",
+      "JWT authentication",
+      "Dockerized Postgres + pgvector",
+    ],
+    techStack: [
+      "Next.js",
+      "TypeScript",
+      "FastAPI",
+      "Python",
+      "PostgreSQL",
+      "pgvector",
+      "SQLAlchemy",
+      "OpenAI API",
+      "JWT",
+      "Docker",
+    ],
+    links: {
+      demo: undefined, // self-hosted, no public demo
+      github: "https://github.com/RoastedBrotato/AIKnowledgeAssistant",
+    },
+    image: "/images/projects/ai-knowledge-assistant/cover.png",
+    gallery: [
+      "/images/projects/ai-knowledge-assistant/login.png",
+      "/images/projects/ai-knowledge-assistant/chat.png",
+    ],
+    featured: true,
+    caseStudy: {
+      overview:
+        "KnowledgeOS is a multi-tenant knowledge-assistant platform: an organization's admin uploads internal documents — policy handbooks, onboarding guides, anything in PDF or DOCX — and spins up a chat assistant scoped to exactly those documents and to whichever roles should be able to use it. Employees then ask questions in plain language and get answers grounded in, and cited against, the company's own documents instead of a general-purpose model's guess.",
+      problem:
+        "Internal knowledge tends to live scattered across PDFs and DOCX files that employees either have to hunt through themselves or ping HR/IT to answer. A general-purpose chatbot bolted on top of everything doesn't solve it either — it will happily answer confidently from anything it's ever seen, with no way to tell whether an answer actually came from the company's leave policy or was invented. What was needed was something narrower: let an admin decide exactly which documents a given assistant can see and who can talk to it, and make every answer traceable back to a real document and page.",
+      solution:
+        "An admin uploads a PDF or DOCX; the backend extracts its text (pypdf for PDFs, python-docx for Word files), splits it into overlapping ~1500-character chunks that track page numbers where available, embeds each chunk with OpenAI's text-embedding-3-small, and stores the vectors in a pgvector column alongside the rest of the relational data — no separate vector database to run. The admin then creates an assistant: a name, a system prompt (\"You are a helpful company knowledge assistant...\"), a set of documents it's allowed to see, and which roles (admin/employee) can use it. When an employee asks a question, it's embedded and matched via pgvector's cosine-distance operator against only that assistant's linked documents (and only within its own organization), and the top matches are handed to gpt-4o-mini inside a prompt that restricts it to answering from the numbered excerpts and citing them inline — every stored message keeps its citations (filename, page, snippet) so an answer can always be checked against the exact source it came from.",
+      architecture: {
+        primary: {
+          label: "Ingestion pipeline",
+          steps: [
+            "PDF / DOCX Upload (admin)",
+            "Text Extraction (pypdf / python-docx)",
+            "Page-aware Chunking",
+            "OpenAI Embeddings",
+            "pgvector (Postgres)",
+          ],
+        },
+        secondary: {
+          label: "Chat & retrieval",
+          steps: [
+            "Employee Question",
+            "Query Embedding",
+            "Cosine-Distance Retrieval (scoped to assistant + org)",
+            "gpt-4o-mini (grounded, cited)",
+            "Answer + Citations",
+          ],
+        },
+      },
+      challenges: [
+        {
+          title: "Tenant isolation without a service per customer",
+          description:
+            "Every table — users, documents, chunks, assistants — carries an org_id, and every query (retrieval, chat, document listing) filters on it explicitly, rather than standing up separate databases or schemas per organization for what's fundamentally shared infrastructure.",
+        },
+        {
+          title: "Scoping retrieval to exactly the right documents",
+          description:
+            "A similarity search that isn't scoped tightly enough would let a \"Sales\" assistant surface HR chunks, or worse, another organization's data. Retrieval filters on both the assistant's specific linked-document set and its org_id before ranking by vector distance, not after.",
+        },
+        {
+          title: "Role-gating who can use which assistant",
+          description:
+            "Allowed roles live on the assistant, not the user, so access has to be checked server-side on every chat request (not just when listing assistants in the UI) — an admin can always use any assistant in their org, an employee only those whose allowed_roles include \"employee\".",
+        },
+        {
+          title: "Keeping answers traceable, not just plausible",
+          description:
+            "The model is restricted to answering from the numbered source excerpts it's given and told to say so plainly when they don't contain the answer, rather than filling the gap with a plausible-sounding guess. Every message persists the filename, page, and snippet actually used, so a questionable answer can be checked against its source instead of just trusted.",
+        },
+        {
+          title: "Page numbers don't exist for every file type",
+          description:
+            "python-docx has no native concept of a page, so page-aware citation works cleanly for PDFs but DOCX chunks fall back to whole-document text with no page number — a real trade-off in citation precision depending on what an org actually uploads.",
+        },
+      ],
+      techDecisions: [
+        {
+          decision: "pgvector inside the primary Postgres instance",
+          reasoning:
+            "One database to run and back up instead of a separate vector store — chunk embeddings live in a normal SQLAlchemy-mapped table and get queried with a plain cosine_distance() call, which was enough for this scale without adding a dedicated vector database to operate.",
+        },
+        {
+          decision: "An OpenAI-compatible client with a configurable base URL",
+          reasoning:
+            "Embeddings and chat both go through a client that accepts a configurable base_url, so the same code can point at OpenAI directly or any OpenAI-compatible endpoint (Azure OpenAI, a self-hosted gateway) with a config change instead of an application change.",
+        },
+        {
+          decision: "Synchronous ingestion inside the upload request",
+          reasoning:
+            "For the document sizes this targets, extraction, chunking, and embedding finish well within a normal request lifetime — a background job queue would have added real operational surface for a scaling problem that isn't actually happening yet.",
+        },
+        {
+          decision: "A strict, excerpt-only system prompt with inline citations",
+          reasoning:
+            "Grounding is the product's core trust promise, so the prompt explicitly restricts the model to the numbered excerpts it's given and requires inline citations, rather than leaving grounding behavior to whatever the base model happens to do by default.",
+        },
+        {
+          decision: "JWT auth with bcrypt instead of an identity provider",
+          reasoning:
+            "A small, self-contained auth layer covered org- and role-based access without standing up Keycloak or Auth0 for what is fundamentally two roles per organization.",
+        },
+      ],
+      outcome:
+        "The result is a self-hostable, multi-tenant RAG platform: an org admin can upload internal documents and hand employees a scoped, cited chat assistant in minutes. Demoed end to end with real HR documents — an employee handbook, leave policy, and travel policy — from upload through grounded, cited chat.",
+    },
+  },
+  {
     slug: "ai-meeting-intelligence",
     category: "AI / RAG / Full Stack",
     title: "AI Meeting Intelligence",
