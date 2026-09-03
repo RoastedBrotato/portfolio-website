@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -71,16 +72,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <SmoothScroll>
-          <div className="grain-overlay" aria-hidden />
-          <ScrollProgress />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </SmoothScroll>
+        <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+          <SmoothScroll>
+            <div className="grain-overlay" aria-hidden />
+            <ScrollProgress />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </SmoothScroll>
+        </ThemeProvider>
       </body>
     </html>
   );

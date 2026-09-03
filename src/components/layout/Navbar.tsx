@@ -9,6 +9,7 @@ import { navLinks } from "@/data/nav";
 import { siteConfig } from "@/data/config";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -65,6 +66,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-5 md:flex">
+          <ThemeToggle />
           <a
             href={siteConfig.github}
             target="_blank"
@@ -120,6 +122,7 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="mt-3 flex items-center gap-5 px-3">
+                <ThemeToggle />
                 <a
                   href={siteConfig.github}
                   target="_blank"
