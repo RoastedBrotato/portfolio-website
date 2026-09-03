@@ -33,7 +33,7 @@ export function ProjectShowcase({ project, index }: { project: Project; index: n
       ref={articleRef}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-80px 0px" }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className="grid grid-cols-1 items-center gap-10 py-14 first:pt-0 lg:grid-cols-2 lg:gap-16 lg:py-20"
     >

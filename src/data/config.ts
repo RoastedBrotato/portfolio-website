@@ -11,6 +11,7 @@ export const siteConfig: SiteConfig = {
   tagline:
     "I build full-stack software, AI-powered applications, and business automation.",
   email: "waleedajaz1996@gmail.com",
+  businessEmail: "waleed@alsufun.com",
   github: "https://github.com/RoastedBrotato",
   linkedin: "https://www.linkedin.com/in/waleedajaz/",
   location: "Islamabad, Pakistan",

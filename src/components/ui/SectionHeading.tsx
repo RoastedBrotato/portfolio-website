@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { RevealText } from "@/components/ui/RevealText";
 
 export function SectionHeading({
   eyebrow,
@@ -26,9 +27,13 @@ export function SectionHeading({
           {eyebrow}
         </span>
       )}
-      <h2 className="font-display text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+      <RevealText
+        as="h2"
+        trigger="inView"
+        className="font-display text-h2 font-medium tracking-tight text-foreground"
+      >
         {title}
-      </h2>
+      </RevealText>
       {description && (
         <p
           className={cn(

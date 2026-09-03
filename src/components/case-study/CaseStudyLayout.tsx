@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ProjectVisual } from "@/components/project/ProjectVisual";
 import { ArchitectureDiagram } from "@/components/case-study/ArchitectureDiagram";
+import { Reveal } from "@/components/ui/Reveal";
 import { Project } from "@/types";
 
 const visualVariant: Record<string, "ai" | "realtime" | "business"> = {
@@ -26,7 +27,10 @@ function CaseStudySection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="grid grid-cols-1 gap-6 py-14 lg:grid-cols-[240px_1fr] lg:gap-16 lg:py-16">
+    <Reveal
+      as="section"
+      className="grid grid-cols-1 gap-6 py-16 lg:grid-cols-[240px_1fr] lg:gap-16 lg:py-20"
+    >
       <div>
         <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
           {eyebrow}
@@ -36,7 +40,7 @@ function CaseStudySection({
       <div className="max-w-2xl text-base leading-relaxed text-foreground-muted sm:text-lg">
         {children}
       </div>
-    </section>
+    </Reveal>
   );
 }
 
@@ -59,7 +63,7 @@ export function CaseStudyLayout({
             aria-hidden
             className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
           />
-          <Container className="relative py-20 sm:py-28">
+          <Container className="relative py-24 sm:py-32">
             <Link
               href="/#work"
               className="inline-flex items-center gap-1.5 text-sm text-foreground-muted transition-colors hover:text-foreground"
@@ -71,7 +75,7 @@ export function CaseStudyLayout({
             <span className="mt-8 block font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
               {project.category}
             </span>
-            <h1 className="font-display mt-4 max-w-3xl text-4xl font-medium tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="font-display text-h1 mt-4 max-w-3xl font-medium tracking-tight text-foreground">
               {project.title}
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foreground-muted sm:text-xl">
@@ -104,7 +108,7 @@ export function CaseStudyLayout({
         </header>
 
         <Container>
-          <div className="py-14 lg:py-16">
+          <div className="py-16 lg:py-20">
             <ProjectVisual
               variant={visualVariant[project.slug] ?? "ai"}
               image={project.image}
@@ -157,7 +161,7 @@ export function CaseStudyLayout({
               )}
             </CaseStudySection>
 
-            <section className="py-14 lg:py-16">
+            <Reveal as="section" className="py-16 lg:py-20">
               <div className="mb-10">
                 <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
                   Architecture
@@ -170,7 +174,7 @@ export function CaseStudyLayout({
                 primary={caseStudy.architecture.primary}
                 secondary={caseStudy.architecture.secondary}
               />
-            </section>
+            </Reveal>
 
             <CaseStudySection eyebrow="Challenges" title="Key engineering challenges">
               <div className="flex flex-col gap-8">

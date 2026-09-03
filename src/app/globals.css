@@ -45,6 +45,9 @@
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-fraunces);
   --animate-marquee: marquee 32s linear infinite;
+  --text-display: clamp(3rem, 2.2rem + 4vw, 6.5rem);
+  --text-h1: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+  --text-h2: clamp(1.75rem, 1.5rem + 1.2vw, 2.75rem);
 }
 
 @keyframes marquee {
@@ -61,7 +64,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Lenis (see SmoothScroll.tsx) owns scroll easing; native smooth-scroll would double up on hash jumps. */
+  scroll-behavior: auto;
   color-scheme: dark;
 }
 

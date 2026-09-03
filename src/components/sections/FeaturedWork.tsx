@@ -5,7 +5,7 @@ import { projects } from "@/data/projects";
 
 export function FeaturedWork() {
   return (
-    <section id="work" className="scroll-mt-20 py-24 sm:py-32">
+    <section id="work" className="scroll-mt-20 py-28 sm:py-40">
       <Container>
         <SectionHeading
           eyebrow="Selected Work"

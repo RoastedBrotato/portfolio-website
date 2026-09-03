@@ -1,12 +1,16 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Reveal } from "@/components/ui/Reveal";
 
 export function About() {
   return (
-    <section id="about" className="scroll-mt-20 border-t border-border py-24 sm:py-32">
+    <section id="about" className="scroll-mt-20 border-t border-border py-28 sm:py-40">
       <Container className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
         <SectionHeading eyebrow="About" title="How I ended up here" />
-        <div className="flex flex-col gap-6 text-base leading-relaxed text-foreground-muted sm:text-lg">
+        <Reveal
+          delay={0.1}
+          className="flex flex-col gap-6 text-base leading-relaxed text-foreground-muted sm:text-lg"
+        >
           <p>
             I started as a backend engineer. A few years in, I got pulled into a project that
             needed real ML models, not just APIs, and that was the turn. When the current wave of
@@ -31,7 +35,7 @@ export function About() {
             away with — there&apos;s a decent chance I&apos;m somewhere in the mountains while
             you&apos;re reading this.
           </p>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

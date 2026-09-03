@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { RevealText, type RevealWord } from "@/components/ui/RevealText";
 import { siteConfig } from "@/data/config";
 
 const fadeUp = {
@@ -16,7 +17,7 @@ const fadeUp = {
   }),
 };
 
-const headline: { text: string; emphasis?: boolean }[] = [
+const headline: RevealWord[] = [
   { text: "I" },
   { text: "build" },
   { text: "software" },
@@ -88,24 +89,14 @@ export function Hero() {
           {siteConfig.role}
         </motion.span>
 
-        <h1 className="font-display mt-6 max-w-4xl text-4xl font-medium leading-[1.15] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-          {headline.map((word, i) => (
-            <span
-              key={i}
-              className="-mb-[0.18em] inline-block overflow-hidden pb-[0.18em] align-bottom"
-            >
-              <motion.span
-                className="inline-block"
-                initial={{ y: "110%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.75, delay: 0.35 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {word.emphasis ? <em className="italic text-accent">{word.text}</em> : word.text}
-                {i < headline.length - 1 ? " " : ""}
-              </motion.span>
-            </span>
-          ))}
-        </h1>
+        <RevealText
+          as="h1"
+          trigger="mount"
+          delay={0.35}
+          className="font-display text-h1 mt-6 max-w-4xl font-medium leading-[1.15] tracking-tight text-foreground"
+        >
+          {headline}
+        </RevealText>
 
         <motion.p
           custom={2}

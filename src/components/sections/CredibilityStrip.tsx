@@ -1,4 +1,5 @@
 import { Marquee } from "@/components/ui/Marquee";
+import { Reveal } from "@/components/ui/Reveal";
 import { siteConfig } from "@/data/config";
 
 const items = [
@@ -15,11 +16,11 @@ const items = [
 
 export function CredibilityStrip() {
   return (
-    <section className="border-y border-border py-7">
+    <Reveal as="section" className="border-y border-border py-7">
       <Marquee
         items={items}
         className="font-display text-xl italic text-foreground-muted sm:text-2xl"
       />
-    </section>
+    </Reveal>
   );
 }

@@ -87,6 +87,7 @@ export interface SiteConfig {
   role: string;
   tagline: string;
   email: string;
+  businessEmail: string;
   github: string;
   linkedin: string;
   location: string;
