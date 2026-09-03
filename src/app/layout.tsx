@@ -6,7 +6,9 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { CommandPaletteProvider } from "@/components/CommandPalette";
 import { siteConfig } from "@/data/config";
+import { getAllPosts } from "@/data/blog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +71,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const posts = getAllPosts();
+
   return (
     <html
       lang="en"
@@ -77,13 +81,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <SmoothScroll>
-            <div className="grain-overlay" aria-hidden />
-            <ScrollProgress />
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </SmoothScroll>
+          <CommandPaletteProvider posts={posts}>
+            <SmoothScroll>
+              <div className="grain-overlay" aria-hidden />
+              <ScrollProgress />
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </SmoothScroll>
+          </CommandPaletteProvider>
         </ThemeProvider>
       </body>
     </html>

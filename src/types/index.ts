@@ -48,6 +48,20 @@ export interface Project {
   caseStudy: CaseStudyContent;
 }
 
+export interface BlogPostMeta {
+  slug: string;
+  title: string;
+  description: string;
+  /** ISO date string, e.g. "2026-09-03" */
+  date: string;
+  tags?: string[];
+}
+
+export interface BlogPost extends BlogPostMeta {
+  /** Raw MDX body, not yet compiled. */
+  content: string;
+}
+
 export type ServiceIcon =
   | "sparkles"
   | "layers"

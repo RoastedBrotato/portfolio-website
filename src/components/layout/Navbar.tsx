@@ -3,14 +3,36 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { navLinks } from "@/data/nav";
 import { siteConfig } from "@/data/config";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useCommandPalette } from "@/components/CommandPalette";
 import { cn } from "@/lib/utils";
+
+function SearchTrigger({ className, onBeforeOpen }: { className?: string; onBeforeOpen?: () => void }) {
+  const { setOpen } = useCommandPalette();
+
+  return (
+    <button
+      type="button"
+      aria-label="Search"
+      onClick={() => {
+        onBeforeOpen?.();
+        setOpen(true);
+      }}
+      className={cn(
+        "flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:text-foreground",
+        className
+      )}
+    >
+      <Search size={17} />
+    </button>
+  );
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -66,6 +88,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-5 md:flex">
+          <SearchTrigger />
           <ThemeToggle />
           <a
             href={siteConfig.github}
@@ -122,6 +145,7 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="mt-3 flex items-center gap-5 px-3">
+                <SearchTrigger onBeforeOpen={() => setOpen(false)} />
                 <ThemeToggle />
                 <a
                   href={siteConfig.github}
