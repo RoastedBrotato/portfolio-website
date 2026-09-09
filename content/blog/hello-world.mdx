@@ -1,19 +1,15 @@
 ---
 title: "Hello, World"
-description: "Kicking off the blog — what I'm planning to write about here."
+description: "Kicking off the blog — and a reference for everything the post pipeline can do."
 date: "2026-09-03"
 tags: ["meta"]
 ---
 
-This is the first post on the blog — mostly here to prove the pipeline works end to end (frontmatter, MDX rendering, the listing page, search) before real posts show up.
-
-## What's coming
-
-A couple of posts are already planned. Once they're written, this placeholder can be deleted.
+This is the first post on the blog — mostly here to prove the pipeline works end to end before real posts show up. It doubles as a reference for the formatting available in a post.
 
 ## Writing a new post
 
-Drop a new `.mdx` file in `content/blog/`, matching this file's frontmatter shape:
+Drop a new `.mdx` file in `content/blog/`. The filename is the slug, so `content/blog/rag-chunking.mdx` becomes `/blog/rag-chunking`.
 
 ```md
 ---
@@ -21,9 +17,55 @@ title: "Post Title"
 description: "One sentence for the listing page and search results."
 date: "2026-09-10"
 tags: ["ai", "backend"]
+draft: true
 ---
 
 Regular Markdown/MDX body goes here.
 ```
 
-The listing page, the post page, and the `⌘K` search all pick it up automatically — no other code changes needed.
+Only `title`, `description` and `date` are required. The listing page, the post page, the sitemap, the RSS feed and the `⌘K` search all pick it up automatically.
+
+### Drafts
+
+Set `draft: true` and the post is visible when running `npm run dev` and excluded from every build — safe to commit and push while it's half-written. Delete the line to publish.
+
+## Code
+
+Fenced blocks are highlighted at build time and follow the site's light/dark toggle:
+
+```ts title="lib/chunk.ts"
+export function chunk(text: string, size = 800, overlap = 100): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < text.length; i += size - overlap) {
+    out.push(text.slice(i, i + size));
+  }
+  return out;
+}
+```
+
+Add a `title="..."` for the caption bar above the block, and `{2,3}` after the language to mark lines:
+
+```py {2,3}
+def embed(chunks):
+    # these two lines get the accent bar
+    vectors = model.encode(chunks)
+    return vectors
+```
+
+Inline `code` works the way you'd expect.
+
+## Images
+
+Put images in `public/images/blog/<slug>/` and reference them with a normal Markdown image. The alt text doubles as the caption:
+
+```md
+![Retrieval latency before and after caching](/images/blog/rag-chunking/latency.png)
+```
+
+## Everything else
+
+Standard Markdown applies — headings, **bold**, _italics_, lists, tables (GFM), blockquotes and links.
+
+> Blockquotes pick up the accent rule on the left.
+
+External links open in a new tab automatically; internal ones don't.

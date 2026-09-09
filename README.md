@@ -33,9 +33,41 @@ Everything you're likely to change lives in `src/data/`:
 | `src/data/experience.ts` | Your work history timeline |
 | `src/data/techStack.ts` | The grouped technology lists in "Toolbox" |
 | `src/data/nav.ts` | The nav bar links |
+| `content/blog/*.mdx` | Blog posts — one file per post (see "Writing a post" below) |
 
 Page copy that isn't data-driven (hero headline, about paragraph, contact section wording) lives
 directly in its section component under `src/components/sections/`.
+
+### Writing a post
+
+Drop a `.mdx` file in `content/blog/`. The filename is the slug, so
+`content/blog/rag-chunking.mdx` becomes `/blog/rag-chunking`. No code changes — the listing
+page, post page, `sitemap.xml`, the RSS feed and the ⌘K search all pick it up.
+
+```md
+---
+title: "Post Title"
+description: "One sentence for the listing page, search results and the RSS feed."
+date: "2026-09-10"          # YYYY-MM-DD, drives sort order and <pubDate>
+tags: ["ai", "backend"]     # optional
+draft: true                 # optional — see below
+---
+```
+
+- **Drafts.** `draft: true` shows the post under `npm run dev` and excludes it from every build,
+  the sitemap and the feed — so half-written posts are safe to commit and push. Delete the line
+  to publish.
+- **Code.** Fenced blocks are highlighted at build time by Shiki via `rehype-pretty-code`; both
+  palettes ship as CSS variables so blocks follow the theme toggle with no client-side JS. Use
+  ```` ```ts title="lib/chunk.ts" ```` for the caption bar and ```` ```ts {2,5} ```` to mark lines.
+- **Images.** Put them in `public/images/blog/<slug>/` and use a normal Markdown image. The alt
+  text doubles as the caption. These render as plain lazy `<img>`, not `next/image`, because
+  `next/image` needs intrinsic dimensions — fine for in-body screenshots; swap in `next/image`
+  if a post ever needs a heavy above-the-fold hero.
+- **Reading time** is derived from word count, not frontmatter.
+
+`content/blog/hello-world.mdx` is a live reference for all of the above and can be deleted once
+real posts exist.
 
 ### Adding or editing a project / case study
 
@@ -162,9 +194,10 @@ npm run start   # serves on port 3000 by default
 Name, email, GitHub/LinkedIn, work history, tech stack, and resume are filled in with real
 information. Search `src/data/` for `TODO` to find what's still open:
 
-- **`src/data/config.ts`** — `siteUrl` is set to the expected Vercel default
-  (`https://portfolio-website.vercel.app`); confirm it matches the real deployment URL after your
-  first deploy, or swap in a custom domain later.
+- **`src/data/config.ts`** — `siteUrl` is still the placeholder
+  (`https://portfolio-website.vercel.app`). It feeds `metadataBase`, every URL in `sitemap.xml`,
+  the sitemap reference in `robots.txt`, the OpenGraph tags and the RSS feed, so set it to the
+  real domain before relying on search or link previews.
 - **`src/data/projects.ts`** — Moementum now leads the list with a real screenshot, gallery, and
   live demo link (`links.github` still needs the repo URL — it's a `TODO` in the file). The other
   three case studies (AI Meeting Intelligence, Real-Time Task & Notification Platform, Donor &

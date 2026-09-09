@@ -55,6 +55,10 @@ export interface BlogPostMeta {
   /** ISO date string, e.g. "2026-09-03" */
   date: string;
   tags?: string[];
+  /** `draft: true` in frontmatter — shown by `next dev`, excluded from any build. */
+  draft?: boolean;
+  /** Derived from word count, not frontmatter. */
+  readingMinutes: number;
 }
 
 export interface BlogPost extends BlogPostMeta {

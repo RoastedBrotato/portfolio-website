@@ -187,3 +187,74 @@ body {
   --tw-prose-th-borders: var(--border-strong);
   --tw-prose-td-borders: var(--border);
 }
+
+/*
+ * Syntax highlighting (rehype-pretty-code + Shiki, run at build time).
+ *
+ * Shiki emits both palettes as --shiki-light / --shiki-dark on every token, so
+ * the code block follows the site's theme toggle with no re-highlighting and no
+ * client-side JS. Dark is the default; [data-theme="light"] flips it.
+ *
+ * `keepBackground: false` in prettyCodeOptions drops Shiki's own background so
+ * the block uses our surface + 2px rule instead of the theme's colour.
+ */
+.prose pre {
+  border: 2px solid var(--border-strong);
+  background: var(--background-elevated);
+  padding: 1.15rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+.prose pre code {
+  display: grid;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* One grid row per line, so highlighted lines can span the full block width. */
+.prose pre code [data-line] {
+  padding-inline: 0.15rem;
+}
+
+.prose code span {
+  color: var(--shiki-dark);
+}
+
+[data-theme="light"] .prose code span {
+  color: var(--shiki-light);
+}
+
+/* Inline `code` keeps the site's own styling rather than a Shiki token colour. */
+.prose :not(pre) > code {
+  border: 1px solid var(--border-strong);
+  background: var(--background-elevated);
+  padding: 0.1rem 0.35rem;
+  font-weight: 500;
+}
+
+/* ```ts title="file.ts" renders a caption bar above the block. */
+.prose [data-rehype-pretty-code-title] {
+  border: 2px solid var(--border-strong);
+  border-bottom: 0;
+  background: var(--background-elevated);
+  padding: 0.5rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--foreground-subtle);
+}
+
+.prose [data-rehype-pretty-code-title] + pre {
+  margin-top: 0;
+}
+
+/* ```ts {2,5} marks lines; the accent bar is the only colour in the block. */
+.prose pre code [data-highlighted-line] {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 0 var(--accent);
+}
