@@ -1,35 +1,50 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/*
+ * Neo-brutalist black & red.
+ *
+ * Rules this file encodes, so components don't each invent their own:
+ *   - Nothing is rounded. Square corners everywhere, no exceptions.
+ *   - Structure is drawn with hard 2px rules, not soft translucent hairlines.
+ *   - Depth is a hard offset shadow (no blur), never a gradient or glow.
+ *   - One rail width (--rail) and one section rhythm shared by every page.
+ */
+
 :root {
-  --background: #0a0a0b;
-  --background-elevated: #131315;
-  --background-elevated-hover: #18181b;
-  --foreground: #f5f5f4;
-  --foreground-muted: #a1a1aa;
-  --foreground-subtle: #8b8b93;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --accent: #c96a43;
-  --accent-foreground: #241008;
-  --accent-soft: rgba(201, 106, 67, 0.14);
-  --grid-line: rgba(255, 255, 255, 0.04);
+  --background: #000000;
+  --background-elevated: #0d0d0d;
+  --background-elevated-hover: #1a1a1a;
+  --foreground: #ffffff;
+  --foreground-muted: #a3a3a3;
+  --foreground-subtle: #7a7a7a;
+  /* Hairline for dividers inside a block. */
+  --border: #2b2b2b;
+  /* The structural rule: full-contrast, always 2px. */
+  --border-strong: #ffffff;
+  --accent: #ff2b1f;
+  --accent-foreground: #000000;
+  --accent-soft: rgba(255, 43, 31, 0.14);
+  --grid-line: rgba(255, 255, 255, 0.05);
+  /* Hard shadow colour: red on black reads as intent; pure white reads as a glitch. */
+  --shadow-hard: #ff2b1f;
 }
 
-/* Architectural hook for a future light theme — not wired up by default per project brief. */
 [data-theme="light"] {
-  --background: #fafaf9;
-  --background-elevated: #ffffff;
-  --background-elevated-hover: #f4f4f3;
-  --foreground: #18181b;
-  --foreground-muted: #52525b;
-  --foreground-subtle: #71717a;
-  --border: rgba(0, 0, 0, 0.1);
-  --border-strong: rgba(0, 0, 0, 0.16);
-  --accent: #a8502c;
+  --background: #ffffff;
+  --background-elevated: #f4f4f4;
+  --background-elevated-hover: #e8e8e8;
+  --foreground: #000000;
+  --foreground-muted: #4a4a4a;
+  --foreground-subtle: #6b6b6b;
+  --border: #d4d4d4;
+  --border-strong: #000000;
+  /* Darker red: #ff2b1f only hits 3.7:1 on white, which fails body text. */
+  --accent: #cc0000;
   --accent-foreground: #ffffff;
-  --accent-soft: rgba(168, 80, 44, 0.1);
-  --grid-line: rgba(0, 0, 0, 0.04);
+  --accent-soft: rgba(204, 0, 0, 0.1);
+  --grid-line: rgba(0, 0, 0, 0.06);
+  --shadow-hard: #000000;
   color-scheme: light;
 }
 
@@ -48,23 +63,33 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-fraunces);
-  --animate-marquee: marquee 32s linear infinite;
   --text-display: clamp(3rem, 2.2rem + 4vw, 6.5rem);
-  --text-h1: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
-  --text-h2: clamp(1.75rem, 1.5rem + 1.2vw, 2.75rem);
+  --text-h1: clamp(2.75rem, 2rem + 3vw, 5rem);
+  --text-h2: clamp(1.875rem, 1.5rem + 1.4vw, 3rem);
+
+  /*
+   * Layout scale. Every labelled section on every page uses --rail + --rail-gap,
+   * so the content column sits on the same left edge sitewide — including when
+   * you navigate from the homepage into a case study.
+   */
+  --spacing-rail: 10rem;
+  --spacing-rail-gap: 3rem;
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+:root {
+  --rail: 10rem;
+  --rail-gap: 3rem;
 }
 
-* {
-  border-color: var(--border);
+/*
+ * Must live in @layer base. Unlayered declarations outrank every layered one,
+ * so a bare `* { border-color }` silently beats `border-border-strong` and every
+ * other border-colour utility — which is exactly what it did before this comment.
+ */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 }
 
 html {
@@ -104,15 +129,42 @@ body {
   background-size: 48px 48px;
 }
 
-/* Tactile film-grain layer over the whole page — the difference between "flat gradient" and "designed surface". */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/*
+ * Hard offset shadow + press-in hover. `.brutal` shadows in accent red;
+ * `.brutal-fg` shadows in the foreground, for elements that are already red
+ * and would otherwise cast an invisible shadow.
+ */
+.brutal,
+.brutal-fg {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.brutal {
+  box-shadow: 5px 5px 0 0 var(--shadow-hard);
+}
+
+.brutal-fg {
+  box-shadow: 5px 5px 0 0 var(--foreground);
+}
+
+.brutal:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 0 var(--shadow-hard);
+}
+
+.brutal-fg:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 0 var(--foreground);
+}
+
+/* Reduced motion: keep the shadow shift, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .brutal:hover,
+  .brutal-fg:hover {
+    transform: none;
+  }
 }
 
 /* Tailwind Typography reads these vars directly — pointing them at our own tokens means
@@ -124,8 +176,8 @@ body {
   --tw-prose-links: var(--accent);
   --tw-prose-bold: var(--foreground);
   --tw-prose-counters: var(--foreground-muted);
-  --tw-prose-bullets: var(--border-strong);
-  --tw-prose-hr: var(--border);
+  --tw-prose-bullets: var(--accent);
+  --tw-prose-hr: var(--border-strong);
   --tw-prose-quotes: var(--foreground);
   --tw-prose-quote-borders: var(--accent);
   --tw-prose-captions: var(--foreground-subtle);

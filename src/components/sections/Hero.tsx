@@ -1,143 +1,74 @@
-"use client";
-
-import { useRef } from "react";
-import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { SectionLabel } from "@/components/ui/Section";
 import { RevealText, type RevealWord } from "@/components/ui/RevealText";
+import { Reveal } from "@/components/ui/Reveal";
 import { siteConfig } from "@/data/config";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] as const },
-  }),
-};
 
 const headline: RevealWord[] = [
   { text: "I" },
   { text: "build" },
   { text: "software" },
-  { text: "that" },
-  { text: "solves" },
-  { text: "real", emphasis: true },
-  { text: "business" },
-  { text: "problems." },
+  { text: "people" },
+  { text: "open", emphasis: true },
+  { text: "every" },
+  { text: "day." },
 ];
 
 export function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const spotlightRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (
-      !window.matchMedia("(pointer: fine)").matches ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
-    const spotlight = spotlightRef.current;
-    const rect = e.currentTarget.getBoundingClientRect();
-    if (!spotlight) return;
-    spotlight.style.setProperty("--x", `${e.clientX - rect.left}px`);
-    spotlight.style.setProperty("--y", `${e.clientY - rect.top}px`);
-    spotlight.style.opacity = "1";
-  };
-
-  const handleMouseLeave = () => {
-    if (spotlightRef.current) spotlightRef.current.style.opacity = "0";
-  };
-
   return (
-    <section
-      ref={sectionRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="relative overflow-hidden"
-    >
+    <section className="relative overflow-hidden">
       <div
         aria-hidden
         className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
       />
-      <div
-        ref={spotlightRef}
-        aria-hidden
-        className="pointer-events-none absolute inset-0 hidden opacity-0 transition-opacity duration-500 sm:block"
-        style={{
-          background:
-            "radial-gradient(560px circle at var(--x, 50%) var(--y, 0%), var(--accent-soft), transparent 70%)",
-        }}
-      />
-      <span
-        aria-hidden
-        className="font-display pointer-events-none absolute -right-[0.12em] -top-[0.14em] select-none text-[38vw] italic leading-none text-foreground/[0.035] sm:text-[26vw] lg:-right-[0.08em] lg:-top-[0.16em] lg:text-[20vw]"
-      >
-        {siteConfig.initials}
-      </span>
 
-      <Container className="relative flex min-h-[88svh] flex-col justify-center py-28 sm:py-32">
-        <motion.span
-          custom={0}
-          initial="hidden"
-          animate="show"
-          variants={fadeUp}
-          className="font-mono text-xs font-medium uppercase tracking-[0.25em] text-accent"
-        >
-          {siteConfig.role}
-        </motion.span>
+      {/* Same rail grid as every other section — the hero's rail holds the role
+          tag where a section would put its label, so one left edge runs the page. */}
+      <Container className="relative grid min-h-[70svh] grid-cols-1 content-center gap-8 py-20 sm:py-28 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
+        <div>
+          <Reveal>
+            <SectionLabel as="p">{siteConfig.role}</SectionLabel>
+          </Reveal>
+        </div>
 
-        <RevealText
-          as="h1"
-          trigger="mount"
-          delay={0.35}
-          className="font-display text-h1 mt-6 max-w-4xl font-medium leading-[1.15] tracking-tight text-foreground"
-        >
-          {headline}
-        </RevealText>
+        <div className="min-w-0">
+          <RevealText
+            as="h1"
+            trigger="mount"
+            delay={0.2}
+            className="font-display text-h1 text-foreground max-w-3xl leading-[1.05] font-bold tracking-tight"
+          >
+            {headline}
+          </RevealText>
 
-        <motion.p
-          custom={2}
-          initial="hidden"
-          animate="show"
-          variants={fadeUp}
-          className="mt-6 max-w-2xl text-lg leading-relaxed text-foreground-muted sm:text-xl"
-        >
-          Full-stack engineer specializing in web applications, AI-powered products,
-          backend systems, and intelligent automation — from first commit to production.
-        </motion.p>
+          <Reveal delay={0.15}>
+            <p className="text-foreground-muted mt-8 max-w-xl text-lg leading-relaxed">
+              I take client projects from the first discovery call to production. Right now that
+              means a coaching platform running with 10 active clients, and a RAG assistant that
+              answers from a company&apos;s own documents.
+            </p>
 
-        <motion.div
-          custom={3}
-          initial="hidden"
-          animate="show"
-          variants={fadeUp}
-          className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
-        >
-          <Button href="/#work" size="lg">
-            View My Work
-            <ArrowRight size={16} />
-          </Button>
-          <Button href="/#contact" variant="secondary" size="lg">
-            Let&apos;s Work Together
-          </Button>
-        </motion.div>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Button href="/#work" size="lg">
+                See the work
+                <ArrowRight size={16} />
+              </Button>
+              <Button href="/#contact" variant="secondary" size="lg">
+                Get in touch
+              </Button>
+            </div>
 
-        <motion.div
-          custom={4}
-          initial="hidden"
-          animate="show"
-          variants={fadeUp}
-          className="mt-14 flex items-center gap-2.5 text-sm text-foreground-muted"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-          </span>
-          {siteConfig.availability}
-        </motion.div>
+            {/* items-start keeps the marker on the first line when the label wraps. */}
+            <p className="text-foreground-subtle mt-12 flex items-start gap-2.5 font-mono text-xs leading-relaxed tracking-[0.15em] uppercase">
+              <span className="bg-accent mt-[0.4em] h-2 w-2 shrink-0" />
+              <span>
+                {siteConfig.availability} · {siteConfig.location}
+              </span>
+            </p>
+          </Reveal>
+        </div>
       </Container>
     </section>
   );

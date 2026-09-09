@@ -9,9 +9,5 @@ export function Container({
   className?: string;
   as?: keyof React.JSX.IntrinsicElements;
 }) {
-  return (
-    <Tag className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)}>
-      {children}
-    </Tag>
-  );
+  return <Tag className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)}>{children}</Tag>;
 }

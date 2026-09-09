@@ -7,10 +7,12 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border">
-      <Container className="flex flex-col gap-8 py-12 sm:flex-row sm:items-center sm:justify-between">
+    <footer className="border-t-2 border-border-strong">
+      <Container className="flex flex-col gap-8 py-10 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-mono text-sm font-medium text-foreground">{siteConfig.name}</p>
+          <p className="font-mono text-sm font-bold uppercase tracking-[0.08em] text-foreground">
+            {siteConfig.name}
+          </p>
           <p className="mt-1 text-sm text-foreground-subtle">{siteConfig.role}</p>
         </div>
 

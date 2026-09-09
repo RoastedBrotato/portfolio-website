@@ -17,19 +17,19 @@ export default function BlogIndexPage() {
 
   return (
     <>
-      <header className="relative overflow-hidden border-b border-border">
+      <header className="relative overflow-hidden border-b-2 border-border-strong">
         <div
           aria-hidden
           className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
         />
-        <Container className="relative py-24 sm:py-32">
-          <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
+        <Container className="relative py-20 sm:py-28">
+          <span className="inline-block bg-accent px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent-foreground">
             Writing
           </span>
           <RevealText
             as="h1"
             trigger="mount"
-            className="font-display text-h1 mt-4 max-w-2xl font-medium tracking-tight text-foreground"
+            className="font-display text-h1 mt-6 max-w-2xl font-bold leading-[1.05] tracking-tight text-foreground"
           >
             Blog
           </RevealText>
@@ -39,7 +39,7 @@ export default function BlogIndexPage() {
         </Container>
       </header>
 
-      <Container className="py-16 sm:py-20">
+      <Container className="py-20 sm:py-28">
         {posts.length === 0 ? (
           <p className="text-foreground-muted">Nothing published yet — check back soon.</p>
         ) : (
@@ -48,10 +48,10 @@ export default function BlogIndexPage() {
               <Reveal key={post.slug} delay={Math.min(i * 0.06, 0.3)}>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group flex flex-col gap-2 py-8 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8"
+                  className="group flex flex-col gap-2 py-6 first:pt-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8"
                 >
                   <div>
-                    <h2 className="font-display text-xl font-medium text-foreground transition-colors group-hover:text-accent sm:text-2xl">
+                    <h2 className="font-display text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-accent sm:text-2xl">
                       {post.title}
                     </h2>
                     <p className="mt-2 max-w-xl text-base text-foreground-muted">

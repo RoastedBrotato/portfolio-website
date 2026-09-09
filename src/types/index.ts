@@ -62,17 +62,9 @@ export interface BlogPost extends BlogPostMeta {
   content: string;
 }
 
-export type ServiceIcon =
-  | "sparkles"
-  | "layers"
-  | "plug"
-  | "workflow";
-
 export interface Service {
-  icon: ServiceIcon;
   title: string;
   description: string;
-  capabilities: string[];
 }
 
 export interface ExperienceItem {
@@ -97,7 +89,6 @@ export interface NavLink {
 
 export interface SiteConfig {
   name: string;
-  initials: string;
   role: string;
   tagline: string;
   email: string;

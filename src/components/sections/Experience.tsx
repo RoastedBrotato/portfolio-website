@@ -1,27 +1,27 @@
 import { Download } from "lucide-react";
-import { Container } from "@/components/ui/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Button } from "@/components/ui/Button";
+import { Section } from "@/components/ui/Section";
 import { ExperienceTimeline } from "@/components/ui/ExperienceTimeline";
-import { Reveal } from "@/components/ui/Reveal";
 import { experience } from "@/data/experience";
 import { siteConfig } from "@/data/config";
 
 export function Experience() {
   return (
-    <section id="experience" className="scroll-mt-20 border-t border-border py-28 sm:py-40">
-      <Container>
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeading eyebrow="Experience" title="Where I've worked" />
-          <Button href={siteConfig.resumeUrl} variant="secondary" external className="shrink-0">
-            Download Resume
-            <Download size={16} />
-          </Button>
-        </div>
-        <Reveal delay={0.1} className="mt-16">
-          <ExperienceTimeline items={experience} />
-        </Reveal>
-      </Container>
-    </section>
+    <Section
+      id="experience"
+      label="Experience"
+      aside={
+        <a
+          href={siteConfig.resumeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm text-foreground-muted transition-colors hover:text-foreground"
+        >
+          Resume
+          <Download size={14} />
+        </a>
+      }
+    >
+      <ExperienceTimeline items={experience} />
+    </Section>
   );
 }

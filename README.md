@@ -82,24 +82,60 @@ src/
     not-found.tsx           Custom 404
   components/
     layout/                Navbar, Footer
-    sections/               Hero, CredibilityStrip, FeaturedWork, Services,
-                             Experience, TechStack, About, ContactCTA
+    sections/               Hero, FeaturedWork, Experience, About, Services, ContactCTA
     project/                ProjectShowcase (homepage card), ProjectVisual (mockup/screenshot frame)
     case-study/              CaseStudyLayout (full case-study template), ArchitectureDiagram
-    ui/                      Reusable primitives — Button, Badge, Container, SectionHeading,
-                              ServiceCard, ExperienceTimeline, icons (GitHub/LinkedIn)
+    ui/                      Reusable primitives — Button, Badge, Container,
+                              Section/SectionLabel, ExperienceTimeline, Reveal/RevealText,
+                              icons (GitHub/LinkedIn)
   data/                    All editable content (see table above)
   types/                   Shared TypeScript types for the data layer
-  lib/utils.ts             Small className helper
+  lib/                     className helper, reduced-motion hook, project visual lookup
 ```
 
 ## Design system notes
 
-- Colors are CSS variables defined in `src/app/globals.css` and mapped into Tailwind via
-  `@theme inline` (`bg-background`, `text-foreground-muted`, `border-border`, `text-accent`, etc.).
-  The site ships dark-only, but a `[data-theme="light"]` palette is already defined — wiring up a
-  toggle later is a matter of adding a `data-theme` attribute switch, not restructuring colors.
-- Respect `prefers-reduced-motion` is handled globally in `globals.css`.
+Neo-brutalist black & red. The rules are encoded in `src/app/globals.css` so components don't
+each invent their own — read that file's header comment before adding UI.
+
+**Colour.** CSS variables mapped into Tailwind via `@theme inline` (`bg-background`,
+`text-foreground-muted`, `border-border-strong`, `text-accent`, …). Both themes are live:
+`[data-theme="light"]` redefines the same tokens and `ThemeToggle` flips the attribute, so
+nothing else needs light/dark variants. Never hardcode `bg-white/x` — use `bg-foreground/x`
+so surfaces invert with the theme. The light accent is a darker red (`#cc0000`): the dark
+theme's `#ff2b1f` only reaches 3.7:1 on white and fails body-text contrast.
+
+**Spacing scale.** Four vertical rhythms, and nothing else:
+
+| Level | Padding | Used by |
+| --- | --- | --- |
+| Page section | `py-20 sm:py-28` | `Section`, hero, case-study header, blog pages |
+| Article section | `py-14 sm:py-16` | `CaseStudySection`, case-study visuals |
+| List row (large) | `py-12` | project rows, case-study prev/next |
+| List row (small) | `py-6` | services, blog index rows |
+
+Chrome is separate: navbar `h-16 sm:h-20`, footer `py-10`.
+
+**Columns.** One rail, sitewide. `--rail` (10rem) and `--rail-gap` (3rem) in `globals.css` drive
+`lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]`, used by `Section`, the hero, and every
+case-study section — so the content column sits on the same left edge on every page and does not
+shift when you navigate from `/#work` into a case study. Nested label columns (e.g. the About
+stack list) use `8rem`. Don't introduce a third width.
+
+**Structure.** 2px `border-border-strong` rules separate sections; 1px `border-border` hairlines
+divide rows *inside* a section. Depth is the `.brutal` / `.brutal-fg` hard offset shadow (no
+blur), never a gradient or glow. Nothing is rounded — there are no `rounded-*` classes in the
+codebase and new UI shouldn't add any.
+
+**Labels.** `SectionLabel` (solid red block, mono, uppercase) is the only section-heading style.
+Sections do not get an eyebrow + serif heading + description stack; the hero and the closing CTA
+are the only large type on the homepage.
+
+> **Gotcha:** the global `* { border-color }` reset **must** stay inside `@layer base`. Unlayered
+> declarations outrank every layered one, so a bare `*` rule silently beats `border-border-strong`
+> and every other border-colour utility — which is exactly what it did until it was wrapped.
+
+- `prefers-reduced-motion` is handled globally in `globals.css`, including the `.brutal` press.
 - No CSS/JS animation or icon libraries beyond Framer Motion and `lucide-react`. `lucide-react`
   dropped brand icons from its core set, so GitHub/LinkedIn glyphs are small local SVGs in
   `src/components/ui/icons.tsx`.

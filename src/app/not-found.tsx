@@ -6,10 +6,10 @@ export default function NotFound() {
   return (
     <section className="flex min-h-[70svh] items-center">
       <Container className="flex flex-col items-center text-center">
-        <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent">
+        <span className="inline-block bg-accent px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent-foreground">
           404
         </span>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+        <h1 className="font-display mt-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           This page doesn&apos;t exist.
         </h1>
         <p className="mt-4 max-w-md text-base leading-relaxed text-foreground-muted">

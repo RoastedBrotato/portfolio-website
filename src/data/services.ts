@@ -1,56 +1,28 @@
 import { Service } from "@/types";
 
 /**
- * "What I Build" — targeted at freelance/contract clients.
- * Keep descriptions understandable to a non-technical founder.
+ * "What I can build" — the short version, for a founder skimming the page.
+ * One line each; the case studies carry the detail.
  */
 export const services: Service[] = [
   {
-    icon: "sparkles",
-    title: "AI Applications",
+    title: "AI applications",
     description:
-      "AI-powered features and products built on real retrieval and reasoning, not just a chat widget bolted on top.",
-    capabilities: [
-      "RAG systems & document intelligence",
-      "Conversational AI & assistants",
-      "Speech transcription & translation",
-      "LLM integrations into existing products",
-    ],
+      "RAG over your own documents, assistants, transcription and translation — retrieval that actually cites its sources, not a chat widget bolted on.",
   },
   {
-    icon: "layers",
-    title: "Full-Stack Products",
+    title: "Full-stack products",
     description:
-      "End-to-end web applications, from data model to deployed UI, built to be maintained by a real team.",
-    capabilities: [
-      "SaaS applications & customer portals",
-      "Admin dashboards & internal platforms",
-      "MVP development for new products",
-      "Design-system-driven front ends",
-    ],
+      "SaaS apps, client portals, internal dashboards, MVPs — data model through deployed UI, built so a team can pick it up after me.",
   },
   {
-    icon: "plug",
-    title: "Backend & Integrations",
+    title: "Backend and integrations",
     description:
-      "The systems that keep the product running: reliable APIs, sane data models, and integrations that don't break.",
-    capabilities: [
-      "REST APIs & service architecture",
-      "Authentication & authorization",
-      "Database design (SQL & vector)",
-      "Third-party & asynchronous integrations",
-    ],
+      "APIs, auth, database design, and the third-party plumbing that quietly breaks at 2am if nobody thought about it.",
   },
   {
-    icon: "workflow",
-    title: "Business Automation",
+    title: "Business automation",
     description:
-      "Software that replaces the spreadsheet-and-email workflow with something that scales past one person.",
-    capabilities: [
-      "Workflow & approval automation",
-      "Replacing manual, repetitive processes",
-      "Connecting disconnected internal tools",
-      "Reporting & operational dashboards",
-    ],
+      "Replacing the spreadsheet-and-email workflow with something that survives past the one person who understands it.",
   },
 ];

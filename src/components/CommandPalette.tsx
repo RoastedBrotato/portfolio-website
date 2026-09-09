@@ -26,24 +26,26 @@ export function useCommandPalette() {
   return ctx;
 }
 
+/*
+ * Spelled out verbatim on purpose. Tailwind only generates CSS for classes that
+ * appear literally in source, so building these with `.map(c => \`[&_...]:${c}\`)`
+ * produced strings the scanner never saw — the headings rendered unstyled.
+ */
 const groupHeadingClass = [
-  "px-2",
-  "pb-1.5",
-  "pt-3",
-  "font-mono",
-  "text-[11px]",
-  "font-medium",
-  "uppercase",
-  "tracking-[0.15em]",
-  "text-foreground-subtle",
-  "first:pt-1",
-]
-  .map((c) => `[&_[cmdk-group-heading]]:${c}`)
-  .join(" ");
+  "[&_[cmdk-group-heading]]:px-2.5",
+  "[&_[cmdk-group-heading]]:pt-4",
+  "[&_[cmdk-group-heading]]:pb-2",
+  "[&_[cmdk-group-heading]]:font-mono",
+  "[&_[cmdk-group-heading]]:text-[11px]",
+  "[&_[cmdk-group-heading]]:font-bold",
+  "[&_[cmdk-group-heading]]:uppercase",
+  "[&_[cmdk-group-heading]]:tracking-[0.16em]",
+  "[&_[cmdk-group-heading]]:text-accent",
+].join(" ");
 
 const itemClass = cn(
-  "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2.5 text-sm text-foreground-muted outline-none",
-  "data-[selected=true]:bg-background-elevated-hover data-[selected=true]:text-foreground"
+  "flex cursor-pointer items-center gap-2.5 px-2.5 py-2.5 text-sm text-foreground-muted outline-none",
+  "data-[selected=true]:bg-background-elevated-hover data-[selected=true]:text-foreground",
 );
 
 export function CommandPaletteProvider({
@@ -80,13 +82,13 @@ export function CommandPaletteProvider({
         onOpenChange={setOpen}
         label="Search"
         overlayClassName="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
-        contentClassName="fixed left-1/2 top-24 z-[101] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-2xl outline-none sm:top-[20vh]"
+        contentClassName="fixed left-1/2 top-24 z-[101] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden border-2 border-border-strong bg-background-elevated shadow-2xl outline-none sm:top-[20vh]"
         shouldFilter
         loop
       >
         <CommandInput
           placeholder="Search sections, projects, blog..."
-          className="w-full border-b border-border bg-transparent px-4 py-3.5 text-sm text-foreground placeholder:text-foreground-subtle focus:outline-none"
+          className="w-full border-b-2 border-border-strong bg-transparent px-4 py-3.5 text-sm text-foreground placeholder:text-foreground-subtle focus:outline-none"
         />
         <CommandList className="max-h-80 overflow-y-auto p-2">
           <CommandEmpty className="py-10 text-center text-sm text-foreground-subtle">
@@ -133,7 +135,10 @@ export function CommandPaletteProvider({
                   onSelect={() => go(`/blog/${post.slug}`)}
                   className={itemClass}
                 >
-                  <FileText size={15} className="mt-0.5 shrink-0 self-start text-foreground-subtle" />
+                  <FileText
+                    size={15}
+                    className="mt-0.5 shrink-0 self-start text-foreground-subtle"
+                  />
                   <div className="flex flex-col">
                     <span className="text-foreground">{post.title}</span>
                     <span className="text-xs text-foreground-subtle">{post.description}</span>

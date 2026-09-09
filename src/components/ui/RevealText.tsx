@@ -53,7 +53,11 @@ export function RevealText({
   const motionProps =
     trigger === "mount"
       ? { initial: { y: "110%" }, animate: { y: 0 } }
-      : { initial: { y: "110%" }, whileInView: { y: 0 }, viewport: { once: true, margin: "-100px 0px" } };
+      : {
+          initial: { y: "110%" },
+          whileInView: { y: 0 },
+          viewport: { once: true, margin: "-100px 0px" },
+        };
 
   return (
     <Tag className={className}>

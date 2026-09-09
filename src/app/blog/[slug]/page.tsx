@@ -38,11 +38,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
 
@@ -52,7 +48,7 @@ export default async function BlogPostPage({
 
   return (
     <article>
-      <header className="relative overflow-hidden border-b border-border">
+      <header className="relative overflow-hidden border-b-2 border-border-strong">
         <div
           aria-hidden
           className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
@@ -68,14 +64,14 @@ export default async function BlogPostPage({
 
           <time
             dateTime={post.date}
-            className="mt-8 block font-mono text-xs font-medium uppercase tracking-[0.2em] text-accent"
+            className="mt-8 inline-block bg-accent px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent-foreground"
           >
             {formatDate(post.date)}
           </time>
           <RevealText
             as="h1"
             trigger="mount"
-            className="font-display text-h1 mt-4 max-w-3xl font-medium tracking-tight text-foreground"
+            className="font-display text-h1 mt-6 max-w-3xl font-bold leading-[1.05] tracking-tight text-foreground"
           >
             {post.title}
           </RevealText>
@@ -90,9 +86,12 @@ export default async function BlogPostPage({
         </Container>
       </header>
 
-      <Container className="py-16 sm:py-20">
+      <Container className="py-20 sm:py-28">
         <div className="prose prose-lg max-w-2xl prose-headings:font-display prose-code:before:content-none prose-code:after:content-none">
-          <MDXRemote source={post.content} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
+          <MDXRemote
+            source={post.content}
+            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+          />
         </div>
       </Container>
     </article>

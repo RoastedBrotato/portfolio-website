@@ -1,15 +1,10 @@
 import { SiteConfig } from "@/types";
 
-/**
- * Central place for personal/site information.
- * Everything marked TODO is placeholder — replace before deploying.
- */
+/** Central place for personal/site information. */
 export const siteConfig: SiteConfig = {
   name: "Waleed Ajaz",
-  initials: "WA",
   role: "Full-Stack & AI Engineer",
-  tagline:
-    "I build full-stack software, AI-powered applications, and business automation.",
+  tagline: "I build full-stack software, AI-powered applications, and business automation.",
   email: "waleedajaz1996@gmail.com",
   businessEmail: "waleed@alsufun.com",
   github: "https://github.com/RoastedBrotato",

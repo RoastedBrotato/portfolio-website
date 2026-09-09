@@ -13,7 +13,13 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useCommandPalette } from "@/components/CommandPalette";
 import { cn } from "@/lib/utils";
 
-function SearchTrigger({ className, onBeforeOpen }: { className?: string; onBeforeOpen?: () => void }) {
+function SearchTrigger({
+  className,
+  onBeforeOpen,
+}: {
+  className?: string;
+  onBeforeOpen?: () => void;
+}) {
   const { setOpen } = useCommandPalette();
 
   return (
@@ -25,8 +31,8 @@ function SearchTrigger({ className, onBeforeOpen }: { className?: string; onBefo
         setOpen(true);
       }}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:text-foreground",
-        className
+        "flex h-9 w-9 items-center justify-center text-foreground-muted transition-colors hover:text-foreground",
+        className,
       )}
     >
       <Search size={17} />
@@ -57,21 +63,18 @@ export function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-colors duration-300",
         scrolled || open
-          ? "border-b border-border bg-background/85 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent"
+          ? "border-b-2 border-border-strong bg-background/90 backdrop-blur-md"
+          : "border-b-2 border-transparent bg-transparent",
       )}
     >
       <Container className="flex h-16 items-center justify-between sm:h-20">
         <Link
           href="/"
-          className="font-display group flex items-baseline gap-2 text-lg italic text-foreground"
+          className="group flex items-center gap-2.5 font-mono text-sm font-bold uppercase tracking-[0.08em] text-foreground"
           onClick={() => setOpen(false)}
         >
-          <span>{siteConfig.initials}</span>
-          <span className="h-1 w-1 rounded-full bg-accent transition-transform group-hover:scale-125" />
-          <span className="hidden font-mono text-xs not-italic tracking-[0.15em] text-foreground-muted uppercase sm:inline">
-            {siteConfig.name}
-          </span>
+          {siteConfig.name}
+          <span className="h-2 w-2 bg-accent transition-transform duration-300 group-hover:scale-150" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -79,10 +82,10 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="group relative text-sm text-foreground-muted transition-colors hover:text-foreground"
+              className="group relative font-mono text-xs uppercase tracking-[0.12em] text-foreground-muted transition-colors hover:text-foreground"
             >
               {link.label}
-              <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-300 ease-out group-hover:scale-x-100" />
+              <span className="absolute -bottom-1.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-300 ease-out group-hover:scale-x-100" />
             </Link>
           ))}
         </nav>
@@ -118,7 +121,7 @@ export function Navbar() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-border-strong text-foreground md:hidden"
+          className="flex h-11 w-11 items-center justify-center border-2 border-border-strong text-foreground md:hidden"
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
@@ -131,7 +134,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden border-t border-border bg-background md:hidden"
+            className="overflow-hidden border-t-2 border-border-strong bg-background md:hidden"
           >
             <Container className="flex flex-col gap-1 py-4">
               {navLinks.map((link) => (
@@ -139,7 +142,7 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-background-elevated"
+                  className="px-3 py-3 font-mono text-base font-bold uppercase tracking-[0.08em] text-foreground transition-colors hover:bg-background-elevated"
                 >
                   {link.label}
                 </Link>

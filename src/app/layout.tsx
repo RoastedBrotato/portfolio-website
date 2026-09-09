@@ -4,7 +4,6 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CommandPaletteProvider } from "@/components/CommandPalette";
 import { siteConfig } from "@/data/config";
@@ -31,7 +30,7 @@ const fraunces = Fraunces({
 
 const title = `${siteConfig.name} — Full-Stack & AI Engineer`;
 const description =
-  "Full-stack and AI engineer building web applications, intelligent automation, backend systems and AI-powered products.";
+  "Full-stack and AI engineer. I take client projects from the first discovery call to production — web apps, RAG systems, and the backends behind them.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -40,15 +39,7 @@ export const metadata: Metadata = {
     template: `%s — ${siteConfig.name}`,
   },
   description,
-  keywords: [
-    "Full-Stack Engineer",
-    "AI Engineer",
-    "RAG",
-    "LLM Integration",
-    "Backend Development",
-    "Business Automation",
-    "Software Consultant",
-  ],
+  keywords: ["Full-Stack Engineer", "AI Engineer", "RAG", "Next.js", "Freelance Developer"],
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
   openGraph: {
@@ -80,11 +71,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           <CommandPaletteProvider posts={posts}>
             <SmoothScroll>
-              <div className="grain-overlay" aria-hidden />
-              <ScrollProgress />
               <Navbar />
               <main className="flex-1">{children}</main>
               <Footer />
