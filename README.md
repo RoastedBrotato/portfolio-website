@@ -194,10 +194,8 @@ npm run start   # serves on port 3000 by default
 Name, email, GitHub/LinkedIn, work history, tech stack, and resume are filled in with real
 information. Search `src/data/` for `TODO` to find what's still open:
 
-- **`src/data/config.ts`** — `siteUrl` is still the placeholder
-  (`https://portfolio-website.vercel.app`). It feeds `metadataBase`, every URL in `sitemap.xml`,
-  the sitemap reference in `robots.txt`, the OpenGraph tags and the RSS feed, so set it to the
-  real domain before relying on search or link previews.
+- ~~`siteUrl`~~ — done. Set to `https://waleedajaz.com`, which feeds `metadataBase`, every URL in
+  `sitemap.xml`, the sitemap reference in `robots.txt`, the OpenGraph tags and the RSS feed.
 - **`src/data/projects.ts`** — Moementum now leads the list with a real screenshot, gallery, and
   live demo link (`links.github` still needs the repo URL — it's a `TODO` in the file). The other
   three case studies (AI Meeting Intelligence, Real-Time Task & Notification Platform, Donor &

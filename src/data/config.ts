@@ -12,7 +12,7 @@ export const siteConfig: SiteConfig = {
   location: "Islamabad, Pakistan",
   availability: "Open to remote & contract work",
   resumeUrl: "/resume.pdf",
-  // TODO: confirm this matches your actual Vercel deployment URL (Project Settings → Domains),
-  // or replace with a custom domain if you add one later — feeds metadata, sitemap and OG tags
-  siteUrl: "https://portfolio-website.vercel.app",
+  // Feeds metadataBase, every URL in sitemap.xml, the sitemap reference in
+  // robots.txt, the OpenGraph tags and the RSS feed. No trailing slash.
+  siteUrl: "https://waleedajaz.com",
 };
