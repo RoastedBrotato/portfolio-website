@@ -189,6 +189,28 @@ body {
 }
 
 /*
+ * A GFM table with long cells would otherwise squeeze itself unreadable on a
+ * phone. Making it its own scroll container keeps the columns at a legible width
+ * and lets the table — and only the table — scroll sideways.
+ */
+.prose table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+
+.prose thead th {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/*
  * Syntax highlighting (rehype-pretty-code + Shiki, run at build time).
  *
  * Shiki emits both palettes as --shiki-light / --shiki-dark on every token, so

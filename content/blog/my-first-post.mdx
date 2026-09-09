@@ -1,0 +1,102 @@
+---
+title: "Random Draft #1"
+description: "Website is live! Why I made it, and what I'm working on"
+date: "2026-09-09"
+tags: ["yapping"]
+---
+
+> "Wohoo my portfolio is up and I can make a blog post! Let's go!! Nothing can stop me now."
+
+This has been me for the past 3 years, telling everyone around me that the most magnificent, creative and clean portfolio is on the way. But guess what, I only kept adding stuff to my GitHub repo, and never published anything.
+
+I have created an interactive puzzle piece that I even flexed to my friends, and had a pretty awesome idea for my portfolio that gave the idea of me being a creative developer.
+
+A "creative developer"? Another label I have to get behind? Does this title restrict me?
+
+Do I have to figure out a niche and then make my portfolio accordingly?
+
+Cursed with this choice paralysis, I actually never made any progress with publishing anything.
+
+But lately I have been reflecting and evolving (Digimon style), and I decided it's about time I do something about the clutter that's all pending.
+
+In words of my mother who likes to describe what I do as:
+
+> "Super daring and adventurous, because who knows when you will die" (She's being sarcastic and super pissed and mocking whatever I say)
+
+After being part of a business that I can call my own, and having a lot of stuff to work with, I've decided it was about time to just publish stuff if I wanted to get stuff done.
+
+I worked on a lot of products for the company, Alhamdulillah created the branding, website and design system for the company, and also helped my friend set up digital products for his whole company.
+
+Since things have been going on a spree, I decided this was peak time to put my work out there, and just wing the design and publish something.
+
+Once I have something live, I can keep working on it whenever I feel like it.
+
+Anyway, this was how the website came to be, and how I ended up here writing about the blog.
+
+I took a lot of help from Claude in making the website, and got all the stack details from a prompt. Of course it's mandatory to flex the stack information used to make the website (no idea why people do it)
+
+## The stack
+
+| Layer | Choice | Why |
+| --- | --- | --- |
+| Framework | Next.js 16.3.3, App Router | Server Components by default, file-based routing, build-time static generation |
+| Language | TypeScript 5 | Content is typed — a malformed project entry fails the build, not the page |
+| UI | React 19.2.8 | |
+| Styling | Tailwind CSS v4 | CSS-first config. There's no `tailwind.config.js` — design tokens live in `globals.css` under `@theme inline` |
+| Prose | `@tailwindcss/typography` | Blog body styling, pointed at the site's own tokens so it follows the theme |
+| Type | Fraunces, Geist, Geist Mono via `next/font` | Self-hosted at build, so no external request and no layout shift |
+| Motion | framer-motion 13 | Scroll reveals only |
+| Scroll | lenis | Inertial smooth scroll |
+| Theme | next-themes | Light/dark via a `data-theme` attribute |
+| Search | cmdk | The ⌘K palette |
+| Icons | lucide-react + two local SVGs | Lucide dropped brand icons from core, so GitHub/LinkedIn are hand-rolled |
+| Blog | gray-matter + next-mdx-remote | Frontmatter parsing + MDX rendering |
+| Highlighting | rehype-pretty-code + shiki | Runs at build, ships zero JS |
+
+~3,300 lines of source across 49 files.
+
+## Architecture
+
+No CMS, no database, no API. Content is typed TypeScript in `src/data/` (projects, experience, services, tech stack, config, nav) and MDX files in `content/blog/`. Adding a project means adding an object to an array; the `/work/<slug>` route generates itself.
+
+Everything is prerendered. Every single route is Static or SSG — including the OG image, the favicon, the RSS feed, `sitemap.xml` and `robots.txt`. There's no server rendering, no ISR, no middleware, no runtime API routes. The deployed output is effectively a static site with a build step, which is why hosting is a non-issue and why it's fast.
+
+Only 8 of 49 files are client components — Navbar, ThemeToggle, CommandPalette, SmoothScroll, the two Reveal helpers, ExperienceTimeline, ArchitectureDiagram. Everything else is a React Server Component, so very little JavaScript reaches the browser.
+
+## Design system
+
+### Colour
+
+Black and red. Tokens are CSS custom properties mapped into Tailwind, so a token change propagates everywhere and neither theme needs its own variants.
+
+- Dark (default): `#000` ground, `#fff` text, `#ff2b1f` accent, `#2b2b2b` hairlines, `#fff` structural rules
+- Light: inverted, but the accent drops to `#cc0000` — `#ff2b1f` only reaches 3.7:1 on white, which fails WCAG AA for body text. That's the one place the two themes deliberately diverge.
+
+### Typography — three faces, three jobs
+
+- Fraunces (variable serif, with a real italic axis) for display: the hero, section headings, post titles. Bold, tight tracking. The italic red word in "software people _open_ every day" is the one flourish.
+- Geist Sans for body prose — the only thing you actually read at length.
+- Geist Mono for everything structural: section labels, buttons, nav, dates, locations, tech lists, captions.
+
+That split is the core typographic idea: mono for machine-readable metadata, serif for statements, sans for reading. It's what keeps the page from feeling like undifferentiated text.
+
+### Layout — one rail
+
+`--rail: 10rem` and `--rail-gap: 3rem` drive `lg:grid-cols-[var(--rail)_1fr]` on every section of every page. The content column starts at the same left edge sitewide — 384px at 1440 — including the hero, the closing CTA, the case studies and the blog. Navigate from `/#work` into a case study and nothing shifts.
+
+Vertical rhythm is exactly four values: page section `py-20 sm:py-28`, article section `py-14 sm:py-16`, large list row `py-12`, small list row `py-6`.
+
+### Structure — the brutalist part
+
+- Nothing is rounded. Zero `rounded-*` classes in the codebase.
+- Two border weights, two meanings: 2px full-contrast rules separate sections; 1px hairlines divide rows inside a section. Weight encodes hierarchy.
+- Depth is a hard offset shadow — `5px 5px 0`, no blur — that presses in on hover (translates 2px, shadow shrinks to 3px). No gradients, no glows, no blur anywhere.
+- Section labels are solid red blocks. That's the only heading style, and it makes the left rail read as a running index down the page.
+
+### The two decisions that matter most
+
+One peak, not six. Originally every section had an eyebrow + serif heading + description paragraph — six equal shouts, which is the single strongest "generated" tell. Now there are exactly two large-type moments on the homepage: the hero and the closing CTA. Everything between them is a quiet red label. That's real hierarchy instead of uniform emphasis.
+
+Subtraction over addition. Removed: film-grain overlay, hero mouse-spotlight, scroll-progress bar, magnetic buttons, tech marquee, a 30-badge stack grid. Kept: word-by-word reveal on two headings, fade-up on scroll, smooth scroll. Each removed effect was fine alone; stacked, they read as a template with every switch flipped.
+
+`prefers-reduced-motion` is honoured globally — and the hard-shadow hover keeps its shadow shift while dropping the movement, so the interaction still reads without motion.
