@@ -67,8 +67,10 @@ export default async function ReviewsPage() {
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {reviews.map((review, i) => (
-                <Reveal key={review.id} delay={Math.min(i * 0.06, 0.24)}>
-                  <ReviewCard review={review} />
+                // h-full on both so the two cards in a row share a height —
+                // without it a short review leaves a ragged hole beside a long one.
+                <Reveal key={review.id} delay={Math.min(i * 0.06, 0.24)} className="h-full">
+                  <ReviewCard review={review} className="h-full" />
                 </Reveal>
               ))}
             </div>
