@@ -104,3 +104,22 @@ export interface SiteConfig {
   resumeUrl: string;
   siteUrl: string;
 }
+
+/** A visitor-submitted testimonial. `email` is collected for verification and never rendered. */
+export interface Review {
+  id: string;
+  name: string;
+  /** Job title, e.g. "Founder". Optional. */
+  role?: string;
+  /** Company or product name. Optional. */
+  company?: string;
+  body: string;
+  /** Private — used to follow up with the author, never sent to the client. */
+  email?: string;
+  /** Epoch ms. Doubles as the sort score in Redis. */
+  createdAt: number;
+  status: "pending" | "approved";
+}
+
+/** What the public pages render — the private fields stripped off. */
+export type PublicReview = Omit<Review, "email" | "status">;

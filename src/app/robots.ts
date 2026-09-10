@@ -6,6 +6,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // Token-gated moderation UI — nothing here belongs in an index.
+      disallow: "/admin",
     },
     sitemap: `${siteConfig.siteUrl}/sitemap.xml`,
   };

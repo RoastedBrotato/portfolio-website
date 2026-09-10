@@ -101,6 +101,69 @@ To add a real screenshot:
 `public/resume.pdf` is your real resume. To update it later, replace that file (keep the filename,
 or update `resumeUrl` in `src/data/config.ts` if you rename it).
 
+## Reviews
+
+Visitors can leave a review at `/reviews`. Submissions are **held for approval** — nothing a
+stranger types is ever live under your name until you approve it. The two most recent approved
+reviews appear on the homepage behind the scroll-driven marquee; `/reviews` lists all of them.
+
+### Setup
+
+Three environment variables. Copy `.env.example` to `.env.local` for local work, and set the same
+three in **Netlify → Site settings → Environment variables** for the deployed site.
+
+| Variable | Where it comes from |
+|---|---|
+| `UPSTASH_REDIS_REST_URL` | [Upstash console](https://console.upstash.com) → create a Redis database → REST API |
+| `UPSTASH_REDIS_REST_TOKEN` | Same panel, next to the URL |
+| `REVIEWS_ADMIN_TOKEN` | You invent it. Any long random string — `openssl rand -hex 32` |
+
+Upstash's free tier is far more than this needs, and it talks over plain HTTPS rather than a Redis
+socket — which is why no hosting change was needed and why it works the same on Netlify as
+anywhere else.
+
+**Everything degrades if those are missing.** With no Upstash variables the homepage section
+disappears, `/reviews` explains the form is offline, and the build still succeeds — so a fresh
+clone with no `.env.local` runs fine.
+
+### Moderating
+
+Go to `/admin/reviews`, enter `REVIEWS_ADMIN_TOKEN`, and you get two lists:
+
+- **Pending** — approve or delete. The submitter's email (if they left one) shows here and only here.
+- **Published** — unpublish (back to the queue) or delete permanently.
+
+Approving calls `revalidatePath` on `/` and `/reviews`, so the change is live on the next request
+rather than at the next deploy. Both pages also self-refresh hourly as a fallback.
+
+The page is `noindex` and `robots.txt` disallows `/admin`. The session is a 12-hour httpOnly
+cookie holding a *hash* of the token, so the token itself never sits in your browser. Every
+moderation action re-checks that session server-side — rendering the page behind a login is a
+convenience, not the security boundary, because a Server Action can be POSTed directly.
+
+### What stops spam
+
+Approval is the real defence; these just cut the noise before it reaches your queue:
+
+- A honeypot field that only a bot fills in (it gets a fake success, so it doesn't retry).
+- Three submissions per IP per hour.
+- Length limits, and a reject on reviews containing more than one link.
+
+There are no star ratings and no avatar upload — the monogram tile is generated from the name.
+Both were left out deliberately; an image upload on an open form is a moderation problem this
+otherwise avoids.
+
+### Where the code lives
+
+```
+src/lib/reviews.ts              Redis reads/writes — the only file that knows the key layout
+src/lib/adminAuth.ts            Token check + session cookie
+src/app/reviews/                Public page and its submit Server Action
+src/app/admin/reviews/          Moderation page and its actions
+src/components/reviews/         ReviewCard, ReviewForm, ScrollMarquee
+src/components/sections/Testimonials.tsx   The homepage section
+```
+
 ## Project structure
 
 ```
@@ -114,7 +177,9 @@ src/
     not-found.tsx           Custom 404
   components/
     layout/                Navbar, Footer
-    sections/               Hero, FeaturedWork, Experience, About, Services, ContactCTA
+    sections/               Hero, FeaturedWork, Experience, About, Services,
+                              Testimonials, ContactCTA
+    reviews/                ReviewCard, ReviewForm, ScrollMarquee
     project/                ProjectShowcase (homepage card), ProjectVisual (mockup/screenshot frame)
     case-study/              CaseStudyLayout (full case-study template), ArchitectureDiagram
     ui/                      Reusable primitives — Button, Badge, Container,
@@ -158,6 +223,11 @@ stack list) use `8rem`. Don't introduce a third width.
 divide rows *inside* a section. Depth is the `.brutal` / `.brutal-fg` hard offset shadow (no
 blur), never a gradient or glow. Nothing is rounded — there are no `rounded-*` classes in the
 codebase and new UI shouldn't add any.
+
+**Oversized type.** `.text-outline` (globals.css) strokes display type instead of filling it.
+The reviews marquee alternates solid and outlined words so a wall of 13rem type reads as texture
+behind the cards sitting on it rather than as a competing headline. It is the only place that
+should need it.
 
 **Labels.** `SectionLabel` (solid red block, mono, uppercase) is the only section-heading style.
 Sections do not get an eyebrow + serif heading + description stack; the hero and the closing CTA

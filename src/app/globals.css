@@ -280,3 +280,13 @@ body {
   background: var(--accent-soft);
   box-shadow: inset 3px 0 0 0 var(--accent);
 }
+
+/*
+ * Outlined display type, used by the reviews marquee. Words alternate solid and
+ * outlined so a wall of oversized type reads as texture behind the cards sitting
+ * on it, rather than as a second headline competing with them.
+ */
+.text-outline {
+  -webkit-text-stroke: 2px var(--foreground);
+  color: transparent;
+}
