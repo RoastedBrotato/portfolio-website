@@ -1,0 +1,15 @@
+# Build settings otherwise come from the Netlify UI; this file only carries the
+# secrets-scanning exception below.
+
+[build.environment]
+  # Turbopack has persisted build state between runs since Next.js 16.3, and that
+  # state includes the values of env vars the build read — so UPSTASH_REDIS_REST_TOKEN
+  # ends up inside .next/cache/turbopack/*.sst. Netlify scans everything the build
+  # produced and fails the deploy when it finds a real secret in a file.
+  #
+  # These cache directories are restored between builds and never served, so the
+  # match is a false positive for anything that ships. Scoped to the cache paths
+  # rather than SECRETS_SCAN_OMIT_KEYS or SECRETS_SCAN_ENABLED=false on purpose:
+  # the rest of the build output and the repo are still scanned, so a token that
+  # ever lands somewhere publicly served still fails the deploy.
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"
