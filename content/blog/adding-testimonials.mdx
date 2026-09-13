@@ -1,0 +1,228 @@
+---
+title: "Creating testimonials, client projects, and social impact events"
+description: "Random update of my adventures and what I've been working on"
+date: "2026-09-13"
+tags: ["yapping"]
+---
+
+> "Every place seems like a new experience. Time to get the whole experience by diving into social and political issues"
+
+My recent move to Pakistan has been quite an adventure, and can be overwhelming at times. I have taken on the attitude of saying yes to most adventures that come my way, and this comes at the cost of your social battery, challenging your insecurities, and stepping out of your comfort zone. I feel weird as a 30 year old man telling people that I'm an 'introvert'. I know for a fact that I can yap a lot given the right people and vibe, so what stops me from speaking in public? I used to take part in hackathons, have given so many presentations in college, and had worked through all these insecurities before. How come they're surfacing differently again?
+
+As you grow older and mature, you realize that you can't put your efforts into one place because of how limited time seems to be. These are the same 24 hours I had when I was in college, but somehow back then days seemed to be endless and nights felt longer. Now each day feels like a fleeting moment, and if I've not done anything productive on that specific day, I feel like I've wasted the day. In light of this ideology, I've been trying out a lot of new things, having a lot of social interactions, and have even started making stories, instants and finally writing about it.
+
+Something about sitting down, reflecting back on the stuff you've done, and writing about it seems to offer me some sort of clarity and insight into the kind of life I'm living. It helps me see that it's not so bad after all, and also helps me somehow see the direction I've been working towards.
+
+Before I tell you about what I've been working on, I wanted to share about a social event I recently attended, and I really liked the community. I came across a post on Reddit by a page called muslimmehdieducationfoundation. They were talking about forming a community to discuss social impact, and how each of us could contribute. Given my background in the NGO sector, I was inclined to attend and help out. Unfortunately I did not get enough sleep but still made it to the event in a semi-dead state. Met some really talented people and learned about how many causes are being worked towards, and how ill-informed I am about the challenges this country faces, like the education system, women's rights and so on. I would like to be more informed about this and help out in whatever way I can. The first step is obviously levelling up my own information and becoming more aware of the situation around me. Since I'm in the country and already figuring out life, might as well figure out stuff happening around me too.
+
+On my website, I've been working on improving my blogs, and also added the feature to add testimonials, so that people who love me, or who've worked with me can write things about me for other people to read. Of course it had to be moderated because I know my friends like to troll and I wouldn't want the whole testimonial section to be a wall of roasts haha.
+
+Anyway, here's the stuff about the blog and the other project I've been working on. Added some technical details with AI for people who care about it.
+
+## The testimonials
+
+The honest reason this exists: the website was making claims about client work with absolutely nothing to back them up. Case studies are me, describing my own work, in my own words. That's fine, but it's not evidence. Anyone can write a case study about how brilliantly they solved a problem nobody can verify.
+
+So now there's a form. If we've worked together, you can write whatever you want and hit submit. It lands in a queue, I read it, and then it goes up.
+
+That moderation step isn't me curating out criticism, by the way an honest "he took three weeks longer than he said he would" is a review I'd publish, because it's true and I'd deserve it. It's there because my friends absolutely will treat an open form on my own website as an invitation, and I'd rather the section not become a wall of roasts. I'll take the roasts in the group chat.
+
+The whole thing took a day to build, wedged in between commits on a client project. Which brings me to the other half of this post.
+
+### How it actually works
+
+The awkward part of this feature is that this site has no backend. Every page is prerendered at build time. No database, no API routes, no server rendering. The projects and the experience are typed TypeScript files, the blog is MDX files in a folder. Adding a feature where strangers write to permanent storage kind of breaks that whole idea, unless you build it carefully.
+
+Four things it had to do:
+
+1. Accept a review from anyone, no account, no login.
+2. Publish nothing until I've read it.
+3. Still build fine on a fresh clone with no environment file.
+4. Not take the homepage down if the storage provider has a bad day.
+
+Storage is Upstash Redis, over its REST API:
+
+| Key | Shape | Purpose |
+| --- | --- | --- |
+| `review:<id>` | JSON object | The review itself |
+| `reviews:approved` | Sorted set, score = `createdAt` | The public list |
+| `reviews:pending` | Sorted set, score = `createdAt` | The moderation queue |
+| `rl:review:<ip>` | Counter with TTL | Per-IP submission cap |
+
+REST rather than a normal TCP connection is the whole reason this works on Netlify Functions without any fuss. Every call is just a `fetch`, so there's no connection pool to keep warm and nothing leaking between invocations. And because the sorted sets are scored by creation timestamp, "newest first" is one `zrange` with `rev: true` — no sorting in application code.
+
+Everything checks one function before it touches Redis:
+
+```ts
+export function reviewsEnabled(): boolean {
+  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+}
+```
+
+If that's false, reads return empty arrays and the UI just says it's unavailable. The client is created lazily so importing the module never throws in an unconfigured environment, and the homepage section returns `null` entirely rather than rendering a section whose only button leads to a form that can't accept anything. Someone cloning this repo with no `.env` should still get a working build.
+
+Reads also swallow their own errors and return nothing:
+
+```ts
+try {
+  const ids = await db.zrange<string[]>(key, 0, limit ? limit - 1 : -1, { rev: true });
+  // …
+} catch (error) {
+  console.error(`[reviews] failed to read ${key}`, error);
+  return [];
+}
+```
+
+An Upstash outage should cost me the reviews section, not the whole homepage. That matters twice over, because this code runs during prerendering — a throw there wouldn't degrade a page, it would fail the entire build.
+
+The email field is optional and never published, so the mapping to the public shape is built field by field instead of deleting the private ones. Delete-the-private-fields works right up until someone adds a field to the type and forgets to update the deletion list. This way a new field is private until I deliberately make it public.
+
+### Keeping the bots out
+
+Three layers, each doing a different job.
+
+**A honeypot.** A hidden field no human ever sees, positioned off-screen rather than `display: none` because some bots know to skip those. Anything in it is a bot. The fun part is what happens next:
+
+```ts
+if (field(formData, "website")) {
+  return { status: "success", message: "Thanks — your review is in the queue." };
+}
+```
+
+It reports success. A bot that knows it failed just comes back with a different shape.
+
+**A link cap.** More than one URL in the body gets rejected outright. Link-stuffing is the one spam pattern that's worth refusing before it ever reaches the queue.
+
+**A rate limit.** Three submissions per IP per hour. It deliberately fails open — if Redis is unreachable the form still accepts, because losing a genuine review to an outage is worse than letting a few extras into a queue that a human reads anyway.
+
+Also worth saying: the form posts to a Server Action, and a Server Action is just a POST endpoint anyone can call directly. So none of the `required` and `maxLength` attributes on the inputs are trusted. Every field is validated again on the server, and the result is always written as pending regardless of what anyone sends.
+
+### The moderation page
+
+There's exactly one admin, me, so building a real auth system would have been more moving parts than the thing it protects. Instead it's one secret in the environment, and the browser only ever holds its SHA-256 digest:
+
+```ts
+function matches(a: string, b: string): boolean {
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  // timingSafeEqual throws on a length mismatch, which would itself leak length.
+  if (left.length !== right.length) return false;
+  return timingSafeEqual(left, right);
+}
+```
+
+A stolen cookie gets you a session but never the token itself, and the comparison is constant-time so you can't refine a guess by timing it.
+
+The thing I had to keep reminding myself: hiding the admin page behind a cookie is a UI convenience, not a security boundary. Every moderation action can be POSTed directly without ever loading that page, so each one re-checks the session server-side first. Each button is also its own little form, which means the entire page works with no client-side JavaScript at all.
+
+Approving a review changes two prerendered pages, so the admin actions revalidate both. The reviews page also has an hourly revalidation as a safety net, in case an on-demand one ever gets missed — an approved review shows up within the hour instead of waiting for me to deploy something.
+
+### The big type behind the cards
+
+The oversized "Testimonials / Reviews" band on the homepage is scroll-linked rather than time-based:
+
+```tsx
+const { scrollYProgress } = useScroll({
+  target: ref,
+  offset: ["start end", "end start"],
+});
+const x = useTransform(scrollYProgress, [0, 1], [START, END]);
+```
+
+Nothing animates on its own. You drive it, and if you stop scrolling it sits perfectly still.
+
+The fiddly bits took longer than the animation did. The row starts already cut off by the left edge, so it reads as a slice of something longer rather than a heading that happens to begin there. The words alternate solid and outlined, because a solid wall of type that size fights the cards sitting on top of it. It's `aria-hidden`, because a screen reader does not need to hear "Testimonials Reviews" eight times in a row. And under `prefers-reduced-motion` it just renders still.
+
+### The bug that only showed up in production
+
+Everything worked locally, then the Netlify deploy failed on a secrets-scanning error.
+
+Turns out Turbopack has persisted build state between runs since Next.js 16.3, and that state includes the values of the environment variables the build read. So my Upstash token was sitting inside `.next/cache/turbopack/*.sst`. Netlify scans everything the build produces and fails the deploy when it finds a real secret in a file, which is correct behaviour and genuinely saved me from a bad habit at some point in the future.
+
+The fix, scoped as narrowly as I could manage:
+
+```toml
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"
+```
+
+Cache paths only. Not the nuclear option of turning scanning off, because if that token ever lands in something that actually gets served to a browser, I still want the deploy to fail.
+
+## The other project — White Peaks
+
+The other thing I've been building is the website for **Benda Offroad Qatar**, which is the White Peaks launch of the Benda lineup in Qatar. White Peaks is the official Benda partner there, and Benda makes off-road vehicles — the Redstone quads and the Supernovae six-seaters. So the site is ten models with full spec sheets, colourway pickers, a gallery, and a contact flow that routes to WhatsApp, because that is genuinely how sales happen in that market.
+
+First commit was 2 September. The homepage narrative was done by the 8th, client feedback came back on the 9th, and I spent that same day running an accessibility and performance audit against my own work and filing issues on myself. The testimonials went in on the 10th. Then the 12th and 13th went straight back to Benda for the gallery rebuild and Arabic URLs.
+
+I want to say something about doing two things at once, because I went in expecting them to fight each other and they didn't.
+
+Client work has a shape imposed on it from outside. There's a deadline, there's a feedback round, there's somebody's actual business waiting at the other end. Portfolio work has no shape whatsoever, which is exactly the trap I wrote about in the last post. Three years of adding things to a repo and publishing nothing.
+
+What actually happened is that the Benda deadline gave the day a spine, and the portfolio work slotted into the gaps around it. The constraint wasn't the enemy. The constraint was the only reason anything got finished at all. Two weeks of trying to "find time" for my own website would have produced nothing. Two weeks with a client deadline produced both.
+
+It helped a lot that they share a stack. Both are Next.js 16, React 19, TypeScript, Tailwind v4, both deploy to Netlify. I wasn't switching between two worlds, I was switching between two rooms in the same house.
+
+### The stack
+
+| Layer | Choice | Why |
+| --- | --- | --- |
+| Framework | Next.js 16.3.4, App Router, `output: "export"` | Ships plain HTML/CSS/JS to `out/`. No Node server in production |
+| Language | TypeScript 5 | A missing Arabic translation is a type error, not a silent English fallback |
+| UI | React 19.2.8 | |
+| Styling | Tailwind CSS v4 | CSS-first config, same as this site |
+| Motion | GSAP 3.15 + ScrollTrigger + SplitText | Pinned hero, scroll choreography, per-character reveals |
+| 3D | Three.js 0.186 | The gallery's WebGL transition stage |
+| i18n | Hand-rolled, `[lang]` route segment | Two locales and a typed dictionary is less code than configuring a library |
+| Forms | Netlify Forms | Static host, working contact form, no backend |
+| Hosting | Netlify | `publish = "out"`, immutable cache headers on static assets |
+
+### Static export is the thing everything else bends around
+
+`output: "export"` means the build produces plain files you can drop on any host. It also means no middleware, no redirects, no API routes, and no image optimization. Every one of those absences had to be solved by hand.
+
+**Arabic needed real URLs.** Originally the language lived in `localStorage`, which meant the server always rendered English. So the Arabic half of the site had nothing for a crawler to index and no URL anyone could share — which for a business launching in Qatar is not a small problem. Now `[lang]` sits *above* the root layout, which is what lets that layout server-render `<html lang dir>` per locale. Every page exists at `/en/atvs` and `/ar/atvs`, with reciprocal `hreflang` and both locales paired in the sitemap.
+
+**The bare `/` has nowhere to redirect to.** No middleware and no redirects in an export. So `public/index.html` is a tiny `noindex` router that forwards to `/en/` or `/ar/` based on stored preference, then browser language. A static host serves it as the directory index. `next dev` doesn't do that, so there's a dev-only redirect in the config, which is why the build prints a warning about redirects not working with `output: export` that is entirely expected and confused me for a solid ten minutes.
+
+**Links can't be plain `next/link`.** An `href="/atvs"` would quietly drop an Arabic reader back into English. Everything internal goes through a `LocaleLink` that handles the prefixing, so no link can forget.
+
+### RTL is more than flipping the direction
+
+The detail I genuinely did not expect to lose an afternoon to: technical strings sitting inside Arabic copy. The hero has values like `997 CC` and `N° 01`. Put those in a normal `span` inside RTL text and the bidi algorithm reorders them — `997 CC` renders as `CC 997`. The fix is `<bdi>`, which isolates the run from the surrounding direction.
+
+Completely obvious in hindsight, and completely invisible unless you can read the language. Good reminder that localization isn't a translation pass, it's a category of bug.
+
+### The gallery
+
+The gallery is a single Three.js plane that cross-fades between photographs with a distortion that peaks in the middle of the transition and resolves to nothing at both ends. The image is only ever warped while it's actually changing:
+
+```glsl
+// Peaks at the midpoint, zero at both ends.
+float energy = sin(uProgress * PI);
+```
+
+The plane keeps a constant box and each texture is fitted inside it in the fragment shader, so a portrait cockpit shot and a wide dune run can trade places on the same geometry without either getting cropped and without the frame jumping size between them. The displacement runs *with* the scroll direction too, which is a tiny thing that makes it feel like you're driving it rather than watching it play.
+
+### Making it not weigh a tonne
+
+`output: "export"` forces images to be unoptimized. The `sizes` attribute does literally nothing, and every file ships exactly as it sits on disk. Which means the source file is the only lever you have.
+
+So I pulled it manually. There's a script that re-encodes the image folder to caps by role. Full-bleed and gallery at 1600px, colourways at 1200px, and it's idempotent, so files already within their cap get skipped and repeat runs don't slowly destroy the library. That took it from 11.20MB to 8.98MB across 35 files.
+
+The bigger offender was the hero video, at 9.7MB. On its own that was comparable to all 113 images on the site combined, and it autoplayed on every single first visit, including phones on mobile data. It's decorative, it sits behind a dark scrim, and there's a 46KB poster that stands in for it perfectly well. So the element now ships with **no `src` and no `autoPlay`**, and an effect attaches the source only where that download is a reasonable thing to spend: a viewport of at least 768px, no `Save-Data` preference, and not a reduced-motion user.
+
+The thing worth writing down, because it cost me a while: dropping `preload` alone does nothing. `autoPlay` makes the browser fetch the file regardless of the preload hint. You have to actually withhold the `src`. After the change, a 1440px viewport makes one video request and a 375px viewport makes zero.
+
+### What's still unfinished
+
+The site isn't live yet — it's waiting on the domain, which also drives the canonical URLs, the Open Graph tags, the `hreflang` and the sitemap, so nothing's really final until that's pointed. The README has a whole "before going live" section listing exactly what's outstanding and why: specs that were sourced from Benda's published numbers and should be checked against the actual import specs, two models that ship in a single factory finish because no colour shoot was supplied, and a known Next.js dev-server bug that I documented rather than papered over.
+
+I've started doing this on every project now. A README that only describes the happy path is a README that lies, and I'd rather hand something over with its rough edges labelled than have someone discover them on their own at the worst possible moment.
+
+## Anyway
+
+Two weeks, two builds, one social event I showed up to on about four hours of sleep, and a growing list of things about this country I clearly need to learn.
+
+Writing it down does the thing I said at the top; it makes the direction visible. Looking back at it now, all of it points the same way: doing the work properly, being honest about what's unfinished, and showing up for things even when the social battery says no.
+
+And if we've worked together, [the review form is open](/reviews#write).
