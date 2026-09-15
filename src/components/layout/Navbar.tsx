@@ -11,6 +11,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useCommandPalette } from "@/components/CommandPalette";
+import { useLenis } from "@/components/SmoothScroll";
 import { cn } from "@/lib/utils";
 
 function SearchTrigger({
@@ -43,6 +44,7 @@ function SearchTrigger({
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -51,12 +53,29 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /*
+   * Holding the page still behind the open menu has to go through Lenis, not
+   * through `overflow: hidden`. Lenis preventDefault()s the wheel and then
+   * scrolls the window itself, and `overflow: hidden` only stops *user* scroll
+   * — programmatic scrolling still lands, so the article slid past underneath
+   * the menu. lenis.stop() halts that, and the `lenis-stopped` class it sets
+   * puts `overflow: clip` on <html> (lenis.css) to catch the scrollbar and
+   * arrow keys as well.
+   */
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+
+    if (lenis) {
+      lenis.stop();
+      return () => lenis.start();
+    }
+
+    // Reduced motion means no Lenis, so the native lock is the only lock.
+    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [open, lenis]);
 
   return (
     <header

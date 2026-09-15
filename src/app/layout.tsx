@@ -2,6 +2,19 @@ import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
+/*
+ * Lenis's own stylesheet, and it is not optional. Its first rule is
+ * `html.lenis, html.lenis body { height: auto }`, and that rule is what keeps
+ * the scroll limit honest.
+ *
+ * Lenis caches a scroll limit of `documentElement.scrollHeight - innerHeight`
+ * and re-reads it only when a ResizeObserver on <html> fires. A ResizeObserver
+ * watches a *box*, so pinning the root to `height: 100%` pins it to the
+ * viewport forever: the page can grow underneath it and the observer never
+ * fires. The limit measured during hydration is then the limit for the life of
+ * the page. See SmoothScroll.tsx for what that looks like from the user's side.
+ */
+import "lenis/dist/lenis.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
@@ -68,9 +81,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      {/* min-h-dvh, not min-h-full: the sticky footer needs to measure against
+          the viewport, not against a percentage of <html> — which is `auto`
+          both before Lenis mounts and after lenis.css applies. */}
+      <body className="flex min-h-dvh flex-col bg-background text-foreground">
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="dark"
