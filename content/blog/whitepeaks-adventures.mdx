@@ -1,0 +1,59 @@
+---
+title: "Peaking at White Peaks"
+description: "Not in a psychedelic way — literally, at mountains. Swat, hospitality, and shipping a client site from a village."
+date: "2026-09-15"
+tags: ["yapping"]
+draft: false
+---
+
+> "I always wondered what a digital nomad's life was actually like. Turns out the answer involves a lot of mountains."
+
+I always wondered how digital nomads pull it off; how anyone manages to travel and work at the same time without one of the two quietly falling apart. Well, life handed me the chance to find out.
+
+One of the homies who came to Pakistan with me is from Swat, and I had the honour of visiting his hometown. It might sound like an exaggeration, but this was the first time I'd had a proper tour of a village, and the hospitality I received was insane. I met my friend's family, ate home-cooked food after way too long, and for a bit it felt like I was back home. A much needed break from the vacation I was already on, haha.
+
+One important tidbit I picked up: "Pathan" is a made-up word, and the actual word is Pukhtun. I'm fairly sure my friends have told me this before and my dementia-ahh brain just failed to store it. I also found out that the chapli kebab up there is genuinely amazing, and that home-cooked food will always be my top pick.
+
+Swat is surrounded by mountains. Like, literally — everywhere I looked, mountains. Coming from the Gulf, that was quite an experience. I'm used to an open, endless horizon. I know what a full sunset looks like, the whole thing, start to finish. People who've only ever lived here might never see one, and it took standing somewhere with no horizon at all for me to notice that I'd been taking it for granted.
+
+## The website I'd been promising for six months
+
+Before the travelling, I'd been working with a client who also happens to be a close friend — and because of that second part, he'd spent about six months telling me to hook him up with a website. Then he finally sent over the actual details of what he needed, and I decided to take the challenge on and get it finished properly, and quickly.
+
+I studied the material, thought about the design system, and got to work. The fiddly bits were all Claude, of course. That's what coding has become for me now: I mostly manage the structure. I barely touch the code, which sometimes feels off. But hey, if it can cook me a carousel in ten minutes, I don't mind spending my time refining it instead. That's roughly what we were doing with Stack Overflow anyway.
+
+## It's live
+
+I [wrote about this project last time](/blog/adding-testimonials), and that post ended on "the site isn't live yet — it's waiting on the domain."
+
+It's not waiting any more. [bendaoffroad.qa](https://bendaoffroad.qa) is up.
+
+The stack and the interesting build problems — the static export, the Arabic routing, the WebGL gallery, getting the hero video to stop shipping 9.7MB to phones — are all in that previous post, so I won't do the tour again. What I want to write about here is the last mile, because that turned out to be where the sneakiest bug of the whole project was hiding.
+
+### The one-line bug that would have quietly sunk the SEO
+
+The site has a single `SITE.url` string. One string that drives every canonical tag, the whole `hreflang` set, `og:url`, all 28 `<loc>` entries in `sitemap.xml`, and the `Sitemap` line in `robots.txt`.
+
+It said `www.bendaoffroad.qa`. But Netlify's primary domain is the apex, so `www` 301s to `bendaoffroad.qa`.
+
+Which means every canonical tag on the site pointed at a host that immediately redirects somewhere else. Search Console doesn't index a page like that, it files it under "Page with redirect" and moves on.
+
+The site would have looked completely fine to every human who visited it. It just would have been slowly, invisibly failing at the one job it was built for, which is being findable by people in Qatar searching for these vehicles.
+
+The fix was to point that string at the apex, so nothing in Netlify or DNS had to change and the existing certificate already covered both names. Then I checked it against the built output: 28 sitemap URLs, zero references to the `www` host anywhere in `out/`, canonicals unchanged in shape.
+
+The lesson: a canonical URL isn't a preference you declare, it's a claim about what your CDN actually serves. If those two disagree, the tag is worse than useless, because it's confidently wrong.
+
+### Deleting things is harder in two languages
+
+The gallery had six frames that rendered with `fit: "contain"` in a square cell — two product feature shots and four model frames. They just looked wrong next to everything around them.
+
+Cutting them is easy. Cutting them in a bilingual site is slightly less easy, because every English entry has an Arabic counterpart in a separate overlay file, and removing one side leaves an orphan on the other. So both moved together: 18 items, 18 translations.
+
+Small thing, but it's the kind of small thing that rots. One orphaned translation is invisible until an Arabic reader hits it.
+
+## Anyway
+
+A village in Swat, mountains in every direction, a plate of chapli kebab, and a canonical-tag bug fixed somewhere between the two.
+
+The digital nomad thing is less romantic than the posts make it look. A lot of it is just finding a signal good enough to push a commit. But I did genuinely spend a week working in a place where the horizon was mountains instead of nothing, and the site I'd been promising for half a year finally went live from there. I'll take that.
