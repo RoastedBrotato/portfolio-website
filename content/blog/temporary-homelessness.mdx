@@ -1,0 +1,115 @@
+---
+title: "Rental time's up, still no products launched"
+description: "Life's way of offering me physical and mental exercise. Plus a proper writeup of GymLink, the coaching marketplace I've been building."
+date: "2026-09-17"
+tags: ["yapping"]
+draft: false
+---
+
+> "Came back from the trip to an apartment whose contract had already run out."
+
+I always took pride in how mature and organised I was about planning things. Apparently not. The new me is a dumbass who can't plan a month ahead. That's the downfall of trusting "the flow" — which is a very elegant way of saying I procrastinated, haha.
+
+Started the day earlier than usual and rushed to a coffee shop to get some work done. I've been building a leads generator for the company, and I wanted to test the quality of what it was actually pulling.
+
+Initially it was bad. It couldn't find the kind of companies I needed at all. After a lot of tweaking and refining, it started returning something closer to what I wanted — not exactly right, but a decent start. To sanity-check the pipeline I opened the companies' websites myself, and the feedback the generator had given me was accurate. Very basic, but accurate.
+
+It still needs to understand the kind of projects I'm trying to land. Which would be easier if I had a clearer sense of direction myself, haha.
+
+The leads generator is still a mess, so I'll write about it once I've actually made progress and figured out what works for the company. I also need to work out how to show what the company is even about — it looks messy right now. That's a UX problem I'll need creative people to help me solve, and I'm hoping to find them in Karachi, since the creative scene there looks pretty lit from what I've been seeing.
+
+Lahore has a good creative side too, but that's for another time. One thing at a time, whether it's travel or a project. Running two in parallel is draining, especially when you also have to clear out your apartment, move everything to a friend's place, and figure out your next steps.
+
+The other thing I've been building is a gym coaching platform, and that one has come far enough to write about properly. So here's where it's at.
+
+## GymLink
+
+**GymLink** is a two-sided marketplace connecting certified fitness coaches with clients. Coaches sign up, pass verification, set their own tiered packages, and get paid through the platform. Clients browse coaches, get approved, pay, and then train under that coach's plan — logging workouts, diet, and daily metrics along the way.
+
+It started in April as a much smaller idea: a tool for one coach to manage their clients. Most of April to July went into the coaching side of it, and honestly that's the part I'd use myself:
+
+- Workout and diet plan builders, with PDF uploads
+- A logbook for workout logging with volume comparison against the last session
+- Morning metrics, nightly check-ins, measurements, activity, weekly feedback and requests
+- Progress photos, with client-side compression because phone uploads kept failing
+- Coach and client dashboards with checklists and trends
+
+A lot of those commits are just me fixing things that broke on a phone. The photo upload flow alone took about four attempts before it stopped falling over.
+
+### The pivot
+
+Then in September I changed the business model, and that's the interesting part.
+
+The original plan was SaaS: coaches pay GymLink a flat monthly fee, tiered by how many clients they have. I actually built that — multi-tenant orgs, Stripe billing, Starter/Growth/Scale plans, trials, a middleware lockout for lapsed subscriptions.
+
+It survived exactly one day. The next commit rips all of it out.
+
+The problem with charging the coach a subscription is that the coach carries all the risk before earning anything, and the platform earns whether or not a single client ever pays. Clients weren't paying through the platform at all — the coach's monthly rate was just a number displayed on a profile. So GymLink was charging for software while sitting right next to the actual transaction and not touching it.
+
+The marketplace model inverts that. Clients pay coaches *through* the platform, and GymLink keeps a published 15% cut. Coaches pay nothing until they earn something. That's how Fiverr, Upwork and Patreon work, and it's a much easier thing to ask someone to sign up for.
+
+That change needed three things that didn't exist yet.
+
+### Verification, because anyone can call themselves a coach
+
+A coach can't list publicly until GymLink staff manually approve them. Certification details, a social handle, and a Stripe Identity government-ID check, all reviewed in an admin queue.
+
+I went looking for an API that verifies a fitness certification and there isn't one. Anywhere. So the review is manual by design, the same way Fiverr Pro, Cameo and TaskRabbit gate their sellers. I'd rather have a bottleneck I control than a green tick that means nothing.
+
+### Packages instead of one flat rate
+
+The single monthly rate became up to three tiered packages — name, price, feature bullets, and a flag for whether video feedback is included. Each one is backed by a real Stripe Product and Price, and changing a price archives the old one rather than mutating it, so historical charges still make sense.
+
+The fee breakdown updates live as the coach types a price. They see what they keep before they commit to a number, instead of discovering it on the first payout.
+
+### Getting coaches actually paid
+
+Stripe Connect Express for onboarding, then Stripe Checkout for the client. The client's payment is a destination charge with `application_fee_percent: 15`, so the split happens inside Stripe and there's no ledger of my own to keep in sync.
+
+The gate order matters here: a coach must be verified before their profile goes public, and must have finished Connect onboarding before a client can check out. Otherwise you get money arriving for someone with nowhere to send it.
+
+The fee lives in one constant in `src/lib/stripe/marketplace.ts`. If the rate ever moves, it moves in one place.
+
+### Tracking it like a real project
+
+The other thing I changed is how I manage the work. Every stage is a GitHub milestone, every unit of work is an issue, and `ROADMAP.md` is the map while GitHub holds the status. Closed issues explain *what was built and why*, not just that it happened.
+
+Seven stages, six of them done: homepage redesign, marketplace foundation, verification, packages, Connect payouts, paid enrollment. All of it typechecks, lints clean, and builds.
+
+## Where it's actually at
+
+Stage 7 is launch readiness, and this is the honest part: none of stages 3–6 had touched the live database or made a single real Stripe call until now. The migrations are applied, the storage buckets exist, and four demo coaches are seeded and live on the directory.
+
+What's left is QA against real Stripe test mode — the Identity flow, Connect onboarding, and a package checkout with the fee split landing correctly. One item is properly blocked: bootstrapping a platform admin needs an account to exist, and the live project has zero accounts, so somebody has to sign up through the app first before I can promote them.
+
+I also found a pre-existing bug while I was in there. The `plan-pdfs` storage bucket didn't exist in the live project at all, even though the code has been writing to it. Nothing to do with the marketplace work — it was just sitting there waiting to fail.
+
+## The problem I can't code my way out of
+
+I did a competitive research pass to see who else has built this. Internationally, no platform combines all three of GymLink's pillars — mandatory identity verification, coach-defined tiered packages, and an automatic published-commission split. CoachUp is the closest real sibling, but it's session-based sports coaching rather than monthly fitness packages. Trainerize has a storefront bolted onto an existing SaaS tool, with self-reported credentials.
+
+In Pakistan there's no direct match at all. The closest things running are Marham and Oladoc, the doctor-telehealth marketplaces, which list "Fitness Trainer" as a minor category — self-reported credentials, one flat rate each. Gym Passport is a ClassPass-style gym-access subscription, and AimFit is a single-brand coaching product, not an open marketplace.
+
+That's either genuine white space or a sign the market hasn't proven out yet. The research can't tell me which.
+
+But here's the thing that stopped me: **Stripe doesn't support Pakistan.** Not for payouts, not at all. GymLink's entire payment layer is Stripe — Connect, Identity, Checkout. A Pakistan-based coach can set their packages and pass verification, but the part where they get paid simply does not work.
+
+Which is a genuinely annoying thing to discover while sitting in Pakistan.
+
+I'm not building a second payment rail speculatively. It's an open strategic question in an issue, not a task. If Pakistan turns out to be a real target market, the options are Safepay — a local company built partly because of this exact gap — a direct JazzCash/EasyPaisa integration, or a payment facilitator that already handles Pakistani payout compliance. All of those are real work, and none of them is worth starting until I've decided the market is worth it.
+
+## What's next
+
+Three things, roughly in order:
+
+1. **Finish stage 7.** The Stripe walkthrough end to end, in test mode, with real API calls. Verification, onboarding, checkout, fee split. That's what the next GymLink post should cover, including whatever breaks — and something always breaks between "it builds" and "it works against a live API".
+2. **Answer the Pakistan question.** Either it's a target market and there's a second payment rail to design, or it isn't and GymLink launches somewhere Stripe supports.
+3. **The leads generator**, once it's less of a mess and I can say something useful about what actually works.
+
+## Anyway
+
+An apartment I no longer live in, everything I own at a friend's place, a coffee shop as an office, and a marketplace that works everywhere except the country I'm currently standing in.
+
+The thing I keep coming back to is that deleting the SaaS billing system one day after building it was the best decision in the whole project. A day of work thrown away, and it saved me from shipping a model that was wrong in a way I'd have felt slowly, over months, instead of immediately.
+
+Better to plan the business model properly than the apartment lease, I suppose. One of the two is easier to move out of.
