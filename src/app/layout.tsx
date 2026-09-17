@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
@@ -102,6 +103,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </CommandPaletteProvider>
         </ThemeProvider>
       </body>
+
+      {/*
+       * Cloudflare Web Analytics. The token is public by design — it ships in
+       * the HTML either way — so it lives here rather than in the environment.
+       *
+       * Through next/script rather than a raw tag so it loads exactly once
+       * across client-side navigations; a plain tag in the root layout would
+       * re-run on every route change. `afterInteractive` over `lazyOnload`
+       * because the latter waits for browser idle, which can miss a quick
+       * bounce — the visit most worth counting.
+       *
+       * Counts are a floor, not a total: the beacon is client-side, so
+       * adblockers remove an unmeasurable slice of real traffic.
+       */}
+      <Script
+        type="module"
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "d500335376f846078037fea7d9f38dc0"}'
+        strategy="afterInteractive"
+      />
     </html>
   );
 }
