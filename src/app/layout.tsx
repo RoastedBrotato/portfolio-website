@@ -116,13 +116,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
        *
        * Counts are a floor, not a total: the beacon is client-side, so
        * adblockers remove an unmeasurable slice of real traffic.
+       *
+       * Production only, so `next dev` refreshes stay out of the numbers.
+       * NODE_ENV is inlined at build time, so this compiles the beacon out of
+       * the development bundle entirely rather than deciding at runtime.
        */}
-      <Script
-        type="module"
-        src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon='{"token": "d500335376f846078037fea7d9f38dc0"}'
-        strategy="afterInteractive"
-      />
+      {process.env.NODE_ENV === "production" && (
+        <Script
+          type="module"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "d500335376f846078037fea7d9f38dc0"}'
+          strategy="afterInteractive"
+        />
+      )}
     </html>
   );
 }
