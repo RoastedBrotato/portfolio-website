@@ -13,7 +13,11 @@ import type { PublicReview, Review } from "@/types";
  *   review:<id>        the Review object (Upstash serialises/parses JSON for us)
  *   reviews:approved   sorted set of ids, score = createdAt — the public list
  *   reviews:pending    sorted set of ids, score = createdAt — the moderation queue
- *   rl:review:<ip>     submission counter, expires after RATE_WINDOW_SECONDS
+ *   rl:<ns>:<ip>       submission counter, expires after RATE_WINDOW_SECONDS
+ *
+ * The rate limiter is shared with the feedback inbox (src/lib/feedback.ts),
+ * which is why its key is namespaced. It stays here rather than moving to its
+ * own module because this file already owns the lazy Redis client.
  */
 
 const APPROVED_KEY = "reviews:approved";
@@ -88,23 +92,41 @@ export async function getPendingReviews(): Promise<Review[]> {
 }
 
 /**
- * Per-IP submission cap. Returns false once the window's allowance is spent.
+ * Per-IP submission cap, one bucket per `namespace`. Separate buckets matter:
+ * a reader leaving notes on three posts must not find the reviews form locked,
+ * and vice versa — they are unrelated actions that happen to share an IP.
+ *
  * Fails open: if Redis is unreachable the form still works, since losing a
  * review to an outage is worse than letting a few extras into a queue that a
  * human reads anyway.
  */
-export async function withinRateLimit(ip: string): Promise<boolean> {
+export async function withinRateLimit(namespace: string, ip: string): Promise<boolean> {
   const db = redis();
   if (!db) return true;
 
   try {
-    const key = `rl:review:${ip}`;
+    const key = `rl:${namespace}:${ip}`;
     const count = await db.incr(key);
     if (count === 1) await db.expire(key, RATE_WINDOW_SECONDS);
     return count <= RATE_LIMIT;
   } catch {
     return true;
   }
+}
+
+/**
+ * The submitting IP, for rate limiting. Lives here beside `withinRateLimit`
+ * because both submission endpoints need it and a "use server" module may only
+ * export async functions, so it cannot be shared from an actions file.
+ */
+export function clientIp(headerList: Headers): string {
+  // Netlify sets the first; x-forwarded-for is the portable fallback and can be
+  // a comma-separated chain, where the client is the leftmost entry.
+  return (
+    headerList.get("x-nf-client-connection-ip") ??
+    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown"
+  );
 }
 
 export type NewReview = Pick<Review, "name" | "body"> &

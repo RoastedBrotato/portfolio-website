@@ -3,9 +3,11 @@ import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/Section";
 import { adminConfigured, isAdmin } from "@/lib/adminAuth";
 import { getApprovedReviews, getPendingReviews, reviewsEnabled } from "@/lib/reviews";
-import type { PublicReview, Review } from "@/types";
+import { getAllFeedback } from "@/lib/feedback";
+import { getAllPosts } from "@/data/blog";
+import type { Feedback, PublicReview, Review } from "@/types";
 import { AdminLogin } from "./AdminLogin";
-import { approve, logout, remove, unapprove } from "./actions";
+import { approve, logout, markRead, remove, removeFeedback, unapprove } from "./actions";
 
 /*
  * Never prerender. Without this the page's env checks can short-circuit before
@@ -100,6 +102,51 @@ function ModerationRow({
   );
 }
 
+/**
+ * Newest-first within each post, and the posts themselves ordered by whoever
+ * heard from someone most recently — a Map preserves insertion order, and the
+ * input is already sorted, so both fall out for free.
+ */
+function groupBySlug(items: Feedback[]): Map<string, Feedback[]> {
+  const groups = new Map<string, Feedback[]>();
+  for (const item of items) {
+    const existing = groups.get(item.slug);
+    if (existing) existing.push(item);
+    else groups.set(item.slug, [item]);
+  }
+  return groups;
+}
+
+function FeedbackRow({ item }: { item: Feedback }) {
+  return (
+    <li className={`border-2 p-5 ${item.read ? "border-border" : "border-border-strong"}`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <p className="text-foreground font-mono text-xs font-bold tracking-[0.12em] uppercase">
+          {item.read ? "Read" : "New"}
+        </p>
+        <p className="text-foreground-subtle font-mono text-xs">{formatWhen(item.createdAt)}</p>
+      </div>
+
+      <p className="text-foreground-muted mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+        {item.body}
+      </p>
+
+      {item.email ? (
+        <p className="text-foreground-subtle mt-3 font-mono text-xs">
+          <a href={`mailto:${item.email}`} className="hover:text-foreground transition-colors">
+            {item.email}
+          </a>
+        </p>
+      ) : null}
+
+      <div className="mt-5 flex flex-wrap gap-3">
+        {item.read ? null : <ActionButton action={markRead} id={item.id} label="Mark read" />}
+        <ActionButton action={removeFeedback} id={item.id} label="Delete" tone="danger" />
+      </div>
+    </li>
+  );
+}
+
 export default async function AdminReviewsPage() {
   if (!adminConfigured() || !reviewsEnabled()) {
     return (
@@ -125,7 +172,17 @@ export default async function AdminReviewsPage() {
     );
   }
 
-  const [pending, approved] = await Promise.all([getPendingReviews(), getApprovedReviews()]);
+  const [pending, approved, feedback] = await Promise.all([
+    getPendingReviews(),
+    getApprovedReviews(),
+    getAllFeedback(),
+  ]);
+
+  // Slug → title, so a note reads as the post it was left on. Falls back to the
+  // raw slug if the post has since been renamed away or turned back into a draft.
+  const titles = new Map(getAllPosts().map((post) => [post.slug, post.title]));
+  const byPost = groupBySlug(feedback);
+  const unread = feedback.filter((item) => !item.read).length;
 
   return (
     <Container className="py-20 sm:py-28">
@@ -174,6 +231,30 @@ export default async function AdminReviewsPage() {
               </ModerationRow>
             ))}
           </ul>
+        )}
+      </section>
+
+      <section className="mt-16">
+        <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
+          Feedback ({unread} unread / {feedback.length})
+        </h2>
+        {feedback.length === 0 ? (
+          <p className="text-foreground-muted mt-4 text-sm">No feedback yet.</p>
+        ) : (
+          <div className="mt-5 grid grid-cols-1 gap-10">
+            {Array.from(byPost, ([slug, items]) => (
+              <div key={slug}>
+                <h3 className="text-foreground-muted font-mono text-xs tracking-[0.12em] uppercase">
+                  {titles.get(slug) ?? slug} ({items.length})
+                </h3>
+                <ul className="mt-4 grid grid-cols-1 gap-4">
+                  {items.map((item) => (
+                    <FeedbackRow key={item.id} item={item} />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         )}
       </section>
     </Container>

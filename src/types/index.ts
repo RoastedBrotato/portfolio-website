@@ -123,3 +123,20 @@ export interface Review {
 
 /** What the public pages render — the private fields stripped off. */
 export type PublicReview = Omit<Review, "email" | "status">;
+
+/**
+ * A reader's note on a blog post. Private by construction: there is no public
+ * surface for these and no approve step, so unlike `Review` there is no
+ * `PublicFeedback` counterpart and nothing here is ever rendered off /admin.
+ */
+export interface Feedback {
+  id: string;
+  /** The post this was left on. Validated against the content directory on write. */
+  slug: string;
+  body: string;
+  /** Private — so I can reply. Never rendered outside the moderation page. */
+  email?: string;
+  /** Epoch ms. Doubles as the sort score in Redis. */
+  createdAt: number;
+  read: boolean;
+}

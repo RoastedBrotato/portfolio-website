@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { createReview, reviewsEnabled, withinRateLimit } from "@/lib/reviews";
+import { clientIp, createReview, reviewsEnabled, withinRateLimit } from "@/lib/reviews";
 
 /*
  * Public submission endpoint. A Server Action is a POST route that anyone can
@@ -33,16 +33,6 @@ function field(formData: FormData, key: string): string {
 /** Link-stuffing is the one spam shape worth rejecting outright, queue or not. */
 function linkCount(text: string): number {
   return (text.match(/https?:\/\/|www\./gi) ?? []).length;
-}
-
-function clientIp(headerList: Headers): string {
-  // Netlify sets the first; x-forwarded-for is the portable fallback and can be
-  // a comma-separated chain, where the client is the leftmost entry.
-  return (
-    headerList.get("x-nf-client-connection-ip") ??
-    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "unknown"
-  );
 }
 
 export async function submitReview(
@@ -100,7 +90,7 @@ export async function submitReview(
   }
 
   const ip = clientIp(await headers());
-  if (!(await withinRateLimit(ip))) {
+  if (!(await withinRateLimit("review", ip))) {
     return {
       status: "error",
       message: "You've submitted a few already — try again in an hour.",

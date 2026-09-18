@@ -10,7 +10,9 @@ import { Badge } from "@/components/ui/Badge";
 import { RevealText } from "@/components/ui/RevealText";
 import { SectionLabel } from "@/components/ui/Section";
 import { mdxComponents, prettyCodeOptions } from "@/components/blog/mdx";
+import { FeedbackBox } from "@/components/blog/FeedbackBox";
 import { getAdjacentPosts, getAllPosts, getPostBySlug } from "@/data/blog";
+import { feedbackEnabled } from "@/lib/feedback";
 import { formatDate } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -156,6 +158,24 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </Container>
         </nav>
       )}
+
+      {/* A private note to me, not a comment section — nothing sent from here
+          is published, which is why it sits below the prev/next links rather
+          than under the prose where a comment thread would go. */}
+      <section className="border-border-strong border-t-2">
+        <Container className="grid grid-cols-1 gap-8 py-16 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
+          <SectionLabel as="h2">Feedback</SectionLabel>
+          <div className="min-w-0">
+            {feedbackEnabled() ? (
+              <FeedbackBox slug={post.slug} />
+            ) : (
+              <p className="text-foreground-subtle max-w-xl text-sm">
+                The feedback box is offline right now — email me instead.
+              </p>
+            )}
+          </div>
+        </Container>
+      </section>
     </article>
   );
 }

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdmin, signIn, signOut } from "@/lib/adminAuth";
+import { deleteFeedback, markFeedbackRead } from "@/lib/feedback";
 import { approveReview, deleteReview, unapproveReview } from "@/lib/reviews";
 
 /*
@@ -48,5 +49,23 @@ export async function remove(id: string): Promise<void> {
   await requireAdmin();
   await deleteReview(id);
   revalidatePublicPages();
+  revalidatePath("/admin/reviews");
+}
+
+/*
+ * Feedback moderation. Two actions, no approve — there is no public surface to
+ * approve onto — and no revalidatePublicPages(), because no public page reads
+ * this data. Only the admin page itself goes stale.
+ */
+
+export async function markRead(id: string): Promise<void> {
+  await requireAdmin();
+  await markFeedbackRead(id);
+  revalidatePath("/admin/reviews");
+}
+
+export async function removeFeedback(id: string): Promise<void> {
+  await requireAdmin();
+  await deleteFeedback(id);
   revalidatePath("/admin/reviews");
 }

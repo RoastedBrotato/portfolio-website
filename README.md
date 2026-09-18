@@ -164,6 +164,57 @@ src/components/reviews/         ReviewCard, ReviewForm, ScrollMarquee
 src/components/sections/Testimonials.tsx   The homepage section
 ```
 
+## Post feedback
+
+Every blog post ends with a small feedback box. It is **not a comment section**: submissions go
+into a private inbox and are never published anywhere, so there is no approve step and no public
+surface to approve onto. Anyone who wants to say something publicly can use `/reviews`, which
+already exists for that.
+
+That choice is what keeps it cheap. Nothing reader-submitted ever renders on a public page, so the
+whole class of injection, spam-display and moderation problems that comes with comments does not
+apply — the only consumer of this data is `/admin/reviews`.
+
+### Setup
+
+**Nothing new to configure.** It reuses `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
+from the reviews setup above — the inbox is a second key prefix in the same database, not a second
+service. With those missing, the box on each post says it is offline and the build still succeeds.
+
+Two keys, alongside the review ones:
+
+| Key | What it holds |
+|---|---|
+| `feedback:<id>` | The note itself — post slug, body, optional email, `read` flag |
+| `feedback:inbox` | Sorted set of ids, scored by creation time |
+
+### Reading it
+
+The same `/admin/reviews` page, below the review lists — one login, not two. Notes are grouped by
+post, newest first, with an unread count in the heading. Two actions only: **mark read** and
+**delete**. Both re-check the session server-side like the review actions do.
+
+### What stops spam
+
+Same shape as the reviews form, with its own limits:
+
+- A honeypot field that only a bot fills in (fake success, so it doesn't retry).
+- Three submissions per IP per hour, in a **separate bucket** from reviews — leaving notes on a few
+  posts must not lock you out of the reviews form, and vice versa.
+- 10–1000 characters, shorter than a review because this is a note, not a testimonial.
+- The post slug is validated against `content/blog` before anything is written, so the inbox
+  cannot be seeded with junk keys by POSTing the action directly.
+
+### Where the code lives
+
+```
+src/lib/feedback.ts             Redis reads/writes — deliberately a near-copy of reviews.ts, not
+                                an abstraction over it, so no shared code path can make it public
+src/app/blog/[slug]/actions.ts  The submit Server Action
+src/components/blog/FeedbackBox.tsx        The box itself
+src/app/admin/reviews/          Reads the inbox; markRead / removeFeedback live in its actions.ts
+```
+
 ## Project structure
 
 ```
@@ -180,6 +231,7 @@ src/
     sections/               Hero, FeaturedWork, Experience, About, Services,
                               Testimonials, ContactCTA
     reviews/                ReviewCard, ReviewForm, ScrollMarquee
+    blog/                   mdx (MDX component map), FeedbackBox
     project/                ProjectShowcase (homepage card), ProjectVisual (mockup/screenshot frame)
     case-study/              CaseStudyLayout (full case-study template), ArchitectureDiagram
     ui/                      Reusable primitives — Button, Badge, Container,
