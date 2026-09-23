@@ -1,0 +1,71 @@
+---
+title: "Changing city, and my UI layouts"
+description: "Travelling to Karachi, rebranding the company website, and generating leads."
+date: "2026-09-23"
+tags: ["yapping"]
+draft: false
+---
+
+> "Couch hopping, wifi issues, rebranding a whole digital identity, and packing bags."
+
+Life has been throwing curveballs at me, and I've been taking them on like a wicketkeeper in training. Lots of bruises, but once you finally make the catch, everything feels worth it.
+
+That's pretty much how I've been feeling about life in general. When I was a kid and adults kept saying "it's one thing after another", I was like pfffftttt, look at these losers. Being one of those losers myself now, god damn, it is one thing after another.
+
+You're not even done with one task and there's a whole backlog piling up behind it.
+
+But being in Pakistan, backpacking, trekking, and living in random places has taught me one thing: never let things pile up, and get things done as they come. Procrastination is the easiest way to let everything pile up, stress out, and then do a mediocre job at all of it.
+
+Nothing wrong with doing a mediocre job I guess. If it works, it works, right? But I can't get behind that. I iterate and iterate, redesign, and try new stuff until things work out just right.
+
+My vision needs to take form or I'm not satisfied. And the more I build, the more my ambition grows, and the harder it is for my own work to please me.
+
+I guess this is how you build taste. Maybe this is how you hone a craft. I hope I can be a master at something at some point. Never thought I'd be that person, but hey, life's changed me a lot, and now I put most of my focus and attention on one solvable problem at a time. No use spreading myself out and doing everything weakly.
+
+Anyway, I've been working on my lead generator and rebranding my company's website.
+
+The biggest problem with Al Sufun's website was that it didn't show who we are or what we do. Honestly, even we were confused at first, and until you put everything down in words and have a proper plan, nothing takes form. Now the website has a lot more detail and paints a much clearer picture of what we do.
+
+It's live at [alsufun.com](https://alsufun.com).
+
+I've also been working on the lead generator, but haven't made any big breakthroughs yet. Still in the refinement stage.
+
+## The Al Sufun website
+
+[Repo](https://github.com/RoastedBrotato/sufun-website)
+
+The old site read like a PCB shop. The hero said "PCB Design, manufacturing and assembly", surrounded by board photos, and the software and AI side only showed up a screen and a half down. We do both, so the site had to say both.
+
+What changed:
+
+- **Positioning.** The homepage now leads with hardware, software and intelligence, with a switcher between the three practices: PCB, Digital, and AI.
+- **One page per service.** PCB design, software, and AI and automation each get their own page. That's also the SEO work, since you can't rank for three different things on one page.
+- **A shorter homepage.** It had grown to seven sections and about 12 screens on mobile, and the contact form was near the very bottom. Now it's four beats: who we are, what we do, proof, and the ask. The FAQ, the process, and the detailed capability lists moved to their own pages.
+- **Only real work.** The work section shows projects we can actually point at. Board designs are confidential, so we can't show them, but we can show the count: 3,419 boards.
+- **Fewer pages pretending to be more.** I retired the products page. It had one product on it, which was also already listed under work. It'll come back when there's an actual shelf of products.
+- **Speed.** Page load (LCP) went from 2100ms to 592ms, mostly by fixing animations that were repainting way more than they needed to.
+
+## The lead generator
+
+[Repo](https://github.com/osama786/opportunity-engine)
+
+Last time I said it was a mess. It still kind of is, but it's a more honest mess now.
+
+The first version gave me 48 companies, and when I actually measured them, they weren't useful. 40 of the 48 had a guess as the reason they were listed ("plausible", "likely"), and only 3 had an actual event behind them. Most of them were old, established companies, which is the opposite of the newer businesses I'm going after. That's what happens when a person browses directories: you find whoever is easiest to find.
+
+So the first thing was deciding what a lead even is. Now a company only counts if it has:
+
+1. A real company in Qatar or Pakistan
+2. Something that changed recently, with a date
+3. Evidence from somewhere other than their own website
+4. A service we can actually offer them
+5. A way in: a person, a channel, and a first line to send
+
+Then the actual discovery part:
+
+- **Tenders**, from PPRA in Pakistan and Ashghal in Qatar. A tender is basically someone telling you they want to buy something, with a deadline.
+- **Website audits**, which check a company's own site for things that tell us what they might need.
+- **New domains**, which I built and then switched off, because it couldn't actually prove a domain was new.
+- **A rules engine** that turns all of that into signals, and expires them when they get stale.
+
+What's missing is the part that ranks everything so I know who to contact first, and a proper queue to review leads in. So still refining.
