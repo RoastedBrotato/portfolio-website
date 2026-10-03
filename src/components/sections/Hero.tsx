@@ -1,28 +1,32 @@
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/Section";
 import { RevealText, type RevealWord } from "@/components/ui/RevealText";
 import { Reveal } from "@/components/ui/Reveal";
+import { HeroGrid } from "@/components/HeroGrid";
 import { siteConfig } from "@/data/config";
 
+// DRAFT — the headline and the paragraph below are yours to rewrite.
 const headline: RevealWord[] = [
-  { text: "I" },
-  { text: "build" },
-  { text: "software" },
+  { text: "Websites" },
   { text: "people" },
-  { text: "open", emphasis: true },
-  { text: "every" },
-  { text: "day." },
+  { text: "remember,", emphasis: true },
+  { text: "engineered" },
+  { text: "to" },
+  { text: "last." },
 ];
+
+/* Shared by the static grid and the interactive layer over it, so the lit
+   cells fade out toward the edges exactly where the grid lines do. */
+const GRID_MASK = "[mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]";
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
-      />
+      <div aria-hidden className={`bg-grid pointer-events-none absolute inset-0 ${GRID_MASK}`} />
+      <HeroGrid className={`pointer-events-none absolute inset-0 h-full w-full ${GRID_MASK}`} />
 
       {/* Same rail grid as every other section — the hero's rail holds the role
           tag where a section would put its label, so one left edge runs the page. */}
@@ -45,9 +49,16 @@ export function Hero() {
 
           <Reveal delay={0.15}>
             <p className="text-foreground-muted mt-8 max-w-xl text-lg leading-relaxed">
-              I take client projects from the first discovery call to production. Right now that
-              means a coaching platform running with 10 active clients, and a RAG assistant that
-              answers from a company&apos;s own documents.
+              Immersive landing pages, brand sites and interactive 3D — built by a developer who
+              spent years shipping full-stack and AI systems first. I try new tech in the open in
+              the{" "}
+              <Link
+                href="/lab"
+                className="text-foreground decoration-accent hover:text-accent underline decoration-2 underline-offset-4 transition-colors"
+              >
+                Lab
+              </Link>
+              .
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
