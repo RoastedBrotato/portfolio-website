@@ -146,3 +146,46 @@ export interface Feedback {
   createdAt: number;
   read: boolean;
 }
+
+/**
+ * A card's preview. Video is the short looping clip (muted, autoplayed while on
+ * screen); `poster` is what shows before it loads and, under reduced motion,
+ * instead of it — so it's required.
+ */
+export type Media =
+  | { type: "video"; src: string; poster: string; alt: string }
+  | { type: "image"; src: string; alt: string };
+
+/** A "Selected work" entry — the creative pieces that lead the homepage. */
+export interface WorkItem {
+  slug: string;
+  title: string;
+  /** One line. The card has room for nothing longer. */
+  description: string;
+  tags: string[];
+  /** Omit while the clip isn't cut yet — the card shows a "preview coming" frame. */
+  media?: Media;
+  /** The live piece (external). */
+  href?: string;
+  /** An internal case-study path, e.g. "/work/<slug>". Optional. */
+  caseStudy?: string;
+  year?: string;
+  /** Placeholder slot: shown by `next dev` only, never in a build. */
+  placeholder?: boolean;
+}
+
+/** A /lab entry: an experiment, a creative challenge, an AI-tool test. */
+export interface LabEntry {
+  slug: string;
+  title: string;
+  /** ISO date, e.g. "2026-10-04". Entries sort newest first. */
+  date: string;
+  /** A sentence or two — what was tried and what came of it. */
+  note: string;
+  tags?: string[];
+  media?: Media;
+  /** Repo, demo, or the post where it was shared. */
+  href?: string;
+  /** Placeholder slot: shown by `next dev` only, never in a build. */
+  placeholder?: boolean;
+}
