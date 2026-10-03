@@ -225,3 +225,16 @@ export interface QuoteRequest {
   createdAt: number;
   read: boolean;
 }
+
+/** A fact on the proof strip, shown on the homepage until real reviews exist. */
+export interface ProofItem {
+  /** The big line, e.g. "10 active clients". */
+  stat: string;
+  /** What it refers to — one short sentence. */
+  detail: string;
+  /** Where to check it: a live site, a repo. */
+  href?: string;
+  linkLabel?: string;
+  /** Placeholder slot: shown by `next dev` only, never in a build. */
+  placeholder?: boolean;
+}

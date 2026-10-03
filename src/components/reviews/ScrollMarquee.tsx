@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
  * the cards that sit on top of it.
  */
 
-const PHRASES = ["Testimonials", "Reviews"];
+const DEFAULT_PHRASES = ["Testimonials", "Reviews"];
 /** Enough copies that neither edge of the row is ever inside the viewport. */
 const REPEATS = 4;
 
@@ -26,7 +26,14 @@ const REPEATS = 4;
 const START = "-12%";
 const END = "-46%";
 
-export function ScrollMarquee({ className }: { className?: string }) {
+export function ScrollMarquee({
+  className,
+  phrases = DEFAULT_PHRASES,
+}: {
+  className?: string;
+  /** Alternated solid / outlined. */
+  phrases?: string[];
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
@@ -39,7 +46,7 @@ export function ScrollMarquee({ className }: { className?: string }) {
   const x = useTransform(scrollYProgress, [0, 1], [START, END]);
 
   const words = Array.from({ length: REPEATS }).flatMap((_, repeat) =>
-    PHRASES.map((phrase, i) => ({
+    phrases.map((phrase, i) => ({
       phrase,
       key: `${repeat}-${i}`,
       outlined: i % 2 === 1,
