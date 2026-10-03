@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
@@ -9,12 +10,12 @@ import { QuoteForm } from "@/components/quote/QuoteForm";
 import { TrackView } from "@/components/TrackView";
 import { customQuote, faqs, formatPrice, packages, processSteps } from "@/data/pricing";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Pricing",
   description:
     "Packages for immersive landing pages, brand websites and interactive 3D product showcases — what's included, typical timelines and starting prices.",
-  alternates: { canonical: "/pricing" },
-};
+  path: "/pricing",
+});
 
 export default function PricingPage() {
   return (

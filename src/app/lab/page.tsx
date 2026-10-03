@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -7,12 +8,12 @@ import { MediaPreview } from "@/components/work/MediaPreview";
 import { getLabEntries } from "@/data/lab";
 import { formatDate } from "@/lib/utils";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Lab",
   description:
     "Experiments, creative challenges and AI-tool tests — new tech tried in public, rough edges included.",
-  alternates: { canonical: "/lab" },
-};
+  path: "/lab",
+});
 
 export default function LabPage() {
   const entries = getLabEntries();

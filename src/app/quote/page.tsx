@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { BookCallButton } from "@/components/ui/BookCallButton";
 import { QuoteFormFromUrl } from "@/components/quote/QuoteFormFromUrl";
 import { siteConfig } from "@/data/config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Get a quote",
   description:
     "Tell me about your landing page, brand site or 3D product showcase — I reply within one working day with questions or a quote.",
-  alternates: { canonical: "/quote" },
-};
+  path: "/quote",
+});
 
 export default function QuotePage() {
   return (

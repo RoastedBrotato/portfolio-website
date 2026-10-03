@@ -1,12 +1,11 @@
 import { ogContentType, ogSize, renderOgImage } from "@/lib/ogImage";
-import { siteConfig } from "@/data/config";
 
 export const size = ogSize;
 export const contentType = ogContentType;
 
 export default function Image() {
   return renderOgImage({
-    tag: siteConfig.role,
-    headline: "Websites people remember, engineered to last.",
+    tag: "Get a quote",
+    headline: "Tell me what you're building. I reply within one working day.",
   });
 }

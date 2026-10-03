@@ -43,9 +43,16 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
-const title = `${siteConfig.name} — Full-Stack & AI Engineer`;
+const title = `${siteConfig.name} — ${siteConfig.role}`;
 const description =
-  "Full-stack and AI engineer. I take client projects from the first discovery call to production — web apps, RAG systems, and the backends behind them.";
+  "Creative developer building immersive landing pages, brand websites and interactive 3D product showcases — on top of real full-stack and AI engineering. Get a quote or book a call.";
+
+/*
+ * Plausible's per-site script URL (Site settings → "Site installation" in the
+ * dashboard, e.g. https://plausible.io/js/pa-XXXXXXXX.js). Unset means no
+ * script, and every track() call quietly does nothing.
+ */
+const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -54,7 +61,16 @@ export const metadata: Metadata = {
     template: `%s — ${siteConfig.name}`,
   },
   description,
-  keywords: ["Full-Stack Engineer", "AI Engineer", "RAG", "Next.js", "Freelance Developer"],
+  keywords: [
+    "Creative Developer",
+    "Immersive Website",
+    "Landing Page",
+    "Interactive 3D",
+    "WebGL",
+    "Next.js",
+    "Full-Stack Engineer",
+    "AI Engineer",
+  ],
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
   openGraph: {
@@ -130,6 +146,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           data-cf-beacon='{"token": "d500335376f846078037fea7d9f38dc0"}'
           strategy="afterInteractive"
         />
+      )}
+
+      {/*
+       * Plausible, for the custom events Cloudflare's beacon can't record —
+       * pricing views, quote starts and submits, booking and social clicks
+       * (see lib/analytics.ts). The inline stub queues any event fired before
+       * the script arrives, so an early click isn't lost. Production only, for
+       * the same reason as the beacon.
+       */}
+      {process.env.NODE_ENV === "production" && plausibleSrc && (
+        <>
+          <Script id="plausible-init" strategy="afterInteractive">
+            {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`}
+          </Script>
+          <Script src={plausibleSrc} strategy="afterInteractive" />
+        </>
       )}
     </html>
   );
