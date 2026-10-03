@@ -2,27 +2,29 @@ import { Service } from "@/types";
 
 /**
  * "What I can build" — the short version, for a founder skimming the page.
- * One line each; the case studies carry the detail.
+ * One line each; /pricing and the case studies carry the detail. The first
+ * three mirror the packages in src/data/pricing.ts.
  */
+// DRAFT — edit freely.
 export const services: Service[] = [
   {
-    title: "AI applications",
+    title: "Immersive landing pages",
     description:
-      "RAG over your own documents, assistants, transcription and translation — retrieval that actually cites its sources, not a chat widget bolted on.",
+      "One page, built to launch something — scroll-driven motion and a clear next step, fast on a phone.",
   },
   {
-    title: "Full-stack products",
+    title: "Brand websites and experiences",
     description:
-      "SaaS apps, client portals, internal dashboards, MVPs — data model through deployed UI, built so a team can pick it up after me.",
+      "Multi-page sites with a point of view: art direction, page transitions and a CMS your team can actually use.",
   },
   {
-    title: "Backend and integrations",
+    title: "Interactive 3D and product showcases",
     description:
-      "APIs, auth, database design, and the third-party plumbing that quietly breaks at 2am if nobody thought about it.",
+      "Real-time WebGL your customers can turn, configure and explore — budgeted for mid-range phones.",
   },
   {
-    title: "Business automation",
+    title: "Full-stack and AI engineering",
     description:
-      "Replacing the spreadsheet-and-email workflow with something that survives past the one person who understands it.",
+      "The part underneath: web apps, RAG over your own documents, APIs and automation — see the engineering range above.",
   },
 ];
