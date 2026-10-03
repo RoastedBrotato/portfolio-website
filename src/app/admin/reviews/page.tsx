@@ -4,10 +4,21 @@ import { SectionLabel } from "@/components/ui/Section";
 import { adminConfigured, isAdmin } from "@/lib/adminAuth";
 import { getApprovedReviews, getPendingReviews, reviewsEnabled } from "@/lib/reviews";
 import { getAllFeedback } from "@/lib/feedback";
+import { getAllQuotes } from "@/lib/quotes";
+import { budgetRanges, projectTypes, referralSources, timelines } from "@/data/pricing";
 import { getAllPosts } from "@/data/blog";
-import type { Feedback, PublicReview, Review } from "@/types";
+import type { Feedback, PublicReview, QuoteRequest, Review } from "@/types";
 import { AdminLogin } from "./AdminLogin";
-import { approve, logout, markRead, remove, removeFeedback, unapprove } from "./actions";
+import {
+  approve,
+  logout,
+  markQuote,
+  markRead,
+  remove,
+  removeFeedback,
+  removeQuote,
+  unapprove,
+} from "./actions";
 
 /*
  * Never prerender. Without this the page's env checks can short-circuit before
@@ -147,6 +158,76 @@ function FeedbackRow({ item }: { item: Feedback }) {
   );
 }
 
+function labelOf(options: readonly { value: string; label: string }[], value?: string) {
+  return value ? (options.find((option) => option.value === value)?.label ?? value) : undefined;
+}
+
+function QuoteRow({ quote }: { quote: QuoteRequest }) {
+  const a = quote.attribution;
+  // The first thing worth knowing about a lead from a social push: which push.
+  const source =
+    [a.utmSource, a.utmMedium, a.utmCampaign].filter(Boolean).join(" / ") ||
+    (a.referrer ? `referrer: ${a.referrer}` : "direct / unknown");
+
+  const details: [string, string | undefined][] = [
+    ["Project", labelOf(projectTypes, quote.projectType)],
+    ["Budget", labelOf(budgetRanges, quote.budget)],
+    ["Timeline", labelOf(timelines, quote.timeline)],
+    ["Found via", labelOf(referralSources, quote.source)],
+    ["Source", source],
+    ["Landed on", a.landingPage],
+    ["Form", quote.placement],
+  ];
+
+  return (
+    <li className={`border-2 p-5 ${quote.read ? "border-border" : "border-border-strong"}`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
+          {quote.read ? null : <span className="text-accent mr-2">New</span>}
+          {quote.name}
+          {quote.company ? (
+            <span className="text-foreground-subtle ml-2 font-normal normal-case">
+              {quote.company}
+            </span>
+          ) : null}
+        </p>
+        <p className="text-foreground-subtle font-mono text-xs">{formatWhen(quote.createdAt)}</p>
+      </div>
+
+      <dl className="mt-4 grid grid-cols-[6rem_1fr] gap-x-4 gap-y-1.5 text-sm">
+        {details
+          .filter(([, value]) => value)
+          .map(([label, value]) => (
+            <div key={label} className="contents">
+              <dt className="text-foreground-subtle font-mono text-xs uppercase">{label}</dt>
+              <dd className="text-foreground-muted break-words">{value}</dd>
+            </div>
+          ))}
+      </dl>
+
+      <p className="text-foreground-muted mt-4 text-sm leading-relaxed whitespace-pre-wrap">
+        {quote.description}
+      </p>
+      {quote.links ? (
+        <p className="text-foreground-subtle mt-3 text-sm break-words whitespace-pre-wrap">
+          {quote.links}
+        </p>
+      ) : null}
+
+      <p className="text-foreground-subtle mt-3 font-mono text-xs">
+        <a href={`mailto:${quote.email}`} className="hover:text-foreground transition-colors">
+          {quote.email}
+        </a>
+      </p>
+
+      <div className="mt-5 flex flex-wrap gap-3">
+        {quote.read ? null : <ActionButton action={markQuote} id={quote.id} label="Mark read" />}
+        <ActionButton action={removeQuote} id={quote.id} label="Delete" tone="danger" />
+      </div>
+    </li>
+  );
+}
+
 export default async function AdminReviewsPage() {
   if (!adminConfigured() || !reviewsEnabled()) {
     return (
@@ -172,11 +253,13 @@ export default async function AdminReviewsPage() {
     );
   }
 
-  const [pending, approved, feedback] = await Promise.all([
+  const [pending, approved, feedback, quotes] = await Promise.all([
     getPendingReviews(),
     getApprovedReviews(),
     getAllFeedback(),
+    getAllQuotes(),
   ]);
+  const unreadQuotes = quotes.filter((quote) => !quote.read).length;
 
   // Slug → title, so a note reads as the post it was left on. Falls back to the
   // raw slug if the post has since been renamed away or turned back into a draft.
@@ -198,7 +281,23 @@ export default async function AdminReviewsPage() {
         </form>
       </div>
 
+      {/* Leads first: they're the one thing on this page with a clock on it. */}
       <section className="mt-12">
+        <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
+          Quote requests ({unreadQuotes} new / {quotes.length})
+        </h2>
+        {quotes.length === 0 ? (
+          <p className="text-foreground-muted mt-4 text-sm">No requests yet.</p>
+        ) : (
+          <ul className="mt-5 grid grid-cols-1 gap-4">
+            {quotes.map((quote) => (
+              <QuoteRow key={quote.id} quote={quote} />
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="mt-16">
         <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
           Pending ({pending.length})
         </h2>

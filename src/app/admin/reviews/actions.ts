@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin, signIn, signOut } from "@/lib/adminAuth";
 import { deleteFeedback, markFeedbackRead } from "@/lib/feedback";
 import { approveReview, deleteReview, unapproveReview } from "@/lib/reviews";
+import { deleteQuote, markQuoteRead } from "@/lib/quotes";
 
 /*
  * Moderation actions. Each one re-checks the session: rendering the admin page
@@ -67,5 +68,19 @@ export async function markRead(id: string): Promise<void> {
 export async function removeFeedback(id: string): Promise<void> {
   await requireAdmin();
   await deleteFeedback(id);
+  revalidatePath("/admin/reviews");
+}
+
+/* Quote requests — private leads, same shape of actions as feedback. */
+
+export async function markQuote(id: string): Promise<void> {
+  await requireAdmin();
+  await markQuoteRead(id);
+  revalidatePath("/admin/reviews");
+}
+
+export async function removeQuote(id: string): Promise<void> {
+  await requireAdmin();
+  await deleteQuote(id);
   revalidatePath("/admin/reviews");
 }

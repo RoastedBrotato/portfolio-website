@@ -1,10 +1,9 @@
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/Button";
 import { BookCallButton } from "@/components/ui/BookCallButton";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { Section } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { RevealText } from "@/components/ui/RevealText";
+import { QuoteForm } from "@/components/quote/QuoteForm";
 import { siteConfig } from "@/data/config";
 
 export function ContactCTA() {
@@ -31,15 +30,10 @@ export function ContactCTA() {
           a quote.
         </p>
 
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <Button href="/quote" size="lg">
-            Get a quote
-            <ArrowRight size={16} />
-          </Button>
-          <BookCallButton placement="contact" />
-        </div>
-
-        <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
+        {/* Book a call and the direct channels sit above the form, for anyone
+            who'd rather not fill one in. */}
+        <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-8">
+          <BookCallButton placement="contact" size="md" />
           <a
             href={`mailto:${siteConfig.email}`}
             className="text-foreground-muted decoration-accent hover:text-foreground text-sm underline decoration-2 underline-offset-4 transition-colors"
@@ -50,6 +44,10 @@ export function ContactCTA() {
             <SocialLinks linkClassName="border-border-strong text-foreground brutal flex h-11 w-11 items-center justify-center border-2" />
           </div>
         </div>
+      </Reveal>
+
+      <Reveal delay={0.15} className="border-border mt-14 border-t-2 pt-12">
+        <QuoteForm placement="home" />
       </Reveal>
     </Section>
   );

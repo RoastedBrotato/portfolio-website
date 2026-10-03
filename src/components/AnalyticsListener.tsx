@@ -2,14 +2,20 @@
 
 import { useEffect } from "react";
 import { track, type AnalyticsEvent } from "@/lib/analytics";
+import { captureAttribution } from "@/lib/attribution";
 
 /**
- * One delegated click listener for every `data-track` link on the site, so
- * server-rendered links (the footer, a pricing card) are tracked without each
- * becoming a client component. Capture phase, so it still sees the click when
- * a handler further down stops propagation.
+ * Site-wide, mounted once. Records where the visitor came from, for the quote
+ * form (see lib/attribution.ts), and runs one delegated click listener for every
+ * `data-track` link on the site, so server-rendered links (the footer, a pricing
+ * card) are tracked without each becoming a client component. Capture phase, so
+ * it still sees the click when a handler further down stops propagation.
  */
 export function AnalyticsListener() {
+  useEffect(() => {
+    captureAttribution();
+  }, []);
+
   useEffect(() => {
     function onClick(event: MouseEvent) {
       const target = event.target as Element | null;

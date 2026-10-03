@@ -189,3 +189,39 @@ export interface LabEntry {
   /** Placeholder slot: shown by `next dev` only, never in a build. */
   placeholder?: boolean;
 }
+
+/** Where a lead came from — captured client-side on arrival, stored with the request. */
+export interface Attribution {
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  /** Path + query of the first page they landed on. */
+  landingPage?: string;
+  /** document.referrer on arrival. Often empty from in-app browsers — hence the UTMs. */
+  referrer?: string;
+}
+
+/**
+ * A /quote submission. Private by construction, like `Feedback`: nothing here
+ * is ever rendered outside /admin/reviews.
+ */
+export interface QuoteRequest {
+  id: string;
+  name: string;
+  email: string;
+  company?: string;
+  /** A package id from src/data/pricing.ts, "custom" or "other". */
+  projectType: string;
+  budget: string;
+  timeline: string;
+  description: string;
+  links?: string;
+  /** "How did you hear about me" — self-reported, alongside the UTMs. */
+  source?: string;
+  attribution: Attribution;
+  /** Which form it came through: "quote-page", "pricing", "home". */
+  placement?: string;
+  /** Epoch ms. Doubles as the sort score in Redis. */
+  createdAt: number;
+  read: boolean;
+}
