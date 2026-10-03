@@ -1,6 +1,7 @@
-import { ArrowUpRight } from "lucide-react";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { BookCallButton } from "@/components/ui/BookCallButton";
+import { SocialLinks } from "@/components/ui/SocialLinks";
 import { Section } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { RevealText } from "@/components/ui/RevealText";
@@ -25,47 +26,30 @@ export function ContactCTA() {
 
       <Reveal delay={0.1}>
         <p className="text-foreground-muted mt-6 max-w-xl text-base leading-relaxed">
-          Freelance projects, contract work, or a full-time role — if it&apos;s interesting, I want
-          to hear about it. I usually reply within a day.
+          A landing page that people remember, a brand site with some motion in it, or a 3D
+          product showcase — send a short brief and I&apos;ll reply within a day with questions or
+          a quote.
         </p>
 
-        <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center">
-          <Button href={`mailto:${siteConfig.email}`} size="lg">
-            {siteConfig.email}
-            <ArrowUpRight size={16} />
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <Button href="/quote" size="lg">
+            Get a quote
+            <ArrowRight size={16} />
           </Button>
-          <div className="flex items-center gap-4">
-            <a
-              href={siteConfig.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="border-border-strong text-foreground brutal flex h-11 w-11 items-center justify-center border-2"
-            >
-              <LinkedinIcon className="h-[18px] w-[18px]" />
-            </a>
-            <a
-              href={siteConfig.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="border-border-strong text-foreground brutal flex h-11 w-11 items-center justify-center border-2"
-            >
-              <GithubIcon className="h-[18px] w-[18px]" />
-            </a>
-          </div>
+          <BookCallButton placement="contact" />
         </div>
 
-        <p className="text-foreground-subtle mt-10 text-sm">
-          Client work goes through{" "}
+        <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
           <a
-            href={`mailto:${siteConfig.businessEmail}`}
-            className="text-foreground-muted decoration-accent hover:text-foreground underline decoration-2 underline-offset-4 transition-colors"
+            href={`mailto:${siteConfig.email}`}
+            className="text-foreground-muted decoration-accent hover:text-foreground text-sm underline decoration-2 underline-offset-4 transition-colors"
           >
-            {siteConfig.businessEmail}
+            {siteConfig.email}
           </a>
-          .
-        </p>
+          <div className="flex items-center gap-4">
+            <SocialLinks linkClassName="border-border-strong text-foreground brutal flex h-11 w-11 items-center justify-center border-2" />
+          </div>
+        </div>
       </Reveal>
     </Section>
   );

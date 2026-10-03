@@ -55,10 +55,8 @@ export function Hero() {
                 See the work
                 <ArrowRight size={16} />
               </Button>
-              {/* Contact is already covered by the sticky navbar CTA and the closing
-                  section, so the hero's second slot points at the writing instead. */}
-              <Button href="/blog" variant="secondary" size="lg">
-                Read the blog
+              <Button href="/quote" variant="secondary" size="lg">
+                Get a quote
               </Button>
             </div>
 

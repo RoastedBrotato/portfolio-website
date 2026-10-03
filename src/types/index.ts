@@ -95,10 +95,16 @@ export interface SiteConfig {
   name: string;
   role: string;
   tagline: string;
+  /** The one address shown anywhere client-facing. */
   email: string;
-  businessEmail: string;
   github: string;
   linkedin: string;
+  /** Full profile URL. Leave empty to hide the icon everywhere. */
+  instagram: string;
+  /** Full profile URL. Leave empty to hide the icon everywhere. */
+  x: string;
+  /** Cal.com / Calendly link. Leave empty to hide every "Book a call" button. */
+  bookingUrl: string;
   location: string;
   availability: string;
   resumeUrl: string;

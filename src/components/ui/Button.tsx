@@ -23,11 +23,15 @@ type BaseProps = {
   className?: string;
 };
 
-type ButtonAsLink = BaseProps & {
-  href: string;
-  external?: boolean;
-  onClick?: () => void;
-};
+/** Analytics hooks (see lib/analytics.ts) — passed straight through to the anchor. */
+type DataAttributes = { [key: `data-${string}`]: string | undefined };
+
+type ButtonAsLink = BaseProps &
+  DataAttributes & {
+    href: string;
+    external?: boolean;
+    onClick?: () => void;
+  };
 
 type ButtonAsButton = BaseProps &
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -47,6 +51,9 @@ export function Button(props: ButtonAsLink | ButtonAsButton) {
 
   if ("href" in props && props.href) {
     const { href, external, onClick } = props;
+    const data = Object.fromEntries(
+      Object.entries(props).filter(([key]) => key.startsWith("data-")),
+    );
     if (external) {
       return (
         <a
@@ -55,13 +62,14 @@ export function Button(props: ButtonAsLink | ButtonAsButton) {
           rel="noopener noreferrer"
           className={classes}
           onClick={onClick}
+          {...data}
         >
           {children}
         </a>
       );
     }
     return (
-      <Link href={href} className={classes} onClick={onClick}>
+      <Link href={href} className={classes} onClick={onClick} {...data}>
         {children}
       </Link>
     );

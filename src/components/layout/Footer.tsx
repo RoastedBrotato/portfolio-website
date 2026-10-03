@@ -1,5 +1,5 @@
 import { Mail } from "lucide-react";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { SocialLinks } from "@/components/ui/SocialLinks";
 import { siteConfig } from "@/data/config";
 import { Container } from "@/components/ui/Container";
 
@@ -17,24 +17,7 @@ export function Footer() {
         </div>
 
         <div className="flex items-center gap-6">
-          <a
-            href={siteConfig.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            className="text-foreground-muted transition-colors hover:text-foreground"
-          >
-            <GithubIcon className="h-[18px] w-[18px]" />
-          </a>
-          <a
-            href={siteConfig.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            className="text-foreground-muted transition-colors hover:text-foreground"
-          >
-            <LinkedinIcon className="h-[18px] w-[18px]" />
-          </a>
+          <SocialLinks linkClassName="text-foreground-muted transition-colors hover:text-foreground" />
           <a
             href={`mailto:${siteConfig.email}`}
             aria-label="Email"

@@ -22,8 +22,8 @@ export function About() {
           </p>
           <p>
             I ran my own company in Qatar before moving to Pakistan for better access to the kind of
-            startup teams I wanted to learn from. At this point I&apos;m only taking on roles and
-            projects with people who care about the work — good engineering, a real environment,
+            startup teams I wanted to learn from. At this point I&apos;m only taking on projects with
+            people who care about the work — good engineering, a real environment,
             some creative energy. I&apos;ve already done the bad-management thing.
           </p>
           <p className="text-foreground-subtle">

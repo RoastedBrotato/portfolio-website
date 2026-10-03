@@ -20,6 +20,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CommandPaletteProvider } from "@/components/CommandPalette";
+import { AnalyticsListener } from "@/components/AnalyticsListener";
 import { siteConfig } from "@/data/config";
 import { getAllPosts } from "@/data/blog";
 
@@ -100,6 +101,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <main className="flex-1">{children}</main>
               <Footer />
             </SmoothScroll>
+            <AnalyticsListener />
           </CommandPaletteProvider>
         </ThemeProvider>
       </body>

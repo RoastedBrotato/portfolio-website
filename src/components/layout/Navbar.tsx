@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Search, X } from "lucide-react";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { navLinks } from "@/data/nav";
 import { siteConfig } from "@/data/config";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { BookCallButton } from "@/components/ui/BookCallButton";
+import { SocialLinks } from "@/components/ui/SocialLinks";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useCommandPalette } from "@/components/CommandPalette";
 import { useLenis } from "@/components/SmoothScroll";
@@ -96,7 +97,7 @@ export function Navbar() {
           <span className="h-2 w-2 bg-accent transition-transform duration-300 group-hover:scale-150" />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-7 lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -109,29 +110,15 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-5 md:flex">
+        <div className="hidden items-center gap-5 lg:flex">
           <SearchTrigger />
           <ThemeToggle />
-          <a
-            href={siteConfig.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            className="text-foreground-muted transition-colors hover:text-foreground"
-          >
-            <GithubIcon className="h-[18px] w-[18px]" />
-          </a>
-          <a
-            href={siteConfig.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            className="text-foreground-muted transition-colors hover:text-foreground"
-          >
-            <LinkedinIcon className="h-[18px] w-[18px]" />
-          </a>
-          <Button href="/#contact" size="md">
-            Let&apos;s Talk
+          {/* Socials only once there's room; below xl they live in the footer and the menu. */}
+          <span className="hidden items-center gap-5 xl:flex">
+            <SocialLinks linkClassName="text-foreground-muted transition-colors hover:text-foreground" />
+          </span>
+          <Button href="/quote" size="md">
+            Get a quote
           </Button>
         </div>
 
@@ -140,7 +127,7 @@ export function Navbar() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-11 w-11 items-center justify-center border-2 border-border-strong text-foreground md:hidden"
+          className="flex h-11 w-11 items-center justify-center border-2 border-border-strong text-foreground lg:hidden"
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
@@ -153,7 +140,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden border-t-2 border-border-strong bg-background md:hidden"
+            className="overflow-hidden border-t-2 border-border-strong bg-background lg:hidden"
           >
             <Container className="flex flex-col gap-1 py-4">
               {navLinks.map((link) => (
@@ -169,29 +156,21 @@ export function Navbar() {
               <div className="mt-3 flex items-center gap-5 px-3">
                 <SearchTrigger onBeforeOpen={() => setOpen(false)} />
                 <ThemeToggle />
-                <a
-                  href={siteConfig.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub"
-                  className="text-foreground-muted"
-                >
-                  <GithubIcon className="h-5 w-5" />
-                </a>
-                <a
-                  href={siteConfig.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn"
-                  className="text-foreground-muted"
-                >
-                  <LinkedinIcon className="h-5 w-5" />
-                </a>
+                <SocialLinks
+                  linkClassName="text-foreground-muted"
+                  iconClassName="h-5 w-5"
+                />
               </div>
-              <div className="mt-2 px-3">
-                <Button href="/#contact" className="w-full" onClick={() => setOpen(false)}>
-                  Let&apos;s Talk
+              <div className="mt-2 flex flex-col gap-3 px-3">
+                <Button href="/quote" className="w-full" onClick={() => setOpen(false)}>
+                  Get a quote
                 </Button>
+                <BookCallButton
+                  placement="mobile-menu"
+                  size="md"
+                  className="w-full"
+                  onClick={() => setOpen(false)}
+                />
               </div>
             </Container>
           </motion.div>
