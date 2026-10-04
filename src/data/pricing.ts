@@ -3,21 +3,34 @@
  * Edit here; nothing else on the site hard-codes a price, a package name or a
  * budget band.
  *
- * Prices: anything left as TODO_PRICE renders as the literal "TODO_PRICE" in
+ * Prices are regional: visitors in Pakistan see PKR, everyone else USD (how
+ * the region is decided: src/lib/region.ts). International projects carry
+ * transfer and platform fees, currency conversion and calls across time
+ * zones, so their prices are set to cover that.
+ *
+ * Anything left as TODO_PRICE renders as the literal "TODO_PRICE" in
  * `next dev` (so it's impossible to miss) and as "Quote on request" in a build
- * (so it can never ship). Replace it with a number in the currency below.
+ * (so it can never ship). Replace it with a whole number in that region's
+ * currency.
  *
  * Lines marked DRAFT are starting points written for you to correct.
  */
 
 export const TODO_PRICE = "TODO_PRICE";
 
-export const currency = {
-  /** ISO 4217 code — "USD", "EUR", "GBP", "AED", "PKR"… */
-  code: "USD",
-  /** Formatting locale for the number, e.g. "en-US" → $2,500, "de-DE" → 2.500 $. */
-  locale: "en-US",
+export type Region = "pk" | "intl";
+
+/** How each region's prices are written. */
+export const regions: Record<Region, { label: string; currency: string; locale: string }> = {
+  pk: { label: "Pakistan", currency: "PKR", locale: "en-PK" },
+  intl: { label: "International", currency: "USD", locale: "en-US" },
 };
+
+/** International first: it's what renders without JavaScript. */
+export const regionList: Region[] = ["intl", "pk"];
+
+/** A whole number per region, in that region's currency, or TODO_PRICE. */
+export type RegionalPrice = Record<Region, number | typeof TODO_PRICE>;
 
 export type PackageId = "immersive-landing" | "brand-experience" | "interactive-3d";
 
@@ -28,8 +41,7 @@ export interface Package {
   outcome: string;
   includes: string[];
   timeline: string;
-  /** A whole number in `currency`, or TODO_PRICE. */
-  startingFrom: number | typeof TODO_PRICE;
+  startingFrom: RegionalPrice;
   /** Gets the accent treatment. At most one. */
   highlighted?: boolean;
 }
@@ -49,7 +61,7 @@ export const packages: Package[] = [
       "One round of revisions per milestone",
     ],
     timeline: "2–3 weeks", // DRAFT
-    startingFrom: TODO_PRICE,
+    startingFrom: { pk: 150_000, intl: 2_500 }, // DRAFT — market rate, Oct 2026
   },
   {
     id: "brand-experience",
@@ -66,7 +78,7 @@ export const packages: Package[] = [
       "Handover walkthrough and docs",
     ],
     timeline: "4–6 weeks", // DRAFT
-    startingFrom: TODO_PRICE,
+    startingFrom: { pk: 400_000, intl: 6_000 }, // DRAFT — market rate, Oct 2026
     highlighted: true,
   },
   {
@@ -83,7 +95,7 @@ export const packages: Package[] = [
       "Embeddable in an existing site or standalone",
     ],
     timeline: "4–8 weeks", // DRAFT
-    startingFrom: TODO_PRICE,
+    startingFrom: { pk: 550_000, intl: 8_000 }, // DRAFT — market rate, Oct 2026
   },
 ];
 
@@ -111,15 +123,35 @@ export const projectTypes = [
 
 export type ProjectType = (typeof projectTypes)[number]["value"];
 
-// DRAFT — the bands should bracket your real prices once they're in. The
-// labels are what the client sees; `value` is what's stored with the lead.
+// DRAFT — each region's bands should bracket that region's real prices once
+// they're in. The labels carry the currency because they're also what the
+// lead notification and the inbox show. `value` is what's stored with the
+// lead: the international values predate regional pricing, so they stay as
+// they are and older leads still label correctly.
+const unsure = { value: "unsure", label: "Not sure yet" } as const;
+
+export const budgetRangesByRegion = {
+  intl: [
+    { value: "under-2k", label: "Under USD 2,000" },
+    { value: "2k-5k", label: "USD 2,000 – 5,000" },
+    { value: "5k-10k", label: "USD 5,000 – 10,000" },
+    { value: "10k-plus", label: "USD 10,000+" },
+    unsure,
+  ],
+  pk: [
+    { value: "pk-under-150k", label: "Under PKR 150,000" },
+    { value: "pk-150k-400k", label: "PKR 150,000 – 400,000" },
+    { value: "pk-400k-1m", label: "PKR 400,000 – 1,000,000" },
+    { value: "pk-1m-plus", label: "PKR 1,000,000+" },
+    unsure,
+  ],
+} as const satisfies Record<Region, readonly { value: string; label: string }[]>;
+
+/** Every band from both regions — what the server validates and labels against. */
 export const budgetRanges = [
-  { value: "under-2k", label: "Under 2,000" },
-  { value: "2k-5k", label: "2,000 – 5,000" },
-  { value: "5k-10k", label: "5,000 – 10,000" },
-  { value: "10k-plus", label: "10,000+" },
-  { value: "unsure", label: "Not sure yet" },
-] as const;
+  ...budgetRangesByRegion.intl,
+  ...budgetRangesByRegion.pk.filter((range) => range.value !== "unsure"),
+];
 
 export const timelines = [
   { value: "asap", label: "As soon as possible" },
@@ -180,7 +212,12 @@ export const faqs = [
   {
     question: "Do you work with clients outside Pakistan?",
     answer:
-      "Yes — most projects are remote. Calls are scheduled around your timezone.",
+      "Yes — most projects are remote, priced in USD. Calls are scheduled around your timezone.",
+  },
+  {
+    question: "Why are prices different in Pakistan?",
+    answer:
+      "Projects outside Pakistan carry costs local ones don't: international transfer and payment-platform fees, currency conversion, and calls across time zones. International prices are set to cover those, so the work itself costs the same. The price list follows where you are; the switch on this page shows the other one.",
   },
   {
     question: "Will it be fast on mobile?",
@@ -194,16 +231,17 @@ export const faqs = [
 ];
 
 /**
- * The price line for a card. `null` means "don't show a number" — the caller
- * renders "Quote on request" instead.
+ * A price for display, in the given region's currency. `null` means "don't
+ * show a number" — the caller renders "Quote on request" instead.
  */
-export function formatPrice(price: number | typeof TODO_PRICE): string | null {
+export function formatPrice(price: number | typeof TODO_PRICE, region: Region): string | null {
   if (price === TODO_PRICE) {
     return process.env.NODE_ENV === "production" ? null : TODO_PRICE;
   }
-  return new Intl.NumberFormat(currency.locale, {
+  const { currency, locale } = regions[region];
+  return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: currency.code,
+    currency,
     maximumFractionDigits: 0,
   }).format(price);
 }

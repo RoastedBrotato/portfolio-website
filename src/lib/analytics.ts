@@ -20,7 +20,9 @@ export type AnalyticsEvent =
   /** A homepage section scrolled into view, once per visit; `section` names it. */
   | "scroll_depth"
   /** Step one of the quote form completed — intent recorded even if they bounce. */
-  | "quote_step";
+  | "quote_step"
+  /** The visitor switched price lists; `region` is the one they chose. */
+  | "pricing_region";
 
 type Props = Record<string, string | number | boolean | undefined>;
 

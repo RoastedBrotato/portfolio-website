@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Section, type SectionTone } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
-import { CountUp } from "@/components/ui/CountUp";
-import { formatPrice, packages } from "@/data/pricing";
+import { RegionPrice } from "@/components/pricing/RegionPrice";
+import { RegionSwitch } from "@/components/pricing/RegionPricing";
+import { packages } from "@/data/pricing";
 
 /**
  * "What I build" — the packages as three large rows, so the work above becomes
@@ -11,8 +12,9 @@ import { formatPrice, packages } from "@/data/pricing";
  * detail on /services. The fourth, smaller row points at the engineering case
  * studies for the buyer who needs the backend too.
  *
- * Prices come straight from src/data/pricing.ts; while one is still TODO_PRICE
- * the row reads "Quote on request" in a build, same as /services.
+ * Prices come straight from src/data/pricing.ts, in the visitor's region
+ * (PKR in Pakistan, USD elsewhere); while one is still TODO_PRICE the row
+ * reads "Quote on request" in a build, same as /services.
  */
 export function Services({ index, tone }: { index?: number; tone?: SectionTone }) {
   return (
@@ -33,7 +35,6 @@ export function Services({ index, tone }: { index?: number; tone?: SectionTone }
     >
       <ul className="border-border-strong divide-border border-y-2 divide-y-2">
         {packages.map((pkg, i) => {
-          const price = formatPrice(pkg.startingFrom);
           return (
             <li key={pkg.id}>
               <Reveal delay={Math.min(i * 0.06, 0.18)}>
@@ -58,7 +59,7 @@ export function Services({ index, tone }: { index?: number; tone?: SectionTone }
                       <div>
                         <dt className="text-foreground-subtle text-[11px] tracking-[0.14em] uppercase">From</dt>
                         <dd className="text-foreground mt-1 text-lg font-bold">
-                          {price ? <CountUp value={price} /> : <span className="text-sm">Quote on request</span>}
+                          <RegionPrice price={pkg.startingFrom} />
                         </dd>
                       </div>
                       <div>
@@ -78,6 +79,8 @@ export function Services({ index, tone }: { index?: number; tone?: SectionTone }
           );
         })}
       </ul>
+
+      <RegionSwitch className="mt-6" />
 
       <Reveal delay={0.1}>
         <Link

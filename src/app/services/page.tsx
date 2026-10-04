@@ -8,7 +8,9 @@ import { BookCallButton } from "@/components/ui/BookCallButton";
 import { PackageCard } from "@/components/pricing/PackageCard";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { TrackView } from "@/components/TrackView";
-import { customQuote, faqs, formatPrice, packages, processSteps } from "@/data/pricing";
+import { RegionPrice } from "@/components/pricing/RegionPrice";
+import { RegionSwitch } from "@/components/pricing/RegionPricing";
+import { customQuote, faqs, packages, processSteps } from "@/data/pricing";
 
 export const metadata: Metadata = pageMetadata({
   title: "Services",
@@ -32,6 +34,7 @@ export default function ServicesPage() {
         title="Packages"
         intro="Three starting points and a custom option. Every project gets a fixed price in writing before anything starts — these are where the conversation begins."
       >
+        <RegionSwitch className="mt-6" />
         <div className="mt-8">
           <BookCallButton placement="pricing-header" size="md" />
         </div>
@@ -45,7 +48,7 @@ export default function ServicesPage() {
                 id={pkg.id}
                 name={pkg.name}
                 outcome={pkg.outcome}
-                price={formatPrice(pkg.startingFrom)}
+                price={<RegionPrice price={pkg.startingFrom} />}
                 timeline={pkg.timeline}
                 includes={pkg.includes}
                 href={`/quote?package=${pkg.id}`}

@@ -6,13 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { BookCallButton } from "@/components/ui/BookCallButton";
 import { Field, inputClass } from "@/components/ui/FormField";
 import { submitQuote, type QuoteFormState } from "@/app/quote/actions";
-import {
-  budgetRanges,
-  currency,
-  projectTypes,
-  referralSources,
-  timelines,
-} from "@/data/pricing";
+import { budgetRangesByRegion, projectTypes, referralSources, timelines } from "@/data/pricing";
+import { useRegion } from "@/components/pricing/RegionPricing";
 import { track } from "@/lib/analytics";
 import { readAttribution } from "@/lib/attribution";
 import { cn } from "@/lib/utils";
@@ -97,12 +92,6 @@ function writeStepOne(values: StepOne) {
   }
 }
 
-// Bands are stored currency-free; the code is added for display only.
-const budgetOptions = budgetRanges.map((range) => ({
-  value: range.value,
-  label: range.value === "unsure" ? range.label : `${currency.code} ${range.label}`,
-}));
-
 /**
  * The quote request form, on /quote. `placement` says where it was embedded,
  * and is stored with the lead alongside the visitor's UTM attribution.
@@ -129,6 +118,10 @@ export function QuoteForm({
     state.values?.description?.length ?? 0,
   );
   const started = useRef(false);
+  // Budget bands in the visitor's currency (PKR in Pakistan, USD elsewhere).
+  // The server accepts either list, so a switch mid-form is harmless.
+  const region = useRegion();
+  const budgetOptions = budgetRangesByRegion[region];
   const form = useRef<HTMLFormElement>(null);
   const [stepOneErrors, setStepOneErrors] = useState<StepOne>({});
   // After a failed submit, land on whichever step has the problem.
@@ -167,7 +160,7 @@ export function QuoteForm({
     if (Object.keys(missing).length > 0) return;
 
     writeStepOne(values);
-    track("quote_step", { placement, ...values });
+    track("quote_step", { placement, region, ...values });
     setStep(2);
     // The next field the visitor needs, once step two is showing.
     requestAnimationFrame(() => document.getElementById(id("name"))?.focus());

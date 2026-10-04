@@ -354,6 +354,16 @@ body {
 }
 
 /*
+ * Regional prices (src/lib/region.ts). Both currencies are in the HTML; the
+ * inline script sets <html data-region> before paint and these rules hide the
+ * other one. No attribute (no JavaScript) means international.
+ */
+:root:not([data-region="pk"]) [data-show="pk"],
+:root[data-region="pk"] [data-show="intl"] {
+  display: none !important;
+}
+
+/*
  * Hard offset shadow + press-in hover. `.brutal` shadows in accent red;
  * `.brutal-fg` shadows in the foreground, for elements that are already red
  * and would otherwise cast an invisible shadow.

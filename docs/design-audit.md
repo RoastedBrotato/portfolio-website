@@ -79,7 +79,7 @@ Accessibility 100, SEO 100 and Best practices 96 are unchanged from the earlier 
 ### 0.3 Still open
 
 **Content only the owner can supply (blocks ads):**
-- Prices in `src/data/pricing.ts` (every `startingFrom` is `TODO_PRICE` → "Quote on request" on `/services` and in the What I build rows), then re-bracket `budgetRanges`.
+- Prices in `src/data/pricing.ts`, **two per package** since regional pricing landed: `startingFrom: { pk, intl }`, PKR for visitors in Pakistan and USD elsewhere (every value is still `TODO_PRICE` → "Quote on request" on `/services` and in the What I build rows). Then re-bracket `budgetRangesByRegion` — the PKR bands are placeholders. Region is decided client-side before paint from the time zone (`Asia/Karachi` → PKR), with a visible switch that remembers the choice; pages stay static. See `src/lib/region.ts`.
 - `instagram` and `x` in `src/data/config.ts`. Empty strings hide the icons everywhere, so the channels the ads run on are not linked from the site.
 - Year, and ideally a write-up (`study`), for the three client pieces in `work.ts`. Without a study they link straight to the live site.
 - Hero headline: still the pre-redesign line, marked DRAFT. Alternatives are in a comment in `Hero.tsx`.

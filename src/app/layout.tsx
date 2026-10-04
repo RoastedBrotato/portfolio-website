@@ -21,6 +21,8 @@ import { SmoothScroll } from "@/components/SmoothScroll";
 import { CommandPaletteProvider } from "@/components/CommandPalette";
 import { AnalyticsListener } from "@/components/AnalyticsListener";
 import { Cursor } from "@/components/Cursor";
+import { RegionSync } from "@/components/pricing/RegionPricing";
+import { REGION_SCRIPT } from "@/lib/region";
 import { MotionProvider } from "@/components/MotionProvider";
 import { siteConfig } from "@/data/config";
 import { getAllPosts } from "@/data/blog";
@@ -124,6 +126,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
     >
+      <head>
+        {/* Picks the price region before first paint, so no one sees the
+            other currency flash first. See src/lib/region.ts. */}
+        <script dangerouslySetInnerHTML={{ __html: REGION_SCRIPT }} />
+      </head>
       {/* min-h-dvh, not min-h-full: the sticky footer needs to measure against
           the viewport, not against a percentage of <html> — which is `auto`
           both before Lenis mounts and after lenis.css applies. */}
@@ -138,6 +145,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <Footer />
             </SmoothScroll>
             <AnalyticsListener />
+          <RegionSync />
             <Cursor />
           </CommandPaletteProvider>
         </MotionProvider>

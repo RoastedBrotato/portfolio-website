@@ -22,8 +22,8 @@ export function PackageCard({
   id?: string;
   name: string;
   outcome: string;
-  /** Formatted "starting from" amount; null renders "Quote on request". Omit for no price row. */
-  price?: string | null;
+  /** The rendered "starting from" price (a <RegionPrice>). Omit for no price row. */
+  price?: React.ReactNode;
   timeline?: string;
   includes: string[];
   href: string;
@@ -51,7 +51,7 @@ export function PackageCard({
                 Starting from
               </dt>
               <dd className="text-foreground mt-1.5 font-mono text-xl font-bold">
-                {price ?? <span className="text-base">Quote on request</span>}
+                {price}
               </dd>
             </div>
           ) : null}
