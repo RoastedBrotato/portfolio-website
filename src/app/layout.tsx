@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 import "./globals.css";
 /*
  * Lenis's own stylesheet, and it is not optional. Its first rule is
@@ -105,21 +104,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           the viewport, not against a percentage of <html> — which is `auto`
           both before Lenis mounts and after lenis.css applies. */}
       <body className="flex min-h-dvh flex-col bg-background text-foreground">
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <CommandPaletteProvider posts={posts}>
-            <SmoothScroll>
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </SmoothScroll>
-            <AnalyticsListener />
-          </CommandPaletteProvider>
-        </ThemeProvider>
+        {/* Dark-only: there is no theme provider and no toggle. The immersive
+            direction (light on dark, depth, material) only works on dark. */}
+        <CommandPaletteProvider posts={posts}>
+          <SmoothScroll>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </SmoothScroll>
+          <AnalyticsListener />
+        </CommandPaletteProvider>
+        <div aria-hidden className="grain" />
       </body>
 
       {/*

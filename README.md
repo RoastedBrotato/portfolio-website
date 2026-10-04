@@ -58,7 +58,7 @@ draft: true                 # optional — see below
   the sitemap and the feed — so half-written posts are safe to commit and push. Delete the line
   to publish.
 - **Code.** Fenced blocks are highlighted at build time by Shiki via `rehype-pretty-code`; both
-  palettes ship as CSS variables so blocks follow the theme toggle with no client-side JS. Use
+  palettes ship as CSS variables, so a light-theme page could flip them with no client-side JS. Use
   ```` ```ts title="lib/chunk.ts" ```` for the caption bar and ```` ```ts {2,5} ```` to mark lines.
 - **Images.** Put them in `public/images/blog/<slug>/` and use a normal Markdown image. The alt
   text doubles as the caption. These render as plain lazy `<img>`, not `next/image`, because
@@ -220,7 +220,10 @@ src/app/admin/reviews/          Reads the inbox; markRead / removeFeedback live 
 ```
 src/
   app/                    Routes (App Router)
-    page.tsx              Homepage — assembles the section components
+    page.tsx              Homepage — Hero, Work, What I build, Proof, CTA
+    template.tsx          Page transitions (React <ViewTransition>)
+    about/, work/          /about (bio, CV, stack, writing) and the /work index
+    services/              Packages, process, FAQ (/pricing redirects here)
     layout.tsx             Root layout, fonts, global <head> metadata
     work/[slug]/page.tsx    Case-study route, statically generated per project
     sitemap.ts, robots.ts   SEO files
@@ -228,11 +231,11 @@ src/
     not-found.tsx           Custom 404
   components/
     layout/                Navbar, Footer
-    sections/               Hero, FeaturedWork, Experience, About, Services,
-                              Testimonials, ContactCTA
+    sections/               Hero, SelectedWork, EngineeringRange, Services ("What I build"),
+                              Testimonials (Proof), ContactCTA, About/Stack, Experience, Writing
     reviews/                ReviewCard, ReviewForm, ScrollMarquee
     blog/                   mdx (MDX component map), FeedbackBox
-    project/                ProjectShowcase (homepage card), ProjectVisual (mockup/screenshot frame)
+    project/                ProjectCard (engineering strip card), ProjectVisual (screenshot frame)
     case-study/              CaseStudyLayout (full case-study template), ArchitectureDiagram
     ui/                      Reusable primitives — Button, Badge, Container,
                               Section/SectionLabel, ExperienceTimeline, Reveal/RevealText,
@@ -248,11 +251,24 @@ Neo-brutalist black & red. The rules are encoded in `src/app/globals.css` so com
 each invent their own — read that file's header comment before adding UI.
 
 **Colour.** CSS variables mapped into Tailwind via `@theme inline` (`bg-background`,
-`text-foreground-muted`, `border-border-strong`, `text-accent`, …). Both themes are live:
-`[data-theme="light"]` redefines the same tokens and `ThemeToggle` flips the attribute, so
-nothing else needs light/dark variants. Never hardcode `bg-white/x` — use `bg-foreground/x`
-so surfaces invert with the theme. The light accent is a darker red (`#cc0000`): the dark
-theme's `#ff2b1f` only reaches 3.7:1 on white and fails body-text contrast.
+`text-foreground-muted`, `border-border-strong`, `text-accent`, …). The site is dark-only — there
+is no theme toggle. `[data-theme="light"]` tokens are kept for a page that might need them (its
+accent is a darker `#cc0000`, since `#ff2b1f` only reaches 3.7:1 on white), but nothing sets the
+attribute. Still use `bg-foreground/x`, never `bg-white/x`, so that option stays open.
+
+**Depth.** Black is a range: `--plane-0` … `--plane-3` (`#050505` → `#161616`, `bg-plane-*`).
+`Section` takes a `tone` that puts it on one of them; neighbouring sections differ by one step.
+A fixed film-grain layer (`.grain`, in the root layout) sits over everything at 4%.
+
+**Section weights.** Every section is one of three:
+
+| Weight | Layout | Example |
+| --- | --- | --- |
+| Immersive | Full-bleed, no rail, display type over media | `SelectedWork` lead piece |
+| Editorial | The rail grid (`Section`) | What I build, CTA, everything on /about |
+| Utility | Full-width band, mono labels, marquee allowed | Proof |
+
+Never two Immersive sections back to back except the hero into Selected work.
 
 **Spacing scale.** Four vertical rhythms, and nothing else:
 
@@ -268,12 +284,12 @@ Chrome is separate: navbar `h-16 sm:h-20`, footer `py-10`.
 **Columns.** One rail, sitewide. `--rail` (10rem) and `--rail-gap` (3rem) in `globals.css` drive
 `lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]`, used by `Section`, the hero, and every
 case-study section — so the content column sits on the same left edge on every page and does not
-shift when you navigate from `/#work` into a case study. Nested label columns (e.g. the About
+shift when you navigate from `/work` into a case study. Nested label columns (e.g. the About
 stack list) use `8rem`. Don't introduce a third width.
 
 **Structure.** 2px `border-border-strong` rules separate sections; 1px `border-border` hairlines
 divide rows *inside* a section. Depth is the `.brutal` / `.brutal-fg` hard offset shadow (no
-blur), never a gradient or glow. Nothing is rounded — there are no `rounded-*` classes in the
+blur) for UI; the one gradient is the scrim under the lead work title. Nothing is rounded — there are no `rounded-*` classes in the
 codebase and new UI shouldn't add any.
 
 **Oversized type.** `.text-outline` (globals.css) strokes display type instead of filling it.
@@ -281,9 +297,14 @@ The reviews marquee alternates solid and outlined words so a wall of 13rem type 
 behind the cards sitting on it rather than as a competing headline. It is the only place that
 should need it.
 
-**Labels.** `SectionLabel` (solid red block, mono, uppercase) is the only section-heading style.
-Sections do not get an eyebrow + serif heading + description stack; the hero and the closing CTA
-are the only large type on the homepage.
+**Labels.** `SectionLabel` (solid red block, mono, uppercase) is the section-heading style, with
+an optional mono `index` ("01") beside it on pages that read as one sequence. Sections do not get
+an eyebrow + serif heading + description stack. Large type is reserved for the hero, the lead work
+title (`text-mega`), the "What I build" rows and the closing CTA.
+
+**Page transitions.** `app/template.tsx` wraps every page in a React `<ViewTransition>`; the
+`.page` keyframes in `globals.css` lift the old page out and uncover the new one bottom-up. The
+navbar is named `site-header` so it holds still.
 
 > **Gotcha:** the global `* { border-color }` reset **must** stay inside `@layer base`. Unlayered
 > declarations outrank every layered one, so a bare `*` rule silently beats `border-border-strong`

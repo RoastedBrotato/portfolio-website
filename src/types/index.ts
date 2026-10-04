@@ -66,11 +66,6 @@ export interface BlogPost extends BlogPostMeta {
   content: string;
 }
 
-export interface Service {
-  title: string;
-  description: string;
-}
-
 export interface ExperienceItem {
   company: string;
   role: string;
@@ -219,7 +214,7 @@ export interface QuoteRequest {
   /** "How did you hear about me" — self-reported, alongside the UTMs. */
   source?: string;
   attribution: Attribution;
-  /** Which form it came through: "quote-page", "pricing", "home". */
+  /** Which form it came through: "quote-page" (older leads: "pricing", "home"). */
   placement?: string;
   /** Epoch ms. Doubles as the sort score in Redis. */
   createdAt: number;

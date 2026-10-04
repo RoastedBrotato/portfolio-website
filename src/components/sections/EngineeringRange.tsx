@@ -1,24 +1,32 @@
-import { Section } from "@/components/ui/Section";
+import { Section, type SectionTone } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { projects } from "@/data/projects";
 
 /**
- * The full-stack and AI case studies, grouped beneath the creative work.
- *
- * `lead` is for the window where Selected work has no real entries yet (every
- * slot still a dev-only placeholder): this section then takes the #work anchor
- * so the navbar's Work link still lands somewhere.
+ * The full-stack and AI case studies as a compact three-up strip — proof that
+ * the creative work is built properly, not the main event. Lives on /work and
+ * /about; the homepage only shows it while Selected work has no real entries.
  */
-export function EngineeringRange({ lead = false }: { lead?: boolean }) {
+export function EngineeringRange({
+  id = "engineering",
+  label = "Under the hood",
+  index,
+  tone,
+}: {
+  id?: string;
+  label?: string;
+  index?: number;
+  tone?: SectionTone;
+}) {
   const featured = projects.filter((project) => project.featured);
 
   return (
-    <Section id={lead ? "work" : "engineering"} label={lead ? "Work" : "Engineering range"}>
+    <Section id={id} label={label} index={index} tone={tone}>
       <Reveal>
         <p className="text-foreground-muted max-w-xl text-lg leading-relaxed">
-          The engineering underneath the motion: production apps, RAG systems and the backends
-          behind them — built and shipped end to end.
+          Full-stack and AI work, shipped end to end: production apps, RAG systems and the
+          backends behind them. The same engineering goes under every creative build.
         </p>
       </Reveal>
 

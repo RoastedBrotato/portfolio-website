@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import { ExperienceItem } from "@/types";
 
 // Marker sits centred on the 2px rule: half the 10px marker, minus half the rule.
@@ -35,17 +36,29 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
           <p className="text-foreground-subtle mt-1.5 font-mono text-xs tracking-[0.08em] uppercase">
             {item.location}
           </p>
-          <ul className="mt-5 space-y-2.5">
-            {item.accomplishments.map((point) => (
-              <li
-                key={point}
-                className="text-foreground-muted flex items-start gap-3 text-sm leading-relaxed"
-              >
-                <span className="bg-accent mt-[0.5em] h-1.5 w-1.5 shrink-0" />
-                {point}
-              </li>
-            ))}
-          </ul>
+          {/* Collapsed by default so the page reads as a timeline, not a CV;
+              <details> keeps every bullet in the HTML and keyboard-operable. */}
+          <details open={item.current} className="group mt-4">
+            <summary className="text-foreground-muted hover:text-foreground inline-flex cursor-pointer list-none items-center gap-2 font-mono text-xs tracking-[0.12em] uppercase transition-colors [&::-webkit-details-marker]:hidden">
+              <Plus
+                size={14}
+                aria-hidden
+                className="text-accent transition-transform duration-200 group-open:rotate-45"
+              />
+              {item.accomplishments.length} highlights
+            </summary>
+            <ul className="mt-5 space-y-2.5">
+              {item.accomplishments.map((point) => (
+                <li
+                  key={point}
+                  className="text-foreground-muted flex items-start gap-3 text-sm leading-relaxed"
+                >
+                  <span className="bg-accent mt-[0.5em] h-1.5 w-1.5 shrink-0" />
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </details>
         </motion.li>
       ))}
     </ol>

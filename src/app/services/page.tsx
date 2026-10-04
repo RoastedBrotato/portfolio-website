@@ -6,24 +6,29 @@ import { Section } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { BookCallButton } from "@/components/ui/BookCallButton";
 import { PackageCard } from "@/components/pricing/PackageCard";
-import { QuoteForm } from "@/components/quote/QuoteForm";
+import { ContactCTA } from "@/components/sections/ContactCTA";
 import { TrackView } from "@/components/TrackView";
 import { customQuote, faqs, formatPrice, packages, processSteps } from "@/data/pricing";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Pricing",
+  title: "Services",
   description:
     "Packages for immersive landing pages, brand websites and interactive 3D product showcases — what's included, typical timelines and starting prices.",
-  path: "/pricing",
+  path: "/services",
 });
 
-export default function PricingPage() {
+/*
+ * Formerly /pricing, which now redirects here (next.config.ts). The analytics
+ * event keeps its old name so the numbers stay continuous across the rename.
+ * No embedded form: every CTA goes to /quote, the one form on the site.
+ */
+export default function ServicesPage() {
   return (
     <>
       <TrackView event="pricing_view" />
 
       <PageHeader
-        label="Pricing"
+        label="Services"
         title="Packages"
         intro="Three starting points and a custom option. Every project gets a fixed price in writing before anything starts — these are where the conversation begins."
       >
@@ -37,6 +42,7 @@ export default function PricingPage() {
           {packages.map((pkg, i) => (
             <Reveal key={pkg.id} delay={Math.min((i % 2) * 0.08, 0.16)} className="h-full">
               <PackageCard
+                id={pkg.id}
                 name={pkg.name}
                 outcome={pkg.outcome}
                 price={formatPrice(pkg.startingFrom)}
@@ -50,6 +56,7 @@ export default function PricingPage() {
           ))}
           <Reveal delay={0.08} className="h-full">
             <PackageCard
+              id={customQuote.id}
               name={customQuote.name}
               outcome={customQuote.outcome}
               includes={customQuote.includes}
@@ -61,7 +68,7 @@ export default function PricingPage() {
         </div>
       </Section>
 
-      <Section id="process" label="How it works" labelAs="p">
+      <Section id="process" label="How it works" labelAs="p" tone="plane-1">
         <h2 className="font-display text-h2 text-foreground max-w-2xl font-bold tracking-tight">
           How a project works
         </h2>
@@ -103,15 +110,7 @@ export default function PricingPage() {
         </div>
       </Section>
 
-      <Section id="quote" label="Get a quote" labelAs="p">
-        <h2 className="font-display text-h2 text-foreground max-w-2xl font-bold tracking-tight">
-          Tell me what you&apos;re building.
-        </h2>
-        <p className="text-foreground-muted mt-4 mb-12 max-w-xl text-base leading-relaxed">
-          Pick the closest package — or none — and I&apos;ll reply within one working day.
-        </p>
-        <QuoteForm placement="pricing" />
-      </Section>
+      <ContactCTA tone="plane-1" />
     </>
   );
 }

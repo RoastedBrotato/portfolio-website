@@ -2,16 +2,23 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { SectionLabel } from "@/components/ui/Section";
+import { SectionIndex, SectionLabel, toneClass, type SectionTone } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { ReviewCard } from "@/components/reviews/ReviewCard";
 import { ScrollMarquee } from "@/components/reviews/ScrollMarquee";
 import { ProofCard } from "@/components/reviews/ProofCard";
 import { getProof } from "@/data/proof";
 import { getApprovedReviews, reviewsEnabled } from "@/lib/reviews";
+import { cn } from "@/lib/utils";
 
 /** The two newest approved reviews, laid out either side of the CTA. */
 const MAX_REVIEWS = 2;
+
+/*
+ * Real words for the marquee in proof mode — what the work is, not filler.
+ * Alternated solid / outlined.
+ */
+const PROOF_PHRASES = ["Shipped", "Live", "Open source", "In daily use"];
 
 /*
  * Built from Container rather than <Section> because the marquee has to run the
@@ -22,8 +29,10 @@ const MAX_REVIEWS = 2;
  * Two modes, chosen automatically: approved reviews when there are any, and
  * until then the proof strip from src/data/proof.ts — so the slot never reads
  * "no reviews yet" to someone deciding whether to get in touch.
+ *
+ * On the homepage it sits directly above the closing CTA: trust next to the ask.
  */
-export async function Testimonials() {
+export async function Testimonials({ index, tone }: { index?: number; tone?: SectionTone } = {}) {
   const enabled = reviewsEnabled();
   const reviews = enabled ? await getApprovedReviews(MAX_REVIEWS) : [];
   const proof = reviews.length === 0 ? getProof() : [];
@@ -65,11 +74,17 @@ export async function Testimonials() {
   return (
     <section
       id="reviews"
-      className="border-border-strong scroll-mt-20 overflow-hidden border-t-2 py-20 sm:py-28"
+      className={cn(
+        "border-border-strong scroll-mt-20 overflow-hidden border-t-2 py-20 sm:py-28",
+        toneClass(tone),
+      )}
     >
       <Container className="grid grid-cols-1 gap-8 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
         <div className="flex items-center justify-between gap-4 lg:flex-col lg:items-start lg:justify-start lg:gap-5">
-          <SectionLabel>{reviews.length === 0 ? "Proof" : "Reviews"}</SectionLabel>
+          <div className="flex items-center gap-3">
+            {index !== undefined ? <SectionIndex value={index} /> : null}
+            <SectionLabel>{reviews.length === 0 ? "Proof" : "Reviews"}</SectionLabel>
+          </div>
           {/* Nothing to list yet in proof mode, so no link to an empty page. */}
           {reviews.length > 0 ? (
             <Link
@@ -115,7 +130,7 @@ export async function Testimonials() {
       <div className="relative mt-14 lg:mt-16 lg:flex lg:min-h-[22rem] lg:items-center">
         <ScrollMarquee
           className="lg:absolute lg:inset-x-0 lg:top-1/2 lg:-translate-y-1/2"
-          phrases={reviews.length === 0 ? ["In production", "Shipped"] : undefined}
+          phrases={reviews.length === 0 ? PROOF_PHRASES : undefined}
         />
 
         <Container className={`relative mt-10 grid grid-cols-1 gap-8 lg:mt-0 ${columns}`}>

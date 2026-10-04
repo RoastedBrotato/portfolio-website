@@ -22,7 +22,12 @@ const DESCRIPTION_MAX = 3000;
 /* Lives here, not in actions.ts: a "use server" module may only export async functions. */
 const INITIAL_STATE: QuoteFormState = { status: "idle" };
 
-export type QuotePlacement = "quote-page" | "pricing" | "home";
+/*
+ * Where the form is embedded, stored with the lead. Only /quote today: the
+ * homepage and /services link there instead of embedding a copy. Older leads
+ * may carry "pricing" or "home" from before that change.
+ */
+export type QuotePlacement = "quote-page";
 
 /** Native <select> for keyboard and screen-reader behaviour, styled to match the inputs. */
 function Select({
@@ -78,9 +83,8 @@ const budgetOptions = budgetRanges.map((range) => ({
 }));
 
 /**
- * The quote request form. One component for /quote, the bottom of /pricing and
- * the homepage contact section; `placement` says which, and is stored with the
- * lead alongside the visitor's UTM attribution.
+ * The quote request form, on /quote. `placement` says where it was embedded,
+ * and is stored with the lead alongside the visitor's UTM attribution.
  */
 export function QuoteForm({
   placement,
@@ -133,8 +137,8 @@ export function QuoteForm({
 
   const values = state.values;
   const errors = state.errors;
-  // Field ids must be unique per page; /pricing and the homepage each embed one
-  // form, but suffixing keeps labels correct if two ever share a page.
+  // Field ids are suffixed by placement so labels stay correct if two forms
+  // ever share a page.
   const id = (name: string) => `${name}-${placement}`;
 
   return (

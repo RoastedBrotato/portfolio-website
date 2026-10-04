@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { Menu, Search, X } from "lucide-react";
 import { navLinks } from "@/data/nav";
 import { siteConfig } from "@/data/config";
@@ -10,7 +10,6 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { BookCallButton } from "@/components/ui/BookCallButton";
 import { SocialLinks } from "@/components/ui/SocialLinks";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useCommandPalette } from "@/components/CommandPalette";
 import { useLenis } from "@/components/SmoothScroll";
 import { cn } from "@/lib/utils";
@@ -46,6 +45,10 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const lenis = useLenis();
+  const { scrollYProgress } = useScroll();
+  // A spring, not the raw value: Lenis already eases the scroll, and this only
+  // has to keep the line from stepping on a wheel tick.
+  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 40, restDelta: 0.001 });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -80,6 +83,8 @@ export function Navbar() {
 
   return (
     <header
+      // Named so page transitions leave it in place (see globals.css).
+      style={{ viewTransitionName: "site-header" }}
       className={cn(
         "sticky top-0 z-50 w-full transition-colors duration-300",
         scrolled || open
@@ -112,7 +117,6 @@ export function Navbar() {
 
         <div className="hidden items-center gap-5 lg:flex">
           <SearchTrigger />
-          <ThemeToggle />
           {/* Socials only once there's room; below xl they live in the footer and the menu. */}
           <span className="hidden items-center gap-5 xl:flex">
             <SocialLinks linkClassName="text-foreground-muted transition-colors hover:text-foreground" />
@@ -132,6 +136,13 @@ export function Navbar() {
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
       </Container>
+
+      {/* Scroll progress: a 2px red line on the header's bottom rule. */}
+      <motion.div
+        aria-hidden
+        style={{ scaleX: progress }}
+        className="bg-accent absolute inset-x-0 -bottom-0.5 h-0.5 origin-left"
+      />
 
       <AnimatePresence>
         {open && (
@@ -155,7 +166,6 @@ export function Navbar() {
               ))}
               <div className="mt-3 flex items-center gap-5 px-3">
                 <SearchTrigger onBeforeOpen={() => setOpen(false)} />
-                <ThemeToggle />
                 <SocialLinks
                   linkClassName="text-foreground-muted"
                   iconClassName="h-5 w-5"

@@ -9,9 +9,9 @@ const secondaryLink =
   "text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors";
 
 /**
- * Compact case-study card for the "Engineering range" grid. Deliberately
+ * Compact case-study card for the "Under the hood" strip. Deliberately
  * thinner than a Selected work card — these sit beneath the creative pieces —
- * so it's outcome, stack and links; the case study carries everything else.
+ * so it's a one-line outcome, stack and links; the case study carries the rest.
  */
 export function ProjectCard({ project }: { project: Project }) {
   return (
@@ -24,11 +24,7 @@ export function ProjectCard({ project }: { project: Project }) {
         />
       </Link>
 
-      <span className="text-accent mt-6 font-mono text-xs font-bold tracking-[0.16em] uppercase">
-        {project.category}
-      </span>
-
-      <h3 className="font-display text-foreground mt-3 text-2xl font-bold tracking-tight">
+      <h3 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight">
         <Link href={`/work/${project.slug}`} className="hover:text-accent transition-colors">
           {project.title}
         </Link>

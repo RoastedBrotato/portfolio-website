@@ -5,7 +5,7 @@ export const contentType = ogContentType;
 
 export default function Image() {
   return renderOgImage({
-    tag: "Pricing",
-    headline: "Immersive landing pages, brand sites and interactive 3D — packages and prices.",
+    tag: "Work",
+    headline: "Immersive sites, interactive 3D and the engineering underneath.",
   });
 }

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
  * custom-quote card, which has no price or timeline, can use the same shell.
  */
 export function PackageCard({
+  id,
   name,
   outcome,
   price,
@@ -17,6 +18,8 @@ export function PackageCard({
   highlighted = false,
   footer,
 }: {
+  /** Anchor for deep links, e.g. /services#interactive-3d from the homepage rows. */
+  id?: string;
   name: string;
   outcome: string;
   /** Formatted "starting from" amount; null renders "Quote on request". Omit for no price row. */
@@ -31,8 +34,9 @@ export function PackageCard({
 }) {
   return (
     <article
+      id={id}
       className={cn(
-        "bg-background flex h-full flex-col border-2 p-6 sm:p-8",
+        "bg-background flex h-full scroll-mt-24 flex-col border-2 p-6 sm:p-8",
         highlighted ? "border-accent brutal" : "border-border-strong",
       )}
     >

@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Section } from "@/components/ui/Section";
+import { Section, type SectionTone } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { getAllPosts } from "@/data/blog";
 import { formatDate } from "@/lib/utils";
 
-/** Latest posts on the homepage. Rows match the /blog index so the two read as one thing. */
+/** Latest posts, on /about. Rows match the /blog index so the two read as one thing. */
 const MAX_POSTS = 3;
 
-export function Writing() {
+export function Writing({ tone }: { tone?: SectionTone }) {
   const posts = getAllPosts().slice(0, MAX_POSTS);
 
   // Nothing published yet — render nothing rather than an empty section.
@@ -18,6 +18,7 @@ export function Writing() {
     <Section
       id="writing"
       label="Writing"
+      tone={tone}
       aside={
         <Link
           href="/blog"

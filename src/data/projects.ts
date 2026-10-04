@@ -14,8 +14,8 @@ export const projects: Project[] = [
     slug: "moementum-fit",
     category: "Full-Stack / SaaS",
     title: "Moementum",
-    outcome:
-      "A fitness coaching platform trainers and clients actually use daily — live in production with 10 active clients.",
+    // Written for a buyer, not a reviewer: what it does for the people using it.
+    outcome: "A coaching platform with 10 active clients logging in daily.",
     description:
       "A full-stack coaching platform built for an independent personal trainer — clients log workouts, morning and night metrics, and progress photos and video, while the trainer reviews and leaves feedback directly against each logged session.",
     features: [
@@ -136,8 +136,7 @@ export const projects: Project[] = [
     slug: "ai-knowledge-assistant",
     category: "AI / RAG / Full-Stack",
     title: "KnowledgeOS",
-    outcome:
-      "A multi-tenant RAG platform where admins scope custom AI assistants to specific documents and roles, with every answer traceable back to its source.",
+    outcome: "An AI assistant over your own documents, every answer cited.",
     description:
       "A self-hostable knowledge-assistant platform for internal company documents — admins upload PDFs and DOCX files, spin up chat assistants scoped to specific documents and employee roles, and every answer comes back grounded and cited against the exact document and page it came from.",
     features: [
@@ -263,8 +262,7 @@ export const projects: Project[] = [
     slug: "ai-meeting-intelligence",
     category: "AI / RAG / Full Stack",
     title: "AI Meeting Intelligence",
-    outcome:
-      "Turns recorded meetings into a searchable, multilingual knowledge base you can ask questions against.",
+    outcome: "Live translated meetings, searchable afterwards.",
     description:
       "A platform for live multilingual meeting translation and post-meeting knowledge retrieval — real-time transcription and voice-cloned dubbing for concurrent participants, plus a RAG-powered Q&A layer over past meetings.",
     features: [

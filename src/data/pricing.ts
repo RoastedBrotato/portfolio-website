@@ -1,5 +1,5 @@
 /**
- * Everything on /pricing, plus the option lists the quote form is built from.
+ * Everything on /services, plus the option lists the quote form is built from.
  * Edit here; nothing else on the site hard-codes a price, a package name or a
  * budget band.
  *
@@ -137,7 +137,7 @@ export const referralSources = [
   { value: "other", label: "Somewhere else" },
 ] as const;
 
-/** "How a project works" on /pricing. */
+/** "How a project works" on /services. */
 export const processSteps = [
   {
     title: "Discovery call",

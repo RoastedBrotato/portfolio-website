@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/data/config";
 import { projects } from "@/data/projects";
 import { getAllPosts } from "@/data/blog";
+import { getLabEntries } from "@/data/lab";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = [
@@ -14,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // The conversion pages rank just under the homepage: they're where a
     // visitor from a social post is meant to end up.
     {
-      url: `${siteConfig.siteUrl}/pricing`,
+      url: `${siteConfig.siteUrl}/services`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.9,
@@ -26,10 +27,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${siteConfig.siteUrl}/lab`,
+      url: `${siteConfig.siteUrl}/work`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     ...projects.map((project) => ({
       url: `${siteConfig.siteUrl}/work/${project.slug}`,
@@ -37,6 +38,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
+    {
+      url: `${siteConfig.siteUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    // An empty page isn't worth sending a crawler to.
+    ...(getLabEntries().length > 0
+      ? [
+          {
+            url: `${siteConfig.siteUrl}/lab`,
+            lastModified: new Date(),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+          },
+        ]
+      : []),
     {
       url: `${siteConfig.siteUrl}/reviews`,
       lastModified: new Date(),

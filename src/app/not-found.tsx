@@ -18,7 +18,7 @@ export default function NotFound() {
         <Button href="/" className="mt-8">
           Back home
         </Button>
-        <Link href="/#work" className="mt-4 text-sm text-foreground-muted hover:text-foreground">
+        <Link href="/work" className="mt-4 text-sm text-foreground-muted hover:text-foreground">
           View selected work
         </Link>
       </Container>

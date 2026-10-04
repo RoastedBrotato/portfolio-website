@@ -14,7 +14,7 @@ import { visualVariantFor } from "@/lib/projectVisuals";
 
 /**
  * Article-level section. Same rail as the homepage so the text column doesn't
- * shift when you navigate from /#work into a case study, but a tighter vertical
+ * shift when you navigate from /work into a case study, but a tighter vertical
  * rhythm (py-14/16) because these are sub-sections of one article, not pages.
  */
 function CaseStudySection({ label, children }: { label: string; children: React.ReactNode }) {
@@ -56,7 +56,7 @@ export function CaseStudyLayout({
             <div className="flex flex-col items-start gap-5">
               <SectionLabel as="p">{project.category}</SectionLabel>
               <Link
-                href="/#work"
+                href="/work"
                 className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors"
               >
                 <ArrowLeft size={14} />
@@ -104,6 +104,7 @@ export function CaseStudyLayout({
               variant={visualVariantFor(project.slug)}
               image={project.image}
               title={project.title}
+              caption={project.category}
             />
           </div>
 
@@ -112,7 +113,7 @@ export function CaseStudyLayout({
               {project.gallery.map((src) => (
                 <div
                   key={src}
-                  className="border-border-strong bg-background-elevated brutal overflow-hidden border-2"
+                  className="border-border-strong bg-plane-3 overflow-hidden border-2 p-3 sm:p-4"
                 >
                   <Image
                     src={src}

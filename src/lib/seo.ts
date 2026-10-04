@@ -15,7 +15,7 @@ export function pageMetadata({
 }: {
   title: string;
   description: string;
-  /** Route path, e.g. "/pricing" — resolved against metadataBase. */
+  /** Route path, e.g. "/services" — resolved against metadataBase. */
   path: string;
 }): Metadata {
   const fullTitle = `${title} — ${siteConfig.name}`;

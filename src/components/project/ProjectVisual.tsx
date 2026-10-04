@@ -73,37 +73,50 @@ const variantContent: Record<Variant, React.ReactNode> = {
   ),
 };
 
+/**
+ * The engineering media frame: a 2px rule around a #161616 plane, with a mono
+ * caption bar underneath. Dark dashboard screenshots vanish against a black
+ * page, so they sit inset on the lighter plane rather than edge to edge — and
+ * there's no fake browser chrome; the caption says what it is.
+ */
 export function ProjectVisual({
   variant,
   image,
   title,
+  caption,
 }: {
   variant: Variant;
   image?: string;
   title: string;
+  /** Right-hand side of the caption bar, e.g. the category or a year. */
+  caption?: string;
 }) {
   return (
-    <div className="group brutal relative overflow-hidden border-2 border-border-strong bg-background-elevated">
-      <div className="flex items-center gap-2 border-b-2 border-border-strong px-4 py-3">
-        <span className="h-2.5 w-2.5 bg-accent" />
-        <span className="h-2.5 w-2.5 border border-border-strong" />
-        <span className="h-2.5 w-2.5 border border-border-strong" />
+    <figure className="group border-border-strong bg-plane-3 relative overflow-hidden border-2">
+      <div className="p-3 sm:p-5">
+        <div className="border-border aspect-[16/10] overflow-hidden border">
+          {image ? (
+            <Image
+              src={image}
+              alt={`${title} — product screenshot`}
+              width={1600}
+              height={1000}
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div className="bg-grid h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.03]">
+              {variantContent[variant]}
+            </div>
+          )}
+        </div>
       </div>
-      <div className="aspect-[16/10] overflow-hidden">
-        {image ? (
-          <Image
-            src={image}
-            alt={`${title} — product screenshot`}
-            width={1600}
-            height={1000}
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="h-full w-full bg-grid transition-transform duration-500 ease-out group-hover:scale-[1.03]">
-            {variantContent[variant]}
-          </div>
-        )}
-      </div>
-    </div>
+      <figcaption className="border-border-strong text-foreground-subtle flex items-center justify-between gap-4 border-t-2 px-4 py-2.5 font-mono text-[11px] tracking-[0.14em] uppercase">
+        <span className="text-foreground flex min-w-0 items-center gap-2 font-bold">
+          <span aria-hidden className="bg-accent h-1.5 w-1.5 shrink-0" />
+          <span className="truncate">{title}</span>
+        </span>
+        {caption ? <span className="hidden truncate sm:block">{caption}</span> : null}
+      </figcaption>
+    </figure>
   );
 }

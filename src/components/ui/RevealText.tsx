@@ -43,7 +43,10 @@ export function RevealText({
         {words.map((word, i) => (
           <span key={i}>
             {word.emphasis ? <em className="italic text-accent">{word.text}</em> : word.text}
-            {i < words.length - 1 ? " " : ""}
+            {/* A plain space here: these spans are inline, so a non-breaking
+                one (needed in the inline-block branch below) stops the line
+                wrapping and pushes long headings off the side of a phone. */}
+            {i < words.length - 1 ? " " : ""}
           </span>
         ))}
       </Tag>
