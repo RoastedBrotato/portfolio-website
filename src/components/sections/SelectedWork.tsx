@@ -26,7 +26,7 @@ export function SelectedWork({
   return (
     <section
       id={id}
-      className={cn("border-border-strong scroll-mt-20 border-t-2 pt-20 pb-20 sm:pt-28 sm:pb-28", className)}
+      className={cn("border-border-strong defer-render scroll-mt-20 border-t-2 pt-20 pb-20 sm:pt-28 sm:pb-28", className)}
     >
       <Container className="mb-10 flex items-center gap-3 sm:mb-14">
         {index !== undefined ? <SectionIndex value={index} /> : null}

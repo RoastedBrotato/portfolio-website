@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
+import { AnimatePresence, m, useScroll, useSpring } from "framer-motion";
 import { Menu, Search, X } from "lucide-react";
 import { navLinks } from "@/data/nav";
 import { siteConfig } from "@/data/config";
@@ -138,7 +138,7 @@ export function Navbar() {
       </Container>
 
       {/* Scroll progress: a 2px red line on the header's bottom rule. */}
-      <motion.div
+      <m.div
         aria-hidden
         style={{ scaleX: progress }}
         className="bg-accent absolute inset-x-0 -bottom-0.5 h-0.5 origin-left"
@@ -146,7 +146,7 @@ export function Navbar() {
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
@@ -183,7 +183,7 @@ export function Navbar() {
                 />
               </div>
             </Container>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>

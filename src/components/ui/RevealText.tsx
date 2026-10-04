@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -91,14 +91,14 @@ export function RevealText({
           key={i}
           className="-mb-[0.18em] inline-block overflow-hidden pb-[0.18em] align-bottom"
         >
-          <motion.span
+          <m.span
             className="inline-block"
             {...motionProps}
             transition={{ duration: 0.75, delay: delay + i * stagger, ease: EASE }}
           >
             {word.emphasis ? <em className="italic text-accent">{word.text}</em> : word.text}
             {i < words.length - 1 ? " " : ""}
-          </motion.span>
+          </m.span>
         </span>
       ))}
     </Tag>

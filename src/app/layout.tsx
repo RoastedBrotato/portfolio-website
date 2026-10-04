@@ -21,8 +21,10 @@ import { SmoothScroll } from "@/components/SmoothScroll";
 import { CommandPaletteProvider } from "@/components/CommandPalette";
 import { AnalyticsListener } from "@/components/AnalyticsListener";
 import { Cursor } from "@/components/Cursor";
+import { MotionProvider } from "@/components/MotionProvider";
 import { siteConfig } from "@/data/config";
 import { getAllPosts } from "@/data/blog";
+import { projects } from "@/data/projects";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,11 +38,29 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+/*
+ * Bold only. Every use of the display face on the site is `font-bold` (plus
+ * the italic emphasis word), and loading the full variable font made the
+ * size-adjusted fallback match the *regular* weight: on a phone the hero
+ * headline wrapped to three lines in the fallback and four in Fraunces, and
+ * everything below it jumped 46px when the font arrived (CLS 0.19). With the
+ * 700 instance the fallback is sized to the weight that is actually drawn.
+ */
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
+  weight: "700",
   style: ["normal", "italic"],
   display: "swap",
+  /*
+   * The fallback face is declared by hand in globals.css. Next's generated one
+   * sizes Times New Roman to Fraunces' *average* width (115%), which is still
+   * about 8% too narrow for the bold that's actually drawn — enough for the
+   * hero headline to wrap one line short in the fallback and jump when the
+   * font arrives. The hand-tuned face is measured against the bold.
+   */
+  adjustFontFallback: false,
+  fallback: ["Fraunces Fallback"],
 });
 
 const title = `${siteConfig.name} — ${siteConfig.role}`;
@@ -94,6 +114,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const posts = getAllPosts();
+  // Only what the palette lists. Passing the full projects array would ship
+  // every case study's prose to the client on every page.
+  const searchableProjects = projects.map(({ slug, title, category }) => ({ slug, title, category }));
 
   return (
     <html
@@ -107,15 +130,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-dvh flex-col bg-background text-foreground">
         {/* Dark-only: there is no theme provider and no toggle. The immersive
             direction (light on dark, depth, material) only works on dark. */}
-        <CommandPaletteProvider posts={posts}>
-          <SmoothScroll>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </SmoothScroll>
-          <AnalyticsListener />
-          <Cursor />
-        </CommandPaletteProvider>
+        <MotionProvider>
+          <CommandPaletteProvider posts={posts} projects={searchableProjects}>
+            <SmoothScroll>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </SmoothScroll>
+            <AnalyticsListener />
+            <Cursor />
+          </CommandPaletteProvider>
+        </MotionProvider>
         <div aria-hidden className="grain" />
       </body>
 

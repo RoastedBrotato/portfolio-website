@@ -75,7 +75,7 @@ export async function Testimonials({ index, tone }: { index?: number; tone?: Sec
     <section
       id="reviews"
       className={cn(
-        "border-border-strong scroll-mt-20 overflow-hidden border-t-2 py-20 sm:py-28",
+        "border-border-strong defer-render scroll-mt-20 overflow-hidden border-t-2 py-20 sm:py-28",
         toneClass(tone),
       )}
     >

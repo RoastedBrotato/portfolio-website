@@ -12,7 +12,6 @@ import {
 } from "cmdk";
 import { FileText, Folder, Hash } from "lucide-react";
 import { navLinks } from "@/data/nav";
-import { projects } from "@/data/projects";
 import { BlogPostMeta } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -48,12 +47,17 @@ const itemClass = cn(
   "data-[selected=true]:bg-background-elevated-hover data-[selected=true]:text-foreground",
 );
 
+/** The fields the palette lists for a project; the layout slims the full data down to these. */
+export type SearchableProject = { slug: string; title: string; category: string };
+
 export function CommandPaletteProvider({
   children,
   posts,
+  projects,
 }: {
   children: ReactNode;
   posts: BlogPostMeta[];
+  projects: SearchableProject[];
 }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();

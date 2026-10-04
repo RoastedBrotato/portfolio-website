@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -73,7 +73,7 @@ export function ScrollMarquee({
       {reduceMotion ? (
         <div style={{ transform: `translateX(${START})` }}>{row}</div>
       ) : (
-        <motion.div style={{ x }}>{row}</motion.div>
+        <m.div style={{ x }}>{row}</m.div>
       )}
     </div>
   );

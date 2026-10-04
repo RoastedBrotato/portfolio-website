@@ -62,6 +62,26 @@
   color-scheme: light;
 }
 
+/*
+ * Fallback for the display face while Fraunces loads (see layout.tsx). The
+ * numbers are measured, not guessed: at 100px the hero headline is 2314px wide
+ * in Fraunces Bold and 1857px in Times New Roman, so the fallback is scaled by
+ * 124.6% to wrap on the same words. Ascent and descent are Fraunces' own
+ * (97.8% / 25.5%) divided by the same factor, so the baseline lands in the
+ * same place. Re-measure if the display font or its weight changes.
+ */
+@font-face {
+  font-family: "Fraunces Fallback";
+  src:
+    local("Times New Roman"),
+    local("Noto Serif"),
+    local("Georgia");
+  size-adjust: 124.6%;
+  ascent-override: 78.5%;
+  descent-override: 20.5%;
+  line-gap-override: 0%;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-background-elevated: var(--background-elevated);
@@ -135,10 +155,14 @@ body {
  */
 .grain {
   position: fixed;
-  inset: -50%;
+  /* The shimmer moves the tile by at most 3% of its own box, so a 6% bleed
+     is enough. -50% made a 2x2-viewport layer that cost real GPU memory on
+     phones for nothing. */
+  inset: -6%;
   z-index: 60;
   pointer-events: none;
   opacity: 0.04;
+  will-change: transform;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain-shift 0.8s steps(4) infinite;
 }
@@ -247,6 +271,18 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * Below-the-fold sections skip layout and paint until they come near the
+ * viewport. The first layout of the homepage was the single longest task
+ * before first paint (670ms at 4x CPU throttle), and most of it was laying out
+ * sections nobody could see yet. `auto` remembers the real size once a section
+ * has rendered, so scrolling back over it never re-estimates.
+ */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 .bg-grid {

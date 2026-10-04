@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { m, useMotionValue, useSpring } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const INTERACTIVE = "a, button, [role='button'], input, select, textarea, summary, label, [data-cursor]";
@@ -70,7 +70,7 @@ export function Cursor() {
   if (!enabled) return null;
 
   return (
-    <motion.div
+    <m.div
       aria-hidden
       style={{ x: springX, y: springY }}
       className="pointer-events-none fixed top-0 left-0 z-[90]"
@@ -86,6 +86,6 @@ export function Cursor() {
       >
         {label}
       </div>
-    </motion.div>
+    </m.div>
   );
 }

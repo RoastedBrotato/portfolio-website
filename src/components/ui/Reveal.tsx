@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const MOTION_TAG = {
-  div: motion.div,
-  section: motion.section,
+  div: m.div,
+  section: m.section,
 } as const;
 
 /** Fade + rise a section's content in as it scrolls into view. */

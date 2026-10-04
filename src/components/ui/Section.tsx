@@ -66,7 +66,7 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "border-border-strong scroll-mt-20 border-t-2 py-20 sm:py-28",
+        "border-border-strong defer-render scroll-mt-20 border-t-2 py-20 sm:py-28",
         tones[tone],
         className,
       )}

@@ -4,7 +4,7 @@
 **Original audit:** 4 October 2026, against commit `f67651d`.
 **This revision:** 4 October 2026, against the working tree after the redesign phases 1 to 4 (commit `e447110` plus uncommitted work). Sections 1 to 9 now describe the site **as it is**, with the pre-redesign state kept only where it explains a decision. Section 0 is the implementation log.
 **Purpose:** handoff document. The goal of the site is to convert paid social traffic (Instagram, X, LinkedIn ads) into quote requests for creative-dev work: immersive landing pages, brand sites, interactive 3D.
-**Status:** structurally done. **Blocking ads:** prices, social handles, the hero's LCP on mobile, and a real-device pass. Full list in 0.3 and section 1.
+**Status:** structurally done and committed (`7cdc95e`), with a performance pass on top. **Blocking ads:** prices and social handles (owner content) and a real-device pass. Full list in 0.3 and section 1.
 
 ---
 
@@ -60,9 +60,21 @@ Measured after Phase 1 (production build, placeholders hidden): homepage **4.6**
 | 8.9 Scroll depth | `scroll_depth {section}` once per view for work / services / reviews / contact. | `src/components/ScrollDepth.tsx` |
 | 5.2 Two-step quote form | Step 1: type, budget, timeline → `quote_step` event with the choices, saved to sessionStorage. Step 2: details. One `<form>`, so server validation is unchanged. Success state lands the red square mark. | `QuoteForm.tsx` |
 | 6.4 LCP fix (partial) | On-load reveals (`RevealText trigger="mount"`, hero copy) moved from Framer to CSS keyframes so they don't wait for hydration. Section numbers lifted to pass contrast. | `RevealText.tsx`, `Hero.tsx`, `globals.css` |
+| 6.4 CLS fix | Lighthouse found a **0.19 layout shift** on the hero column: the fallback font wrapped the headline to 3 lines and Fraunces to 4, so everything below jumped 46 px when the font arrived. Fraunces now loads as the bold instance only (20 + 24 KB instead of 45 + 29), and its fallback face is declared by hand with a size-adjust measured against the bold (124.6%). The headline wraps identically in both fonts; CLS measured 0. | `layout.tsx`, `globals.css` |
+| 6.3 Lighter Framer Motion | All animated elements are `m.*` inside a `LazyMotion` provider with `domAnimation`, so the drag and layout-projection code never ships. `strict` throws in dev if a `motion.*` slips back in. About 40 KB less JavaScript transferred. | `MotionProvider.tsx`, seven component files |
+| Bundle hygiene | The command palette imported the full projects data, so every case study's prose shipped to the client on every page. The layout now passes `{slug, title, category}` only. | `layout.tsx`, `CommandPalette.tsx` |
+| 6.4 First layout | Below-the-fold sections, Selected work and the footer use `content-visibility: auto` (`.defer-render`), so the first layout before first paint skips what the visitor can't see. The grain layer shrank from a 2×2-viewport box (`inset: -50%`) to a 6% bleed. | `globals.css`, `Section.tsx`, `SelectedWork.tsx`, `Testimonials.tsx`, `Footer.tsx` |
 | 4.4 Mark | The favicon is now the red square alone (no monogram). The same square is the cursor companion, the nav mark, the footer mark, the bullet and the quote success state. | `src/app/icon.tsx`, `Cursor.tsx` |
 
-Lighthouse, homepage, mobile preset (simulated slow 4G), local production build: **Accessibility 100, Best practices 96, SEO 100, Performance 71. CLS 0, FCP 2.2 s, TBT 380 ms, LCP 4.8 s** (was 6.8 s before the CSS reveal change). The two best-practices misses are the Cloudflare beacon's CORS error on localhost and missing source maps.
+Lighthouse, homepage, mobile perf preset (simulated slow 4G, 4× CPU), local production build, two runs per stage:
+
+| Stage | Performance | FCP | LCP | TBT | CLS | Transfer |
+|---|---|---|---|---|---|---|
+| Before the perf pass (`7cdc95e`) | 61 | 2.7 s | 2.8 s | 730 ms | **0.19** | 956 KB |
+| Bold-only Fraunces, LazyMotion, slim palette, content-visibility | 65 | 2.6 s | 2.6 s | 680 ms | 0.19 | 897 KB |
+| Plus the hand-tuned fallback face | **71–74** | 2.6 s | 2.6–2.7 s | 680–760 ms | **0** | 897 KB |
+
+Accessibility 100, SEO 100 and Best practices 96 are unchanged from the earlier full run (the two misses are the Cloudflare beacon's CORS error on localhost and missing source maps). The earlier note of "LCP 4.8 s" came from a different Lighthouse configuration; the perf preset above is the comparable baseline going forward.
 
 ### 0.3 Still open
 
@@ -74,7 +86,8 @@ Lighthouse, homepage, mobile preset (simulated slow 4G), local production build:
 - Third proof item in `proof.ts` is a dev-only placeholder; the strip ships with two cards.
 
 **Performance:**
-- **LCP is 4.8 s on Lighthouse's mobile preset against a 2.5 s budget.** The LCP element is now small header text, which points at font loading and main-thread time (TBT 380 ms) rather than the reveals. Next steps: check which font blocks it, preload or subset Geist Mono / Fraunces, and see what in the initial bundle can be deferred.
+- **LCP is 2.6–2.7 s on the mobile preset against a 2.5 s budget.** The remaining gap is one task: the page's first layout, about 640 ms at 4× CPU throttle, which runs before first paint. Measurement showed it is the cost of laying out text in the size-adjusted `local()` fallback faces while the web fonts are still loading (fallback layout ≈ 480 ms, web-font layout ≈ 180 ms, plain system fonts ≈ 220 ms). That cost is at least partly specific to Windows font lookup and may not reproduce on Android or on PageSpeed Insights' Linux runners, so check PSI against the deployed site before spending more on it. If it does reproduce: drop the adjusted fallback for the body fonts (`adjustFontFallback: false` on Geist and Geist Mono, keeping the hand-tuned Fraunces face), or `display: "optional"` for the body fonts only.
+- TBT 680–760 ms. Largest contributors in order: the first layout above, three.js evaluation (≈ 310 ms; it loads on idle so it lands inside the measurement window), React hydration (≈ 200 ms).
 - Real-device pass on a mid-range Android inside the Instagram in-app browser (not done; only desktop GPU and SwiftShader were tested).
 
 **Deferred:**
@@ -92,7 +105,9 @@ Lighthouse, homepage, mobile preset (simulated slow 4G), local production build:
 - **One scroll system.** Lenis owns scroll; every scroll-linked effect (hero scene, launch sequence, nav progress) reads native scroll or Framer's `useScroll`, both of which work under Lenis. No GSAP was needed.
 - **Three.js stays out of the main bundle.** Scenes load through `next/dynamic` with `ssr: false`; anything a page needs from the speaker (colourways) lives in `colorways.ts`, which imports no three.
 - **React Compiler lint.** Mutating values from `useMemo` or props inside `useFrame` fails `react-hooks/immutability`; use refs created lazily inside the frame callback (see `HeroScene.tsx`) or read from the R3F `state` argument.
-- **Uncommitted work.** Everything in 0.2 is in the working tree, not yet committed. `git status` lists about 27 modified files plus the new `scene/`, `lab/`, `public/work/`, `public/og/` and `public/lab/` directories.
+- **Framer Motion.** Use `m.div`, never `motion.div`; the provider is `strict`. Hooks (`useScroll`, `useSpring`, `animate`) are unaffected. If a future piece needs `drag` or `layoutId`, switch the provider to `domMax` and re-check the bundle.
+- **Fonts.** Fraunces ships as the 700 instance only. If a non-bold display weight is ever needed, add it to `weight` and re-measure the fallback's `size-adjust` (method in the `@font-face` comment in `globals.css`). The measurements behind the perf pass were Playwright + CDP `Performance.getMetrics` at 4× CPU throttle, and Lighthouse's mobile perf preset.
+- **Deferred rendering.** `.defer-render` is on `Section`, `SelectedWork`, `Testimonials` and the footer. Anything that measures a section's size before it has scrolled near the viewport will read the placeholder height (900 px) instead of the real one.
 
 ---
 
@@ -112,7 +127,7 @@ The brand gap the audit named, **Physical**, is closed at the level that matters
 What still stands between the site and an ad campaign, in order:
 
 1. **Prices.** All three packages still render "Quote on request". This was finding F7 and it is untouched because only the owner can set the numbers.
-2. **The hero's mobile LCP.** 4.8 s against a 2.5 s budget in Lighthouse's mobile preset. The scene is not the cause (it mounts on idle). Fonts and main-thread time are the suspects.
+2. **The hero's mobile LCP.** 2.6–2.7 s against a 2.5 s budget in Lighthouse's mobile preset after the perf pass (the 0.19 layout shift found in the same run is fixed). What remains is the page's first layout while fonts load, which may be a Windows-only cost. Verify on PageSpeed Insights once deployed before doing more.
 3. **Social handles.** Instagram and X are empty in config, so the icons do not render.
 4. **A real-device pass** on a mid-range Android in the Instagram in-app browser. Tier detection should land these devices on `lite`, but it has only been reasoned about, not watched.
 5. **Years and write-ups for the client pieces**, and a decision on the hero headline, which is still the pre-redesign draft.
@@ -387,8 +402,8 @@ Still do not add: Locomotive Scroll, AOS, Swiper, Lottie for anything structural
 
 | Budget | Status |
 |---|---|
-| LCP under 2.5 s on 4G, poster as LCP element | **Open.** 4.8 s in Lighthouse's mobile preset. LCP element is small header text, so fonts and main-thread time (TBT 380 ms) are the suspects. Next: find the blocking font, preload or subset, defer non-critical client code. |
-| CLS zero | ✅ Measured 0. |
+| LCP under 2.5 s on 4G, poster as LCP element | **Close.** 2.6–2.7 s in Lighthouse's mobile preset. Bounded by the first layout while fonts load (see 0.3); verify on PSI after deploy. |
+| CLS zero | ✅ Measured 0 after the fallback-font fix (was 0.19 with the hero headline re-wrapping on font swap). |
 | Main thread idle before scene init | ✅ Tier decided on idle after hydration; three.js downloads only then. |
 | Device tiers | ✅ `full`, `lite`, `still`, `fallback` (see 0.2). Not yet observed on a real mid-range Android. |
 | Reduced motion | ✅ Scene renders one frame; clips show posters; transitions and grain static; cursor off. |
@@ -489,15 +504,15 @@ Status key: ✅ done · ⏳ open.
 
 ### Phase 4: polish and measurement
 - ✅ Cursor, count-ups, diagram draw-on, scroll-depth events, two-step quote form.
-- ⏳ Mobile LCP under 2.5 s.
+- ⏳ Mobile LCP under 2.5 s (2.6–2.7 s locally; CLS 0, performance 71–74). Check PSI after deploy.
 - ⏳ Real-device pass on a mid-range Android in the Instagram in-app browser.
 - ⏳ A/B hero headline via ad landing variants.
 - ⏳ Inline visuals for What I build rows and package cards.
 - ⏳ Engineering case study tightening.
 - ⏳ Years and studies for the client pieces; Meeting Intelligence cover image.
-- ⏳ Commit the Phase 2 to 4 work.
+- ✅ Commit the Phase 2 to 4 work (`7cdc95e`).
 
-**Ads can start once Phase 0's two open items (prices, socials) are in and LCP is under budget.** Everything else in Phase 4 improves efficiency rather than gating launch.
+**Ads can start once Phase 0's two open items (prices, socials) are in.** LCP is within 0.2 s of budget locally and should be confirmed on PSI after deploy. Everything else in Phase 4 improves efficiency rather than gating launch.
 
 ---
 
@@ -540,7 +555,8 @@ Scenes: `src/components/scene/HeroScene.tsx`, `HeroBackdrop.tsx`, `speaker/` (Sp
 Lab demos: `src/components/lab/Configurator.tsx`, `LaunchPage.tsx`.
 Case studies: `src/components/case-study/CaseStudyLayout.tsx` (engineering), `CreativeStudyLayout.tsx`, `ArchitectureDiagram.tsx`.
 UI: `Section` (+ `SectionLabel`, `SectionIndex`, tones), `PageHeader`, `Button`, `CountUp`, `Reveal`, `RevealText`, `MediaPreview`, `WorkCard` + `LeadWorkCard`, `ProjectCard`, `ProjectVisual`, `PackageCard`, `ProofCard`, `ScrollMarquee`, `Cursor`, `ScrollDepth`.
-Styles: `src/app/globals.css` (planes, grain, view transitions, `fade-up`, `text-mega`, unused light tokens).
+Styles: `src/app/globals.css` (planes, grain, view transitions, `fade-up`, `text-mega`, `.defer-render`, the hand-tuned `Fraunces Fallback` face, unused light tokens).
+Motion: `src/components/MotionProvider.tsx` (LazyMotion, `domAnimation`, strict).
 Meta: `src/lib/ogImage.tsx` + per-route `opengraph-image.tsx`; `public/og/hero.jpg`.
 Media: `public/work/<slug>/preview.mp4` + `poster.jpg` (+ `exploded.jpg`, `opener.jpg` for the studies), `public/lab/configurator/poster.jpg`.
 Analytics: `src/lib/analytics.ts`, `AnalyticsListener.tsx`, `ScrollDepth.tsx`, `lib/attribution.ts`.

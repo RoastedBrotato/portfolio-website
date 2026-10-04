@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { CornerDownRight } from "lucide-react";
 import { ArchitectureFlow } from "@/types";
 import { useReducedMotion } from "@/lib/useReducedMotion";
@@ -41,14 +41,14 @@ function Connector({ index, dashed, still }: { index: number; dashed: boolean; s
       aria-hidden
       className={dashed ? "text-foreground-subtle/60 my-1.5" : "text-accent my-1.5"}
     >
-      <motion.path
+      <m.path
         d="M6 0 V27"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeDasharray={dashed ? "3 3" : undefined}
         {...draw}
       />
-      <motion.path d="M1.5 22.5 L6 27 L10.5 22.5" stroke="currentColor" strokeWidth="1.5" {...land} />
+      <m.path d="M1.5 22.5 L6 27 L10.5 22.5" stroke="currentColor" strokeWidth="1.5" {...land} />
     </svg>
   );
 }
@@ -65,7 +65,7 @@ function FlowSteps({ flow, dashed = false }: { flow: ArchitectureFlow; dashed?: 
       )}
       {flow.steps.map((step, i) => (
         <div key={step} className="flex flex-col items-center">
-          <motion.div
+          <m.div
             initial={still ? false : { opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
@@ -73,7 +73,7 @@ function FlowSteps({ flow, dashed = false }: { flow: ArchitectureFlow; dashed?: 
             className="w-full border-2 border-border-strong bg-background-elevated px-5 py-3.5 text-center font-mono text-xs font-bold uppercase tracking-[0.08em] text-foreground sm:w-auto sm:min-w-[280px]"
           >
             {step}
-          </motion.div>
+          </m.div>
           {i < flow.steps.length - 1 && <Connector index={i} dashed={dashed} still={still} />}
         </div>
       ))}

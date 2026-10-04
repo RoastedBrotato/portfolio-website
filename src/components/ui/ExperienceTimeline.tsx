@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Plus } from "lucide-react";
 import { ExperienceItem } from "@/types";
 
@@ -11,7 +11,7 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
   return (
     <ol className="border-border-strong relative border-l-2 pl-8 sm:pl-10">
       {items.map((item, i) => (
-        <motion.li
+        <m.li
           key={`${item.company}-${item.role}`}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
               ))}
             </ul>
           </details>
-        </motion.li>
+        </m.li>
       ))}
     </ol>
   );
