@@ -1,0 +1,98 @@
+---
+title: "Revamping my identity"
+description: "Decided to stop overthinking who I am online, picked a direction, and gave waleedajaz.com the redesign it was waiting for."
+date: "2026-10-05"
+tags: ["yapping", "website-development"]
+---
+
+> "Tried out a lot of things, of course can't do everything. So it's back to the basics. Stick with what I know, and learn as I go"
+
+Whenever I am in a creative or productive spree, my masochist traits start evolving alongside my progress, and I start to hate whatever I do more and more. Eventually this leads to a lot of overthinking, confusion, discomfort, and worst of all, a lot of procrastination. As things start to pile up, and the pressure starts to come in even closer (self inflicted btw), I somehow figure out what to do in life.
+
+Knowing how dumbly my psyche works and how intense I have to be with myself, I keep having to put myself in such situations to get stuff done. Not the healthiest thing to struggle with, and it's something that I am actively working on.
+
+Having struggled with this in the past, being at the crossroads and then failing again and again, I wanted to force myself to try a different, more structured approach this time.
+
+I have seen people post on socials about what they build, how they work with stuff, how they fool around with tech, and they usually go through the struggles I relate to.
+
+Having so much in common, I decided it was about time that I step out of my comfort zone, and start building properly in public.
+
+To do this, I had to first deal with a lot of insecurities, one of them being that I'm socially handicapped. All the boomer memes have caught up to me, and the newer social media platforms are just so much to understand.
+
+When it comes to brand strategy, marketing strategy and content, doing creative work for someone else, I'm always brimming with ideas, and have even helped companies manage their socials.
+
+But when it comes to myself, it's just a blank page. The age-old philosophical question of "Who am I?" comes into play, and I'm lost.
+
+Again, who isn't lost. No one has it figured out, we all just carry on with what we can, and do what we do. That's just what life is, and why should mine be any different.
+
+So here's me trying, and being out there, and posting stuff, and telling you about the cool things I learned, and cool stuff I did, and what plans I have for the future.
+
+With the figuring-out-what-to-do aspect out of the way, the next aspect was to figure out how to do it. That is something where strategy comes into play, and that's my forte.
+
+I first started redesigning my website around the services I currently wish to provide. Motion animation, 3D building, cool websites seem like a lot of fun right now, the AI models are going crazy, and being someone who knows how to utilize them properly, I decided to offer the services I already know and test the waters.
+
+I could have gone with the backend route too, considering my foundation as a backend engineer is stronger. But I find frontend to be much more creative right now, and it's something I would like to pursue deeply before deciding on what I want to do.
+
+## The redesign
+
+So here's the part with actual technical details, added with AI, for anyone who's curious how it actually happened.
+
+The honest starting point: the old homepage was basically a CV with a hero on top. Bio, experience timeline, stack, writing, pricing, a contact form, all stacked on one page, roughly nine viewport heights tall on desktop. That's fine for a portfolio you link from a resume. It's useless for someone clicking an Instagram ad, which is the actual goal now — I'm running paid social for the services, so the site's one job is turning that traffic into quote requests, not reading like a CV.
+
+I wrote myself a design audit first (it lives at `docs/design-audit.md` in the repo and is still there, half handoff-doc, half diary of what shipped and what's still open), then worked through it in phases over one very long day and night.
+
+### Cutting the homepage down
+
+The homepage went from nine sections to five: hero, work, what I build, proof, and a CTA with no form embedded in it. Everything that used to live on the homepage just to be loosely connected still exists, it just moved:
+
+- Bio, experience, stack, and the writing feed moved to a new `/about`.
+- `/pricing` became `/services` (with a permanent redirect from the old URL so nothing breaks).
+- The quote form, which used to be duplicated in a few places, now lives in exactly one place: `/quote`.
+
+Measured before and after on a production build: the homepage went from about 8.9 viewport heights to 4.6 on desktop, and 6.8 on a phone. Same content, just living in the place that actually wants it.
+
+### Looking less like a template
+
+The visual system got an overhaul alongside the structure. The site is dark-only now — I pulled the light theme toggle entirely rather than maintain two modes for a site almost nobody was switching. Sections step through a near-black depth range instead of one flat background, there's a subtle film-grain layer over everything, and screenshots sit on a plane with a mono caption bar instead of fake browser chrome around them.
+
+Pages also transition into each other now using React's `<ViewTransition>` — the old page lifts out, the new one uncovers from the bottom, and the header stays put the whole time so it doesn't feel like the UI is resetting. All of that collapses to an instant cut under reduced motion, obviously.
+
+### The hero actually does something now
+
+This was the fun part. The old hero had a flat 2D grid behind the headline. The new one is a proper React Three Fiber scene: a field of instanced slabs lit by a single red point light that follows your pointer (or drifts on its own on touch devices). Scroll tilts the whole field back and pulls the camera out as the Selected work section slides up over it.
+
+Since I can't control what device clicks through from an ad, the scene is tiered rather than one-size-fits-all. On idle, before three.js even downloads, the site decides between a full scene, a lighter one (fewer slabs, lower pixel ratio, no antialiasing on touch devices or weaker hardware), a single still frame for reduced motion, and a plain 2D fallback grid if there's no WebGL at all or the device looks genuinely low-end. Nobody gets a spinning wheel waiting for a 3D scene they were never going to render well anyway.
+
+### Selected work, and a lab to play in
+
+The work section now leads with real client sites — Benda Offroad full-bleed as the lead piece, then 3dbanao and CreateXworks — with looping clips recorded straight from the live builds rather than static screenshots. Below that sit two demos under a new `/lab` section: a fictional speaker ("Quarr One") with a 3D colourway configurator, and a pinned-scroll product launch page built around the same model. Both are built from primitives, no 3D model files, so there's nothing to load except code.
+
+I also learned the hard way that recording your own site recording itself is a bug: if you don't hide the site header and the cursor companion before capturing a clip of a page, the footage shows the site rendered inside itself. Fixed by hiding both before the recording pass.
+
+### The performance pass
+
+Shipping a 3D hero is one thing, shipping one that doesn't tank the Lighthouse score is another. First real build came back at a performance score of 61, with a 0.19 layout shift on mobile — the fallback font wrapped the headline onto three lines, the real font (Fraunces) wrapped it onto four, and the page jumped 46px the moment the font loaded in.
+
+The fix was to load Fraunces as the bold weight only and hand-tune a fallback font's `size-adjust` (124.6%, measured against the real one) so both fonts wrap the headline identically. Combined with moving Framer Motion onto `LazyMotion`/`domAnimation` (so drag and layout-projection code never ships), trimming what the command palette loads into the client, and marking below-the-fold sections `content-visibility: auto`, the score moved to 71–74 and CLS dropped to a flat 0. About 60KB less shipped overall.
+
+### Prices in the right currency
+
+Since a decent chunk of this traffic is local, the pricing page now shows PKR to visitors in Pakistan and USD everywhere else, decided before first paint from the saved choice or the browser's time zone, with a visible switch if someone wants the other list. No flash of the wrong currency, no extra request, because the region check runs inline before the page paints.
+
+### What's still open
+
+A few things are still waiting on me rather than on code: a real-device pass on a mid-range Android inside the Instagram in-app browser (so far it's only been tested on desktop GPUs), a decision on the final hero headline (still marked DRAFT in the source), and write-ups for a couple of the client pieces that currently just link straight out to the live site. The draft prices are live but still need a final sanity check against market rates before the ads actually start.
+
+### Also brewing: Al Sufun
+
+Alongside all of this, I've started building out a product for **Al Sufun**, my company. It's a WhatsApp-native booking SaaS: customers pick a service, pick a slot, and pay a deposit entirely inside a WhatsApp chat, no app to install, no separate checkout. Merchants run everything — services, hours, deposits, reminders — from a web dashboard.
+
+It's aimed at service businesses that lose money to no-shows and to the overhead of juggling bookings over calls and DMs: salons and small clinics in Pakistan first, with med-spas and clinics in Qatar as the second market on the same codebase. The two markets differ in currency, deposit structure, payment provider, and language, and all of that lives as configuration on the merchant record rather than as separate code paths.
+
+It's a Next.js app on top of Supabase, talking to Meta's WhatsApp Cloud API directly. Double-booking is made structurally impossible with a database exclusion constraint, holds and payment confirmation are atomic/idempotent at the database level, and there's a `/dev` simulator that lets you test the whole conversation flow without a real WhatsApp number. Early days still — real payment providers (JazzCash, SkipCash) aren't wired up yet, that's the next milestone toward the first paying merchants.
+
+## Anyway
+
+A redesigned homepage, a hero that reacts to where you point your mouse, a lab to dump experiments into, prices in the right currency, and a growing list of socials finally linked up (Instagram's [@waleedbrotato.dev](https://www.instagram.com/waleedbrotato.dev/), X is [@brotatodev](https://x.com/brotatodev), if you want to follow along).
+
+Figuring out who I am online turned out to be less about picking a persona and more about building the thing that shows the work clearly, and then actually pointing people at it. That's the direction for now.
