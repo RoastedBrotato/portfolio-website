@@ -79,8 +79,7 @@ Accessibility 100, SEO 100 and Best practices 96 are unchanged from the earlier 
 ### 0.3 Still open
 
 **Content only the owner can supply (blocks ads):**
-- Prices in `src/data/pricing.ts`, **two per package** since regional pricing landed: `startingFrom: { pk, intl }`, PKR for visitors in Pakistan and USD elsewhere (every value is still `TODO_PRICE` → "Quote on request" on `/services` and in the What I build rows). Then re-bracket `budgetRangesByRegion` — the PKR bands are placeholders. Region is decided client-side before paint from the time zone (`Asia/Karachi` → PKR), with a visible switch that remembers the choice; pages stay static. See `src/lib/region.ts`.
-- `instagram` and `x` in `src/data/config.ts`. Empty strings hide the icons everywhere, so the channels the ads run on are not linked from the site.
+- Prices in `src/data/pricing.ts`, **two per package** since regional pricing landed: `startingFrom: { pk, intl }`, PKR for visitors in Pakistan and USD elsewhere. **Draft market rates are live** (Rs 150k / 400k / 550k; $2,500 / $6,000 / $8,000, marked `// DRAFT — market rate, Oct 2026`) pending the owner's review. The budget bands in `budgetRangesByRegion` bracket them as they stand; revisit if the prices move much. Region is decided client-side before paint from the time zone (`Asia/Karachi` → PKR), with a visible switch that remembers the choice; pages stay static. See `src/lib/region.ts`.
 - Year, and ideally a write-up (`study`), for the three client pieces in `work.ts`. Without a study they link straight to the live site.
 - Hero headline: still the pre-redesign line, marked DRAFT. Alternatives are in a comment in `Hero.tsx`.
 - Third proof item in `proof.ts` is a dev-only placeholder; the strip ships with two cards.

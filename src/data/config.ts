@@ -9,8 +9,8 @@ export const siteConfig: SiteConfig = {
   email: "waleed@alsufun.com",
   github: "https://github.com/RoastedBrotato",
   linkedin: "https://www.linkedin.com/in/waleedajaz/",
-  instagram: "", // TODO: e.g. "https://www.instagram.com/<handle>/"
-  x: "", // TODO: e.g. "https://x.com/<handle>"
+  instagram: "https://www.instagram.com/waleedbrotato.dev/",
+  x: "https://x.com/brotatodev",
   // Set NEXT_PUBLIC_BOOKING_URL (Cal.com or Calendly) in the environment, or
   // paste the link here. NEXT_PUBLIC_ so it's inlined into the client navbar too.
   bookingUrl: process.env.NEXT_PUBLIC_BOOKING_URL ?? "",
