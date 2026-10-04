@@ -90,7 +90,7 @@ export function Section({
 /** The mono "01" that runs down the rail beside each label. */
 export function SectionIndex({ value }: { value: number }) {
   return (
-    <span aria-hidden className="text-foreground-subtle font-mono text-xs font-bold tracking-[0.16em]">
+    <span aria-hidden className="text-foreground-muted font-mono text-xs font-bold tracking-[0.16em]">
       {String(value).padStart(2, "0")}
     </span>
   );

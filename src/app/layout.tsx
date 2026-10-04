@@ -20,6 +20,7 @@ import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CommandPaletteProvider } from "@/components/CommandPalette";
 import { AnalyticsListener } from "@/components/AnalyticsListener";
+import { Cursor } from "@/components/Cursor";
 import { siteConfig } from "@/data/config";
 import { getAllPosts } from "@/data/blog";
 
@@ -113,6 +114,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
           </SmoothScroll>
           <AnalyticsListener />
+          <Cursor />
         </CommandPaletteProvider>
         <div aria-hidden className="grain" />
       </body>

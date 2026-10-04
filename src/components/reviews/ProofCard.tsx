@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import type { ProofItem } from "@/types";
 import { cn } from "@/lib/utils";
+import { CountUp } from "@/components/ui/CountUp";
 
 /** Same shell as ReviewCard, so the proof strip and the reviews read as one slot. */
 export function ProofCard({ item, className }: { item: ProofItem; className?: string }) {
@@ -16,7 +17,9 @@ export function ProofCard({ item, className }: { item: ProofItem; className?: st
           Placeholder · dev only
         </span>
       ) : null}
-      <p className="font-display text-foreground text-3xl font-bold tracking-tight">{item.stat}</p>
+      <p className="font-display text-foreground text-3xl font-bold tracking-tight">
+        <CountUp value={item.stat} />
+      </p>
       <p className="text-foreground-muted mt-3 text-base leading-relaxed">{item.detail}</p>
       {item.href ? (
         <a

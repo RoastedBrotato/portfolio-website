@@ -12,7 +12,15 @@ export type AnalyticsEvent =
   | "quote_start"
   | "quote_submit"
   | "booking_click"
-  | "social_click";
+  | "social_click"
+  /** The hero's 3D scene rendered its first frame; `tier` is full / lite / still. */
+  | "hero_scene_loaded"
+  /** The device got the 2D hero instead; `reason` says why. */
+  | "hero_scene_fallback"
+  /** A homepage section scrolled into view, once per visit; `section` names it. */
+  | "scroll_depth"
+  /** Step one of the quote form completed — intent recorded even if they bounce. */
+  | "quote_step";
 
 type Props = Record<string, string | number | boolean | undefined>;
 

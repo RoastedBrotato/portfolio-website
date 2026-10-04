@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
@@ -73,7 +74,16 @@ export default function LabPage() {
                       </div>
 
                       <h2 className="font-display text-foreground mt-3 text-xl font-bold tracking-tight sm:text-2xl">
-                        {entry.href ? (
+                        {entry.href?.startsWith("/") ? (
+                          // A demo that lives on this site: same tab.
+                          <Link
+                            href={entry.href}
+                            className="hover:text-accent inline-flex items-baseline gap-1.5 transition-colors"
+                          >
+                            {entry.title}
+                            <ArrowRight size={16} className="shrink-0 self-center" />
+                          </Link>
+                        ) : entry.href ? (
                           <a
                             href={entry.href}
                             target="_blank"

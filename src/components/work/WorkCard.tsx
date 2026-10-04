@@ -69,7 +69,13 @@ function Links({ item }: { item: WorkItem }) {
           <ArrowUpRight size={15} />
         </Link>
       ) : null}
-      {item.href ? (
+      {item.href?.startsWith("/") ? (
+        // A demo that lives on this site (the Lab pieces): same tab.
+        <Link href={item.href} className={cn(linkClass, "text-foreground-muted hover:text-foreground")}>
+          View live
+          <ArrowUpRight size={13} />
+        </Link>
+      ) : item.href ? (
         <a
           href={item.href}
           target="_blank"
@@ -91,7 +97,7 @@ function Links({ item }: { item: WorkItem }) {
 export function LeadWorkCard({ item }: { item: WorkItem }) {
   return (
     <article className="group">
-      <div className="relative">
+      <div className="relative" data-cursor={item.caseStudy || item.href ? "View" : undefined}>
         <MediaPreview
           media={item.media}
           sizes="100vw"
@@ -103,7 +109,7 @@ export function LeadWorkCard({ item }: { item: WorkItem }) {
           className="from-background pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t to-transparent"
         />
       </div>
-      <Container className="relative -mt-[0.6em] text-mega lg:pl-[calc(var(--rail)+var(--rail-gap)+2rem)]">
+      <Container className="relative -mt-[0.6em] text-title lg:pl-[calc(var(--rail)+var(--rail-gap)+2rem)]">
         <h3 className="font-display text-foreground leading-[0.95] font-bold tracking-tight">
           <WorkTitle item={item} />
         </h3>
@@ -121,7 +127,7 @@ export function LeadWorkCard({ item }: { item: WorkItem }) {
 export function WorkCard({ item }: { item: WorkItem }) {
   return (
     <article className="group flex flex-col">
-      <div className="border-border-strong border-2">
+      <div className="border-border-strong border-2" data-cursor={item.caseStudy || item.href ? "View" : undefined}>
         <MediaPreview media={item.media} sizes="(min-width: 640px) 50vw, 100vw" className="border-0" />
         {/* Caption bar instead of browser chrome: what it is, and when. */}
         <div className="border-border-strong text-foreground-subtle flex items-center justify-between gap-4 border-t-2 px-4 py-2.5 font-mono text-[11px] tracking-[0.14em] uppercase">

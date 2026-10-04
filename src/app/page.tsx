@@ -4,6 +4,7 @@ import { EngineeringRange } from "@/components/sections/EngineeringRange";
 import { Services } from "@/components/sections/Services";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { ContactCTA } from "@/components/sections/ContactCTA";
+import { ScrollDepth } from "@/components/ScrollDepth";
 import { getWork } from "@/data/work";
 
 /*
@@ -28,15 +29,33 @@ export default function Home() {
    */
   return (
     <>
-      <Hero />
       {work.length > 0 ? (
-        <SelectedWork items={work} index={1} />
+        <>
+          {/*
+           * The one place two Immersive sections touch (audit 6.2): the hero
+           * pins for half a viewport while Selected work slides up over it,
+           * and the scene tilts away underneath (it reads scroll itself).
+           * The spacer sets how long the pin lasts; the negative margin pulls
+           * the work section up into that space so it covers the hero.
+           */}
+          <div>
+            <div className="sticky top-0">
+              <Hero />
+            </div>
+            <div aria-hidden className="h-[50svh]" />
+          </div>
+          <SelectedWork items={work} index={1} className="bg-background relative z-10 -mt-[50svh]" />
+        </>
       ) : (
-        <EngineeringRange id="work" label="Work" index={1} />
+        <>
+          <Hero />
+          <EngineeringRange id="work" label="Work" index={1} />
+        </>
       )}
       <Services index={2} tone="plane-1" />
       <Testimonials index={3} tone="plane-2" />
       <ContactCTA index={4} tone="plane-1" />
+      <ScrollDepth sections={["work", "services", "reviews", "contact"]} />
     </>
   );
 }

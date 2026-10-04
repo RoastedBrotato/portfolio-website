@@ -37,6 +37,31 @@ export function RevealText({
   const reduceMotion = useReducedMotion();
   const words = toWords(children);
 
+  /*
+   * On-load reveals run in CSS, not Framer: the keyframes start at first paint,
+   * so a headline is never held invisible waiting for JavaScript to hydrate.
+   * On a slow phone connection that wait was the page's LCP. Reduced motion
+   * is handled by the global rule in globals.css, which collapses the
+   * animation to its end state.
+   */
+  if (trigger === "mount") {
+    return (
+      <Tag className={className}>
+        {words.map((word, i) => (
+          <span key={i} className="-mb-[0.18em] inline-block overflow-hidden pb-[0.18em] align-bottom">
+            <span
+              className="reveal-word inline-block"
+              style={{ animationDelay: `${delay + i * stagger}s` }}
+            >
+              {word.emphasis ? <em className="italic text-accent">{word.text}</em> : word.text}
+              {i < words.length - 1 ? " " : ""}
+            </span>
+          </span>
+        ))}
+      </Tag>
+    );
+  }
+
   if (reduceMotion) {
     return (
       <Tag className={className}>
@@ -53,14 +78,11 @@ export function RevealText({
     );
   }
 
-  const motionProps =
-    trigger === "mount"
-      ? { initial: { y: "110%" }, animate: { y: 0 } }
-      : {
-          initial: { y: "110%" },
-          whileInView: { y: 0 },
-          viewport: { once: true, margin: "-100px 0px" },
-        };
+  const motionProps = {
+    initial: { y: "110%" },
+    whileInView: { y: 0 },
+    viewport: { once: true, margin: "-100px 0px" },
+  };
 
   return (
     <Tag className={className}>

@@ -151,6 +151,25 @@ export type Media =
   | { type: "video"; src: string; poster: string; alt: string }
   | { type: "image"; src: string; alt: string };
 
+/**
+ * The write-up behind a creative piece, rendered by CreativeStudyLayout at
+ * /work/<slug>. Image-led and light on text, unlike the engineering case
+ * studies: a brief, a sequence of stills and clips, how it was built, result.
+ */
+export interface CreativeStudy {
+  /** One paragraph: what it is, who it's for, what it had to do. */
+  brief: string;
+  /** Shown in order, each with a short caption that sticks beside it on desktop. */
+  sequence: { media: Media; caption: string }[];
+  build: {
+    stack: string[];
+    /** Measured, not aspirational: [label, value] pairs. */
+    budget: [string, string][];
+    notes: { title: string; body: string }[];
+  };
+  result: string;
+}
+
 /** A "Selected work" entry — the creative pieces that lead the homepage. */
 export interface WorkItem {
   slug: string;
@@ -165,6 +184,8 @@ export interface WorkItem {
   /** An internal case-study path, e.g. "/work/<slug>". Optional. */
   caseStudy?: string;
   year?: string;
+  /** The write-up. When present, /work/<slug> renders it. */
+  study?: CreativeStudy;
   /** Placeholder slot: shown by `next dev` only, never in a build. */
   placeholder?: boolean;
 }

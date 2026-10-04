@@ -10,6 +10,8 @@
     "reviews": "node --env-file-if-exists=.env.local scripts/reviews.mjs"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
     "@upstash/redis": "^1.38.4",
     "cmdk": "^1.1.1",
     "framer-motion": "^13.1.1",
@@ -23,7 +25,8 @@
     "rehype-pretty-code": "^0.14.5",
     "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
-    "shiki": "^4.4.3"
+    "shiki": "^4.4.3",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -31,6 +34,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",

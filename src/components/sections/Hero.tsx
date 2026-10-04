@@ -3,8 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/Section";
 import { RevealText, type RevealWord } from "@/components/ui/RevealText";
-import { Reveal } from "@/components/ui/Reveal";
-import { HeroSpotlight } from "@/components/HeroSpotlight";
+import { HeroBackdrop } from "@/components/scene/HeroBackdrop";
 import { siteConfig } from "@/data/config";
 
 // DRAFT — the headline and the paragraph below are yours to rewrite. The audit's
@@ -25,15 +24,21 @@ export function Hero() {
         aria-hidden
         className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
       />
-      <HeroSpotlight />
+      <HeroBackdrop />
+      {/* Keeps the copy on a dark plane whatever the scene is doing behind it:
+          from the bottom on phones, from the left where the text sits on lg. */}
+      <div
+        aria-hidden
+        className="from-background/85 via-background/40 pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent lg:bg-gradient-to-r lg:via-background/30"
+      />
 
       {/* Same rail grid as every other section — the hero's rail holds the role
           tag where a section would put its label, so one left edge runs the page. */}
-      <Container className="relative grid min-h-[70svh] grid-cols-1 content-center gap-8 py-20 sm:py-28 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
+      <Container className="relative grid min-h-[calc(100svh-4rem)] grid-cols-1 content-center sm:min-h-[calc(100svh-5rem)] gap-8 py-20 sm:py-28 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
         <div>
-          <Reveal>
+          <div className="fade-up">
             <SectionLabel as="p">{siteConfig.role}</SectionLabel>
-          </Reveal>
+          </div>
         </div>
 
         <div className="min-w-0">
@@ -46,7 +51,9 @@ export function Hero() {
             {headline}
           </RevealText>
 
-          <Reveal delay={0.15}>
+          {/* CSS, not <Reveal>: this paragraph is the LCP element on a phone,
+              so it must not wait for hydration to become visible. */}
+          <div className="fade-up" style={{ animationDelay: "0.35s" }}>
             {/* One sentence, under 20 words: the hero's job is the claim and the
                 two ways forward. Availability and location live in the footer. */}
             <p className="text-foreground-muted mt-8 max-w-xl text-lg leading-relaxed">
@@ -63,7 +70,7 @@ export function Hero() {
                 Get a quote
               </Button>
             </div>
-          </Reveal>
+          </div>
         </div>
       </Container>
     </section>

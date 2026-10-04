@@ -236,7 +236,11 @@ src/
     reviews/                ReviewCard, ReviewForm, ScrollMarquee
     blog/                   mdx (MDX component map), FeedbackBox
     project/                ProjectCard (engineering strip card), ProjectVisual (screenshot frame)
-    case-study/              CaseStudyLayout (full case-study template), ArchitectureDiagram
+    case-study/              CaseStudyLayout (engineering), CreativeStudyLayout (creative pieces),
+                              ArchitectureDiagram
+    scene/                   React Three Fiber: HeroScene + HeroBackdrop (tiered hero), speaker/
+                              (the Quarr One model, studio lighting, configurator and launch scenes)
+    lab/                     Configurator and LaunchPage, the two /lab demos
     ui/                      Reusable primitives — Button, Badge, Container,
                               Section/SectionLabel, ExperienceTimeline, Reveal/RevealText,
                               icons (GitHub/LinkedIn)

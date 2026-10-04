@@ -12,20 +12,32 @@ import { LabEntry } from "@/types";
  */
 export const lab: LabEntry[] = [
   {
-    slug: "experiment-01",
-    title: "TODO — Experiment 01",
-    date: "2026-10-01",
-    note: "TODO: what you tried, with what tool, and what came of it.",
-    tags: ["TODO"],
-    placeholder: true,
+    slug: "quarr-launch",
+    title: "Quarr One launch page",
+    date: "2026-10-04",
+    note: "A launch page for a speaker that doesn't exist: four screens of pinned scroll turn the product, open it up and recolour it, then a waitlist that sends nothing.",
+    tags: ["Scroll-driven", "R3F"],
+    media: {
+      type: "video",
+      src: "/work/quarr-launch/preview.mp4",
+      poster: "/work/quarr-launch/poster.jpg",
+      alt: "Scrolling the launch page as the speaker turns and comes apart",
+    },
+    href: "/lab/launch",
   },
   {
-    slug: "experiment-02",
-    title: "TODO — Experiment 02",
-    date: "2026-09-20",
-    note: "TODO: what you tried, with what tool, and what came of it.",
-    tags: ["TODO"],
-    placeholder: true,
+    slug: "quarr-configurator",
+    title: "Product configurator",
+    date: "2026-10-03",
+    note: "The same fictional speaker as a configurator: three colourways, an exploded view and a scripted camera move. Modelled from primitives and lit with Lightformers, so the only download is code.",
+    tags: ["Interactive 3D", "R3F"],
+    media: {
+      type: "video",
+      src: "/work/quarr-configurator/preview.mp4",
+      poster: "/work/quarr-configurator/poster.jpg",
+      alt: "A speaker turning in the configurator as its colourway changes",
+    },
+    href: "/lab/configurator",
   },
 ];
 

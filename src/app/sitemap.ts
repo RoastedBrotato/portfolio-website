@@ -3,6 +3,7 @@ import { siteConfig } from "@/data/config";
 import { projects } from "@/data/projects";
 import { getAllPosts } from "@/data/blog";
 import { getLabEntries } from "@/data/lab";
+import { getStudies } from "@/data/work";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = [
@@ -32,6 +33,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    ...getStudies().map((item) => ({
+      url: `${siteConfig.siteUrl}/work/${item.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
     ...projects.map((project) => ({
       url: `${siteConfig.siteUrl}/work/${project.slug}`,
       lastModified: new Date(),
@@ -53,6 +60,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: "weekly" as const,
             priority: 0.7,
           },
+          // The demos themselves, linked from their Lab entries.
+          ...getLabEntries()
+            .filter((entry) => entry.href?.startsWith("/"))
+            .map((entry) => ({
+              url: `${siteConfig.siteUrl}${entry.href}`,
+              lastModified: new Date(entry.date),
+              changeFrequency: "monthly" as const,
+              priority: 0.6,
+            })),
         ]
       : []),
     {

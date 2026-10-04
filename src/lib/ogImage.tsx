@@ -1,14 +1,27 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 import { siteConfig } from "@/data/config";
+
+/*
+ * A still of the hero scene (public/og/hero.jpg, 1200 × 630), captured from the
+ * live site: the slab field with the red light off to the right, empty on the
+ * left where the headline goes. Inlined as a data URL because the card is
+ * rendered at build time, with no server to fetch it from. Re-capture it when
+ * the scene changes.
+ */
+const heroStill = `data:image/jpeg;base64,${readFileSync(
+  path.join(process.cwd(), "public/og/hero.jpg"),
+).toString("base64")}`;
 
 /** Shared by every route's opengraph-image.tsx. */
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
 /**
- * The site's share card: black, the 48px grid, a red tag and one big line —
- * the same language as the hero, so a link in an Instagram DM or a LinkedIn
- * post looks like the page it opens.
+ * The site's share card: the hero scene behind a red tag and one big line —
+ * so a link in an Instagram DM or a LinkedIn post shows the thing the site
+ * sells, not just a description of it.
  */
 export function renderOgImage({ tag, headline }: { tag: string; headline: string }) {
   return new ImageResponse(
@@ -21,11 +34,26 @@ export function renderOgImage({ tag, headline }: { tag: string; headline: string
         justifyContent: "center",
         padding: "80px",
         backgroundColor: "#000000",
-        backgroundImage:
-          "linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)",
-        backgroundSize: "48px 48px",
+        position: "relative",
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain <img> only. */}
+      <img
+        src={heroStill}
+        alt=""
+        width={ogSize.width}
+        height={ogSize.height}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+      />
+      {/* Keeps the headline on black whatever the still shows behind it. */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 55%, rgba(0,0,0,0.1) 100%)",
+        }}
+      />
       <div
         style={{
           display: "flex",

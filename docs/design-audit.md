@@ -1,13 +1,14 @@
 # Design audit and redesign brief
 
-**Site:** waleedajaz.com (Next.js 16, Tailwind 4, Framer Motion, Lenis)
-**Audited:** 4 October 2026, from the repo at commit `f67651d` plus the uncommitted `HeroSpotlight` experiment
-**Purpose:** handoff document for a redesign. The goal of the site is to convert paid social traffic (Instagram, X, LinkedIn ads) into quote requests for creative-dev work: immersive landing pages, brand sites, interactive 3D.
-**Status:** Phase 0 (code parts) and Phase 1 shipped on 4 October 2026. **Next up: Phase 2.** Section 0 lists what was done, what is still open, and handoff notes. Sections 1 to 8 are the original audit and describe the site *before* that work.
+**Site:** waleedajaz.com (Next.js 16, Tailwind 4, Framer Motion, Lenis, React Three Fiber)
+**Original audit:** 4 October 2026, against commit `f67651d`.
+**This revision:** 4 October 2026, against the working tree after the redesign phases 1 to 4 (commit `e447110` plus uncommitted work). Sections 1 to 9 now describe the site **as it is**, with the pre-redesign state kept only where it explains a decision. Section 0 is the implementation log.
+**Purpose:** handoff document. The goal of the site is to convert paid social traffic (Instagram, X, LinkedIn ads) into quote requests for creative-dev work: immersive landing pages, brand sites, interactive 3D.
+**Status:** structurally done. **Blocking ads:** prices, social handles, the hero's LCP on mobile, and a real-device pass. Full list in 0.3 and section 1.
 
 ---
 
-## 0. Implementation status
+## 0. Implementation log
 
 ### 0.1 Done (Phase 0 code items + Phase 1)
 
@@ -18,7 +19,7 @@
 | 5.2 `/about` | Bio (location + resume in the rail), engineering strip, experience timeline (each role collapsed, current one open), stack, latest writing, "Elsewhere" links (Lab, Blog, Reviews), CTA. | `src/app/about/` |
 | 5.2 `/work` index | Selected work (when it exists), then the engineering case studies. No type filter yet: there is only one type. | `src/app/work/page.tsx` |
 | 5.2 `/services` | `/pricing` moved here, with a 308 redirect in `next.config.ts`. Package cards have anchors (`/services#interactive-3d`). Embedded form replaced by the CTA. `pricing_view` event name kept for continuity. | `src/app/services/` |
-| F6, 7.4 Navbar | Work, Services, About, Get a quote. Search kept. Theme toggle removed. Red scroll-progress line on the header rule. | `src/data/nav.ts`, `Navbar.tsx` |
+| F6, 7.4 Navbar | Work, Services, About, Blog, Get a quote (Blog added at the owner's request — posted to regularly, so worth one click; departs from 5.2). Search kept. Theme toggle removed. Red scroll-progress line on the header rule. | `src/data/nav.ts`, `Navbar.tsx` |
 | F9 Light mode | Dark-only. `next-themes` and `ThemeToggle` removed; `[data-theme="light"]` tokens kept in CSS, unused. | `layout.tsx`, `globals.css` |
 | 7.4 Footer | Availability + location; links to Work, Services, About, Lab, Blog, Reviews, Get a quote; socials. | `Footer.tsx` |
 | 4.3 Depth range | `--plane-0..3` (`#050505` to `#161616`) as `bg-plane-*`. `Section` takes a `tone`; the homepage steps base → plane-1 → plane-2 → plane-1, footer on plane-0. | `globals.css`, `Section.tsx` |
@@ -33,58 +34,90 @@
 | F2, F11, 5.4 Hero copy | Support line cut to one sentence, Lab link dropped, availability line moved to the footer, "See the work" → `/work`. Headline unchanged (still marked DRAFT, alternatives in a comment). | `Hero.tsx` |
 | 5.4 Outcome lines | Moementum: "A coaching platform with 10 active clients logging in daily." ("active", not "paying": only "active" is verified.) KnowledgeOS and Meeting Intelligence as proposed. | `projects.ts` |
 | F11 Resume link | Moved from the Experience rail to the bio rail on `/about`. | `About.tsx` |
-| F10 partial | Share cards added for `/about`, `/work` and each case study. Still the static template (see 0.3). | `opengraph-image.tsx` files |
+| F10 partial | Share cards added for `/about`, `/work` and each case study. | `opengraph-image.tsx` files |
 | Sitemap | `/services`, `/work`, `/about` added; `/lab` only listed when it has entries. | `sitemap.ts` |
 | Bug (not in audit) | Reduced-motion headings joined inline words with non-breaking spaces, so long headings overflowed sideways on phones. Fixed. | `RevealText.tsx` |
 
-Measured after the change (production build, placeholders hidden): homepage **4.6** viewport heights at 1440 × 900 (was ≈ 8.9) and **6.8** at 390 × 844. No horizontal overflow at 390 px.
+Measured after Phase 1 (production build, placeholders hidden): homepage **4.6** viewport heights at 1440 × 900 (was ≈ 8.9) and **6.8** at 390 × 844. No horizontal overflow at 390 px.
 
-### 0.2 Still open
+### 0.2 Done (Phases 2, 3 and 4)
 
-**Content only the owner can supply (Phase 0, blocks ads):**
-- Prices in `src/data/pricing.ts`. Every `startingFrom` is still `TODO_PRICE`, which renders "Quote on request". Then re-bracket `budgetRanges` around them.
-- `instagram` and `x` in `src/data/config.ts`.
-- Three clips + posters (site hero, Moementum, KnowledgeOS), 5 to 8 s, 1280 px, under 1.5 MB.
-- Real Selected work entries in `src/data/work.ts` (7.1).
+| Audit item | What shipped | Where |
+|---|---|---|
+| F2, 7.2 Hero scene (direction A) | Instanced slab field (748 slabs full / 468 lite, one draw call) lit by a red point light that follows the pointer, or drifts on touch. Scroll tilts the field and pulls the camera back. Fog hides the edges; a scrim keeps the copy legible. | `src/components/scene/HeroScene.tsx` |
+| 6.4 Device tiers | Decided on idle after hydration, before three.js downloads: `full`, `lite` (touch / ≤4 cores / ≤4 GB: fewer slabs, dpr 0.75–1, no AA), `still` (reduced motion: one frame), `fallback` (no WebGL, Save-Data, ≤2 cores: the 2D `HeroGrid`, restored from `f67651d`). `HeroSpotlight` removed. | `src/lib/sceneTier.ts`, `useSceneTier.ts`, `HeroBackdrop.tsx` |
+| 6.2 Pinned hero → work | CSS sticky: the hero pins for 50svh while Selected work slides over it; the scene keeps reading scroll underneath. Only when a real lead entry exists. | `src/app/page.tsx` |
+| 6.1.8 Scene events | `hero_scene_loaded {tier}`, `hero_scene_fallback {reason}`. | `analytics.ts` |
+| F10 OG image | Every share card now renders over a still of the hero scene (`public/og/hero.jpg`, inlined at build). | `src/lib/ogImage.tsx` |
+| 7.1 Selected work | **Changed from the audit:** the site itself is *not* a piece (it read as the page repeating itself). Lineup: Benda Offroad (lead), 3dbanao, CreateXworks — client sites linking to their live builds — then the two Quarr One demos. Clips and posters were recorded from the live sites with Playwright + ffmpeg (all under 850 KB). | `src/data/work.ts`, `public/work/*` |
+| 7.1 Configurator demo | Quarr One, a fictional speaker modelled from primitives (no model file), lit with Lightformers (no HDR). Three colourways, exploded view, scripted camera intro, orbit without zoom. ≈ 290 KB gz of scene JS, lazy. | `/lab/configurator`, `src/components/scene/speaker/*` |
+| 7.1 Fictional launch page | Same speaker: display-type opener, 400svh pinned scroll sequence (turn / open / colour / hear, aria-live captions), the numbers, a waitlist that sends nothing. Fictional-product banner on every screen. | `/lab/launch`, `LaunchPage.tsx` |
+| 5.2 Creative case-study template | Full-bleed lead clip, brief, sequence with sticky captions, "how it was built" (stack, measured budget, notes), result, next piece. Shares `/work/[slug]` with the engineering template. Used by the two Quarr pieces. | `CreativeStudyLayout.tsx`, `work.ts` (`study`) |
+| Lab | Two real entries (the demos); internal links open in the same tab. Still out of the primary nav (rule: three entries). | `src/data/lab.ts` |
+| 6.2 Cursor | Red square companion, fine pointer only, off under reduced motion; grows on interactive elements, opens to "View" on work media. Native cursor kept. | `src/components/Cursor.tsx` |
+| 6.2 Count-ups | First number in a string counts up once on view (0.4 s); server renders the final value, no CLS. Proof stats, package prices (once set), launch-page numbers. | `src/components/ui/CountUp.tsx` |
+| 6.2 Diagram draw-on | Architecture connectors are SVG paths drawn with pathLength; arrowheads land after. | `ArchitectureDiagram.tsx` |
+| 8.9 Scroll depth | `scroll_depth {section}` once per view for work / services / reviews / contact. | `src/components/ScrollDepth.tsx` |
+| 5.2 Two-step quote form | Step 1: type, budget, timeline → `quote_step` event with the choices, saved to sessionStorage. Step 2: details. One `<form>`, so server validation is unchanged. Success state lands the red square mark. | `QuoteForm.tsx` |
+| 6.4 LCP fix (partial) | On-load reveals (`RevealText trigger="mount"`, hero copy) moved from Framer to CSS keyframes so they don't wait for hydration. Section numbers lifted to pass contrast. | `RevealText.tsx`, `Hero.tsx`, `globals.css` |
+| 4.4 Mark | The favicon is now the red square alone (no monogram). The same square is the cursor companion, the nav mark, the footer mark, the bullet and the quote success state. | `src/app/icon.tsx`, `Cursor.tsx` |
 
-**Deferred from Phase 1:**
-- Inline visuals for the What I build rows (need the clips).
-- Case-study template tightening (5.2): merge Overview + Problem, fold Challenges + Decisions into one expandable "Notes" section.
-- `/work` type filter, once there is more than one type.
+Lighthouse, homepage, mobile preset (simulated slow 4G), local production build: **Accessibility 100, Best practices 96, SEO 100, Performance 71. CLS 0, FCP 2.2 s, TBT 380 ms, LCP 4.8 s** (was 6.8 s before the CSS reveal change). The two best-practices misses are the Cloudflare beacon's CORS error on localhost and missing source maps.
 
-### 0.3 Handoff notes for Phase 2
+### 0.3 Still open
 
-- **Hero fallback.** `HeroGrid.tsx` (the canvas grid) was replaced by the CSS `HeroSpotlight` experiment, which is what ships now. Direction A (7.2) wants the canvas back as the lite tier; restore it with `git show f67651d:src/components/HeroGrid.tsx`. `HeroSpotlight` makes a reasonable poster/no-WebGL tier.
-- **Where the scene goes.** `Hero.tsx` stacks the grid and spotlight layers (absolutely positioned) behind the rail grid; the R3F canvas replaces those two layers. Keep `min-h-[70svh]`, or raise it to `100svh` for the pinned transition.
-- **Pinned hero → work transition.** Only possible once `work.ts` has a real lead entry; until then the section after the hero is the engineering strip, not an Immersive section. `SelectedWork` renders its own `<section id="work">` with `LeadWorkCard` first, so a pinned wrapper can span Hero + lead card.
-- **One scroll system.** Lenis owns scroll (`SmoothScroll.tsx`, exposes `useLenis()`). If GSAP ScrollTrigger comes in, drive it from Lenis per 6.3. The navbar progress line uses Framer `useScroll`, which reads native scroll and already works under Lenis.
-- **Page transitions** are View Transitions, not Framer. Anything given a `viewTransitionName` is skipped by hit-testing during a transition, so don't name interactive elements.
-- **Planes and grain.** Use `bg-plane-*` for scene backgrounds so the canvas matches the page. The grain sits at `z-index: 60` over everything, canvas included, so the scene doesn't need its own.
-- **Events to add.** `hero_scene_loaded`, `hero_scene_fallback` and the scroll-depth events go in the `AnalyticsEvent` union in `src/lib/analytics.ts`.
-- **OG image.** `src/lib/ogImage.tsx` takes `tag` + `headline`; add an optional background image for the hero still.
+**Content only the owner can supply (blocks ads):**
+- Prices in `src/data/pricing.ts` (every `startingFrom` is `TODO_PRICE` → "Quote on request" on `/services` and in the What I build rows), then re-bracket `budgetRanges`.
+- `instagram` and `x` in `src/data/config.ts`. Empty strings hide the icons everywhere, so the channels the ads run on are not linked from the site.
+- Year, and ideally a write-up (`study`), for the three client pieces in `work.ts`. Without a study they link straight to the live site.
+- Hero headline: still the pre-redesign line, marked DRAFT. Alternatives are in a comment in `Hero.tsx`.
+- Third proof item in `proof.ts` is a dev-only placeholder; the strip ships with two cards.
+
+**Performance:**
+- **LCP is 4.8 s on Lighthouse's mobile preset against a 2.5 s budget.** The LCP element is now small header text, which points at font loading and main-thread time (TBT 380 ms) rather than the reveals. Next steps: check which font blocks it, preload or subset Geist Mono / Fraunces, and see what in the initial bundle can be deferred.
+- Real-device pass on a mid-range Android inside the Instagram in-app browser (not done; only desktop GPU and SwiftShader were tested).
+
+**Deferred:**
+- Inline visuals for the What I build rows (5.1, 6.2).
+- One visual per package on `/services` (5.2).
+- Engineering case-study tightening (merge Overview + Problem, fold Challenges + Decisions into "Notes").
+- `/work` type filter; preloader (6.2 — skipped: the scene loads on idle and fades in, so there is nothing to wait for).
+- A/B hero headlines via ad landing variants (needs the ad setup).
+- Lab back into the nav at three entries. Reviews back into the nav at three approved reviews.
+
+### 0.4 Handoff notes
+
+- **Re-cutting clips.** Pieces are recorded from the live sites in headless Chrome on the real GPU (`channel: "chrome"`, `--use-angle=d3d11`; SwiftShader runs at ~2 fps and is useless for video), then trimmed and encoded with `ffmpeg -c:v libx264 -crf 27 -movflags +faststart`. Hide the site header and the cursor companion (`[class*='z-[90]']`) when recording this site's own pages, or the footage shows the site inside itself.
+- **OG still.** Re-capture `public/og/hero.jpg` (1200 × 630, scene only, light off to the right) whenever the hero scene changes.
+- **One scroll system.** Lenis owns scroll; every scroll-linked effect (hero scene, launch sequence, nav progress) reads native scroll or Framer's `useScroll`, both of which work under Lenis. No GSAP was needed.
+- **Three.js stays out of the main bundle.** Scenes load through `next/dynamic` with `ssr: false`; anything a page needs from the speaker (colourways) lives in `colorways.ts`, which imports no three.
+- **React Compiler lint.** Mutating values from `useMemo` or props inside `useFrame` fails `react-hooks/immutability`; use refs created lazily inside the frame callback (see `HeroScene.tsx`) or read from the R3F `state` argument.
+- **Uncommitted work.** Everything in 0.2 is in the working tree, not yet committed. `git status` lists about 27 modified files plus the new `scene/`, `lab/`, `public/work/`, `public/og/` and `public/lab/` directories.
 
 ---
 
-## 1. Verdict in one page
+## 1. Where the site stands
 
-The site is a well-engineered engineer's portfolio wearing a "creative developer" label it has not earned yet. The code quality is high, the design system is disciplined, and the lead funnel (pricing, quote form, UTM attribution, Plausible events) is more complete than most agencies have. But a visitor arriving from an ad sees none of that. They see:
+The structural problems from the original audit are fixed. The site now does the thing it sells: the hero is a real-time scene, the work section leads with full-bleed motion, routes transition, and two of the five work pieces are live demos of the exact packages on the services page. The homepage is about half its previous length and nothing on it is CV content.
 
-- A text headline over a faint grid, with a canvas effect so restrained it is nearly invisible.
-- A "Selected work" section that **does not render in production** because all three entries are placeholders. The first thing a creative-dev client wants to see is the one thing that is missing.
-- Three dashboard screenshots of admin-style SaaS tools (dark cards, forms, tables). They are good engineering proof, but they are visually the opposite of "immersive" and "3D".
-- Then around 2,500 words of services, proof cards, a four-paragraph bio, five jobs of CV bullets, a tech-stack list, three blog posts about travelling, and a six-field form.
+What a visitor from an ad sees today:
 
-The homepage currently has **nine sections** and runs roughly **8 to 9 viewport heights** on desktop, more on mobile. Everything after the first two sections is there to reassure, not to sell, and most of it reassures the wrong buyer (a hiring manager, not a founder buying a landing page).
+- A 100svh hero with an instanced 3D field lit by a red light that follows their pointer, a headline, one sentence, and two buttons. On a phone the light drifts on its own; on a weak device the 2D grid takes over; under reduced motion a single still frame.
+- Five creative pieces: three client sites (Benda Offroad full-bleed as the lead, 3dbanao, CreateXworks) and the two Quarr One demos, each with a looping clip.
+- The three packages as large rows with timeline and a "from" price slot, then a small link to the engineering case studies.
+- A proof strip of two verifiable facts over the oversized marquee, directly above the closing CTA.
 
-The brand problem is structural, not cosmetic: the site tells people you build immersive, motion-rich, 3D experiences, and then demonstrates none of them. For a creative developer the website **is** the portfolio piece. Right now the strongest piece of evidence for your pitch is the pricing page's copy, not anything the visitor can see or feel.
+The brand gap the audit named, **Physical**, is closed at the level that matters: light, depth and material are now on the page, and they extend the existing black-and-red system rather than replacing it.
 
-The recommendation is not "add Three.js to the hero". It is a three-part fix, in this order:
+What still stands between the site and an ad campaign, in order:
 
-1. **Make the site itself the flagship case study.** Hero, transitions, scroll choreography, one real-time scene. Treat it as the first entry in "Selected work".
-2. **Cut the homepage to five sections and one scroll story.** Move CV, stack, bio and blog off the homepage to pages where they belong.
-3. **Reframe the three engineering projects** as "built the whole thing" proof under the creative work, not as the main event, and get three real creative pieces in front of them, even if two are self-initiated Lab pieces.
+1. **Prices.** All three packages still render "Quote on request". This was finding F7 and it is untouched because only the owner can set the numbers.
+2. **The hero's mobile LCP.** 4.8 s against a 2.5 s budget in Lighthouse's mobile preset. The scene is not the cause (it mounts on idle). Fonts and main-thread time are the suspects.
+3. **Social handles.** Instagram and X are empty in config, so the icons do not render.
+4. **A real-device pass** on a mid-range Android in the Instagram in-app browser. Tier detection should land these devices on `lite`, but it has only been reasoned about, not watched.
+5. **Years and write-ups for the client pieces**, and a decision on the hero headline, which is still the pre-redesign draft.
 
-The rest of this document is specific about how.
+Smaller things that would lift the page further are in 0.3 under "Deferred". None of them block launch.
 
 ---
 
@@ -94,104 +127,93 @@ The rest of this document is specific about how.
 
 | Route | What it is | State |
 |---|---|---|
-| `/` | Hero, Selected work, Engineering range, Services, Proof/Reviews, About, Experience, Writing, Contact + quote form | Live. Selected work hidden in prod (all placeholders). |
-| `/work/[slug]` | Case studies for Moementum, KnowledgeOS, AI Meeting Intelligence | Live. One has no cover image, two have no demo or repo link. |
-| `/lab` | Experiments feed | Empty in prod. Renders "First experiments are on the way". |
-| `/pricing` | 3 packages + custom, process, FAQ, embedded quote form | Live. Every price is `TODO_PRICE`, so renders "Quote on request". |
-| `/quote` | The quote form | Live, complete. |
-| `/reviews` | Approved testimonials + submit form | Live, zero approved reviews. |
-| `/blog`, `/blog/[slug]` | 5 published posts, all tagged "yapping" | Live. |
-| `/admin/reviews` | Moderation | Private. |
+| `/` | Hero (pinned) → Selected work → What I build → Proof → Contact | Live. Five real work pieces. Prices show "Quote on request". |
+| `/work` | Selected work, then the engineering case studies, then CTA | Live. No type filter (not needed yet). |
+| `/work/[slug]` | Engineering case studies (Moementum, KnowledgeOS, AI Meeting Intelligence) and creative studies (Quarr configurator, Quarr launch) under one route, two templates | Live. Meeting Intelligence still has no cover image and uses the generated visual; two engineering studies have no demo or repo link. |
+| `/services` | 3 packages + custom, process, FAQ, CTA. `/pricing` redirects here (308). | Live. Every `startingFrom` is `TODO_PRICE`. |
+| `/quote` | Two-step quote form with UTM attribution | Live, complete. The only form on the site. |
+| `/about` | Bio, engineering strip, experience (collapsed), stack, writing, Elsewhere links, CTA | Live. |
+| `/lab` | Experiments feed | Live, two entries (the Quarr demos). Footer and About only, not in the nav. |
+| `/lab/configurator`, `/lab/launch` | The two live demos | Live. Three.js loads lazily per page. |
+| `/reviews` | Approved testimonials + submit form | Live, no approved reviews yet. Footer and About only. |
+| `/blog`, `/blog/[slug]` | 5 published posts | Live. In the nav at the owner's request. |
+| `/admin/reviews` | Moderation for reviews, feedback and quote requests | Private. |
 
-Navigation: Work, Lab, Pricing, About, Reviews, Blog, plus Search, Theme toggle, Get a quote. Seven destinations plus two utilities is heavy for a conversion site. Two of them (Lab, Reviews) land on empty pages in production.
+Navigation: Work, Services, About, Blog, plus Search and Get a quote. Four destinations and one CTA. Lab and Reviews return to the nav when each has three real entries.
 
 ### 2.2 Visual system (from `globals.css` and the README)
 
-- **Palette:** pure black `#000`, white, red accent `#ff2b1f` (dark) / `#cc0000` (light). Greys at 0d, 1a, 2b, 7a, a3.
-- **Type:** Fraunces (display, bold, italic for emphasis), Geist Sans (body), Geist Mono (labels, nav, buttons). Fluid `clamp()` scales for display, h1, h2.
-- **Structure:** 2 px white rules between sections, 1 px hairlines inside. No border radius anywhere. Hard 5 px offset shadow (`.brutal`) for depth. 48 px background grid. One 10 rem left "rail" that holds a red section label on every section of every page.
-- **Motion:** Lenis smooth scroll. Per-word mask-lift text reveal on headings. Fade-and-rise on scroll for blocks (`Reveal`, 24 px, 0.6 s, `[0.16,1,0.3,1]`). A scroll-linked oversized type marquee behind the testimonials. Pointer-reactive grid cells in the hero (canvas), and an uncommitted CSS spotlight alternative. Reduced-motion is respected everywhere.
-- **Components:** Button (primary red / secondary outlined / ghost), SectionLabel (red block), Badge, PackageCard, WorkCard, ProjectCard with a fake browser chrome, ProofCard, ReviewCard, PageHeader, FormField.
+- **Palette:** black as a range, not a value. `--plane-0` to `--plane-3` (`#050505`, `#0a0a0a`, `#111`, `#161616`) step section backgrounds one level at a time. White text, greys at 7a and a3. Red `#ff2b1f` as the single accent, now also used as *light*: the hero's point light, the speaker studio's red strip. The light-theme tokens remain in CSS but nothing sets the attribute.
+- **Type:** Fraunces (display), Geist Sans (body), Geist Mono (labels, nav, buttons, numbers). Fluid scales: `--text-display`, `--text-h1`, `--text-h2`, plus `--text-mega` (`clamp(3.5rem, 1rem + 9vw, 11rem)`) for titles meant to be read as images.
+- **Structure:** 2 px white rules between sections, 1 px hairlines inside. No border radius. `.brutal` hard offset shadow for UI cards. One 10 rem rail with a red label and a running section number on Editorial sections. Three section weights: Immersive (full-bleed, no rail), Editorial (the rail grid), Utility (compact band).
+- **Texture:** fixed SVG grain at 4% over the whole page, stepped shimmer, static under reduced motion. The 48 px grid is now a secondary texture (hero poster, page headers).
+- **Motion:** Lenis smooth scroll. CSS keyframe reveals for on-load elements (so LCP does not wait for hydration), Framer `Reveal` for on-scroll blocks. View Transitions between routes with a held header. Scroll-linked marquee. Hero scene reads pointer and scroll. Red-square cursor companion on fine pointers. Count-up numbers. SVG draw-on for the architecture diagram. Everything respects reduced motion and Save-Data.
+- **3D:** React Three Fiber + drei + three 0.186. Two scenes: the hero field (instanced, one draw call) and the Quarr One speaker (primitives, Lightformer studio, no texture or model downloads). All scene code is dynamically imported with `ssr: false`.
+- **Mark:** the red square. Favicon, nav, footer, cursor, bullets, quote success state.
+- **Components:** Button, SectionLabel + SectionIndex, Section (with `tone`), PageHeader, Badge, PackageCard, WorkCard + LeadWorkCard, MediaPreview, ProjectCard + ProjectVisual (plane and caption bar, no browser chrome), ProofCard, ReviewCard, CountUp, Cursor, ScrollDepth, FormField, HeroBackdrop + HeroScene, CreativeStudyLayout, CaseStudyLayout, ArchitectureDiagram.
 
-This is a coherent neo-brutalist system. It is also, by its own rules, a **static** system: hard edges, no gradients, no depth beyond a flat offset shadow, no imagery language beyond screenshots in a frame. Those rules were right for the "3 projects, black/red brutalist" engineer portfolio they were written for (commit `0d5dce1`). They are now in tension with the pivot to immersive and 3D, which lives on light, depth, material and motion.
+### 2.3 What is working and should be protected
 
-### 2.3 What is working and should be kept
-
-- The **data-driven content layer** (`src/data/*`). Everything below is a content and layout change on top of it.
-- The **lead funnel**: `/quote` with UTM capture, placement tracking, the honeypot, rate limiting, Plausible events. This is the business end and it is done.
-- The **pricing structure**: three packages mapped to the quote form's project types, a custom path, a process section, an FAQ. The copy is good. It needs prices.
-- The **reduced-motion and Save-Data handling** in `MediaPreview`, `HeroGrid`, `Reveal`. Carry these habits into anything heavier.
-- **Fraunces as display face.** It has real character, and the italic red emphasis word is the one thing in the current system that already feels like a brand gesture.
-- **Red as the single accent.** Keep it. Change what sits around it.
-- The **rail label idea**. Keep the concept of a single running left index, but it should not be the only heading style on the site (see 5.3).
-- The **blog's voice.** It is honest and personal. It just should not sit between a founder and the quote form.
+- The **data-driven content layer** (`src/data/*`). Work, lab, pricing, proof and projects are all data; the layouts have no hard-coded content.
+- The **lead funnel**: `/quote` with two steps, UTM capture, placement, honeypot, rate limiting, and the Plausible events `quote_start`, `quote_step`, `quote_submit`, `booking_click`, `scroll_depth`, `hero_scene_loaded`, `hero_scene_fallback`.
+- The **tiering and fallback discipline**: tier decided before three.js downloads, poster paints first, the 2D grid for weak devices, a still frame for reduced motion, clips that only play on screen and never under Save-Data. Keep this for anything added.
+- **One scroll system.** Lenis owns scroll; every scroll-linked effect reads it. GSAP was not needed and should not be added casually.
+- **Three.js out of the main bundle.** Both scenes are lazy; shared data (`colorways.ts`) imports no three.
+- The **red square as the mark** and **Fraunces italic red as the emphasis gesture**. Both are now consistent across the site.
+- The **blog's voice**, now reachable in one click without sitting in the funnel.
 
 ---
 
-## 3. Findings, ranked by impact on conversion
+## 3. Findings from the original audit, with current status
 
-Each finding names where it is in the code so it can be fixed without re-auditing.
+Each finding keeps its original statement so the reasoning survives, followed by where it stands.
 
-### F1. The flagship section is empty in production
-`src/data/work.ts` has three `placeholder: true` entries, so `SelectedWork` renders nothing in a build and `EngineeringRange` takes the `#work` anchor. A visitor who clicks the hero's primary button "See the work" lands on three SaaS dashboards under a label that says "Work". For a site selling immersive websites that is a broken promise on the first click.
+### F1. The flagship section was empty in production — **resolved**
+`work.ts` had three placeholders, so Selected work did not render in a build. Now five real entries: Benda Offroad, 3dbanao, CreateXworks, Quarr One configurator, Quarr One launch page. The lead runs full-bleed. "See the work" goes to `/work`.
+*Open:* year and `study` write-ups for the three client pieces.
 
-**Fix:** three real creative pieces before any ad spend, even self-initiated. This site's own redesign should be piece one. See 7.1.
+### F2. The hero made the claim and showed nothing — **resolved**
+A text headline over a faint grid with a near-invisible canvas effect. Now a tiered real-time scene (7.2 direction A) with the pinned transition into Selected work.
+*Open:* the headline copy is still the original draft; mobile LCP is over budget (6.4).
 
-### F2. The hero makes the claim and shows nothing
-`Hero.tsx` is a headline, a paragraph, two buttons and an availability line over a grid that lights up red cells near the cursor at 55% alpha. On touch, one ambient cell blinks every 900 ms. A creative-dev hero needs to be the demo. The first three seconds decide whether the ad click was wasted.
+### F3. The homepage was a CV — **resolved**
+Nine sections, around nine viewport heights, most of it hiring-manager content. Now five sections, measured at 4.6 viewport heights on desktop and 6.8 on a 390 px phone. About, Experience, Writing and the embedded form moved to `/about`.
 
-**Fix:** a real-time scene or a scroll-driven showreel in the hero. Details in 6.1 and 7.2.
+### F4. The three case studies pulled the brand toward "backend engineer" — **resolved**
+Fake browser chrome around dark dashboards, titled "Engineering range", first thing under the hero. Now a compact strip under Selected work on `/work` and `/about`, linked from the homepage by a one-line row. Screenshots sit on a `#161616` plane with a caption bar. Outcome lines rewritten for a buyer.
+*Open:* template tightening (merge Overview + Problem, fold Challenges + Decisions) is deferred. Meeting Intelligence still has no screenshot.
 
-### F3. The homepage is a CV
-Order today: Hero, Selected work, Engineering range, Services, Proof, About, Experience, Writing, Contact. Of these, **Experience** (five jobs, fourteen bullet points), **About** (four paragraphs plus a five-row tech stack), and **Writing** (three travel posts) are hiring-manager content. A founder buying a landing page does not need to know you optimised Entity Framework queries in 2021 or that you like metal.
+### F5. Nothing on the site used the medium it sells — **resolved**
+No WebGL, no 3D, no pinning, no transitions, no video. Now: hero scene, two product scenes, a 400svh pinned scroll sequence, View Transitions, five looping clips, scroll-linked marquee, draw-on diagram, cursor companion. The package copy's promises ("camera choreography", "page transitions", "scroll-driven motion") each have a live example on the site.
 
-**Fix:** homepage becomes Hero, Work, Capabilities, Proof, CTA. Everything else moves to `/about`. See 5.1.
+### F6. Two nav links went to empty pages — **resolved**
+Lab and Reviews removed from the nav; both live in the footer and on `/about`. Lab now has two entries and returns at three. Blog was added to the nav at the owner's request.
 
-### F4. The three case studies pull the brand toward "backend engineer"
-`ProjectCard` wraps every screenshot in a fake browser window with three square dots, and the screenshots are dark admin dashboards. The copy is excellent engineering writing (RLS, pgvector, diarization), which is exactly what a CTO would want and exactly what a marketing lead would scroll past. The section is titled "Engineering range" and its intro says "the engineering underneath the motion", but there is no motion above it yet.
+### F7. Pricing with no prices — **open, owner content**
+All three packages still render "Quote on request" on `/services` and in the What I build rows. Set `startingFrom` in `pricing.ts`, then re-bracket `budgetRanges` around the real numbers. This is the single largest remaining conversion issue.
 
-**Fix:** keep the case studies, reposition them as a "Full-stack and AI under the hood" strip beneath the creative work, with a tighter visual treatment. Rewrite the three outcome lines for a buyer, not a reviewer. See 5.1 and 5.4.
+### F8. Visual monotony across the scroll — **resolved**
+Every section was the same shape on flat black. Now the homepage steps through planes (base → plane-1 → plane-2 → plane-1, footer plane-0), alternates Immersive / Editorial / Utility weights, has a full-bleed lead piece and grain over everything.
 
-### F5. Nothing on the site uses the medium it sells
-Zero WebGL, zero 3D, no scroll-pinned sequences, no page transitions, no video. The two most expressive effects (the reviews marquee and the hero grid) are small and sit in low-traffic spots. The package copy promises "camera choreography", "page transitions", "scroll-driven motion". None of it is on the page.
+### F9. Light mode worked against the brand — **resolved**
+Toggle and `next-themes` removed. Site is dark-only; light tokens kept in CSS, unused.
 
-**Fix:** sections 6 and 7 of this document.
-
-### F6. Two nav links go to empty pages
-`/lab` and `/reviews` both render "nothing yet" copy in production. Every empty page an ad visitor hits lowers trust.
-
-**Fix:** remove Lab and Reviews from the primary nav until they have at least three entries each. Fold the review form into `/about` or the footer. Nav becomes Work, Services, Pricing, About, plus Get a quote.
-
-### F7. Pricing with no prices
-`formatPrice` renders "Quote on request" for all three packages because every `startingFrom` is `TODO_PRICE`. A pricing page that lists no prices is a brochure. Social traffic in particular will bounce rather than fill a form to find out a number.
-
-**Fix:** publish "from" prices. If you want to keep flexibility, publish a range per package. Also fix the budget bands in the quote form so they bracket those prices.
-
-### F8. Visual monotony across the scroll
-Every section is the same shape: a 2 px rule, a red label on the left, text or a grid of same-size rectangles on the right, full black background. There is no change of pace, no full-bleed moment, no colour-field shift, no large imagery. A long page with no rhythm changes reads as a document, which is what "bland" means here.
-
-**Fix:** section 5.3 defines three section "weights" and 6.2 defines where the breathing moments go.
-
-### F9. Light mode works against the brand
-The theme toggle flips to white with black rules and dark red. It is correct and accessible, but it doubles every design decision, and the immersive direction (light on dark, material, depth) only really works on dark. A creative-dev portfolio does not need a light mode.
-
-**Fix:** remove the toggle. Keep `[data-theme="light"]` tokens in CSS if you want them for case-study pages later, but take the control out of the nav.
-
-### F10. The share card shows the problem too
-`ogImage.tsx` is a black card, the grid, a red tag and a headline. It is consistent with the site, and equally static. Ads and social posts live or die on the preview image.
-
-**Fix:** the OG image should be a still from the hero scene or the lead work piece, with the headline over it.
+### F10. The share card showed the problem too — **resolved**
+Every OG image now renders over a still of the hero scene. Per-route cards exist for home, work, each case study, about, services, lab and quote.
+*Maintenance:* re-capture `public/og/hero.jpg` when the scene changes.
 
 ### F11. Smaller issues
 
-- `About.tsx` repeats the tech stack that `Experience` already implies, and both duplicate the resume PDF.
-- `Services.tsx` is a definition list with no visuals. For a services section that is selling visual work, that is a missed opportunity.
-- `Testimonials.tsx` "proof" mode shows two cards ("10 active clients", "Open source") and a marquee reading "In production / Shipped". The marquee is the most expressive element on the site and it is spent on filler words.
-- `ProjectVisual.tsx` fallback mockups (abstract bars and tags) ship for AI Meeting Intelligence because it has no cover image.
-- The quote form appears three times (home, pricing, quote). On the homepage it adds roughly a viewport of inputs below the fold on mobile. One form on `/quote`, one short CTA everywhere else.
-- `siteConfig.instagram` and `siteConfig.x` are empty, so the channels the ads will run on are not linked from the site.
-- The resume download link in the Experience rail invites recruiters, which is the wrong audience for this site. Move it to `/about`.
-- Hero availability line reads "Booking client projects · Islamabad, Pakistan". Location is a useful trust signal but should not be the last thing in the hero. Use it in the footer and the About page.
+| Issue | Status |
+|---|---|
+| About repeated the tech stack; both duplicated the resume | Resolved. Stack is its own section on `/about`; resume link is in the bio rail only. |
+| Services had no visuals | **Partially open.** Rows are large, with price and timeline slots, but no inline clip or canvas yet. Same for package cards on `/services`. |
+| Marquee spent on filler words | Resolved. "Shipped / Live / Open source / In daily use". |
+| Generated mockup shipped for Meeting Intelligence | **Open.** Needs a cover image. |
+| Quote form appeared three times | Resolved. One form, on `/quote`. |
+| Instagram and X empty in config | **Open, owner content.** |
+| Resume link invited recruiters on the homepage | Resolved. Moved to `/about`. |
+| Availability line was the last thing in the hero | Resolved. Moved to the footer. |
 
 ---
 
@@ -201,100 +223,90 @@ The theme toggle flips to white with black rules and dark red. It is correct and
 
 Who it is for: founders, marketing leads and small studios who want a launch page, brand site or product showcase that **looks expensive and ships fast**, and who are nervous that a "creative" developer will deliver something beautiful and broken.
 
-The differentiator is the thing the current site buries: **you have shipped production systems for six years and you are now applying that to creative work.** Most creative developers are designers who learned enough code. You are an engineer who can do the creative work and will also wire the CMS, the analytics, the auth and the backend if the project needs it. That is the brand.
+The differentiator: **six years shipping production systems, now applied to creative work.** Most creative developers are designers who learned enough code. You are an engineer who can do the creative work and will also wire the CMS, the analytics, the auth and the backend if the project needs it.
 
-Working positioning line (to refine, not to ship verbatim):
+Working positioning line (the About page intro now carries a version of it):
 
 > Immersive websites, engineered properly. Motion, 3D and the full-stack work underneath, from one developer.
 
 ### 4.2 Brand attributes
 
-Pick three and design every decision against them.
-
-| Attribute | What it means on the page | What it rules out |
-|---|---|---|
-| **Precise** | Grid-true layouts, mono labels, exact spacing, type that lines up. Motion with physical easing, never bouncy. | Rounded blobby shapes, pastel gradients, playful cartoon 3D. |
-| **Physical** | Light, depth, material. Scenes feel like they have mass and respond to the cursor. Hard red stays, but the black gains depth. | Flat illustration, stock 3D icons, glassmorphism cards. |
-| **Direct** | Short copy, prices on the page, one CTA per section, no filler sections. | Testimonial carousels, logo walls of nobody, "passionate about" copy. |
-
-The current brutalist system already delivers **Precise** and **Direct**. It is missing **Physical**, and that is the whole gap.
+| Attribute | What it means on the page | What it rules out | Status |
+|---|---|---|---|
+| **Precise** | Grid-true layouts, mono labels, exact spacing, type that lines up. Motion with physical easing, never bouncy. | Rounded blobby shapes, pastel gradients, playful cartoon 3D. | Held throughout. The speaker is hard-edged primitives; the hero field is slabs. |
+| **Physical** | Light, depth, material. Scenes have mass and respond to the cursor. Hard red stays, but the black gains depth. | Flat illustration, stock 3D icons, glassmorphism cards. | Delivered: plane range, grain, hero light, Lightformer studio, full-bleed media. |
+| **Direct** | Short copy, prices on the page, one CTA per section, no filler sections. | Testimonial carousels, logo walls of nobody, "passionate about" copy. | Held, except **prices are not on the page yet**. |
 
 ### 4.3 Visual identity: evolve, do not replace
 
-Keep the skeleton of the current system and add one dimension to it.
+The system was extended by one dimension rather than replaced. What the audit asked for and what landed:
 
-**Colour.** Keep black and red. Introduce a **near-black depth range** instead of flat `#000`: `#050505`, `#0a0a0a`, `#111`, `#161616`, used as planes in the 3D scene and as section backgrounds that shift subtly as you scroll. Allow the red to appear as **light** (emissive glow, rim light, a red light source in the scene) and not only as a flat fill. Add one cool neutral for contrast in scenes only (a desaturated `#8a9bb0` steel) so red has something to play against in 3D. Do not add a second brand colour to the UI.
+**Colour.** Depth range in place (`--plane-0..3`). Red appears as light in both scenes. A steel neutral is used in the speaker's rim light only; the UI still has one accent. Nothing else to do.
 
-**Type.** Keep Fraunces, Geist, Geist Mono. Push Fraunces larger and use its optical sizing axis and italic more aggressively in heroes and section openers. Allow display type at `clamp(4rem, 10vw, 11rem)` for section titles that are meant to be read as images. Keep Geist Mono for labels, numbers, prices.
+**Type.** `--text-mega` added for titles read as images (lead work card, launch opener). Fraunces italic red emphasis is the one headline gesture. The hero headline itself is still the pre-redesign draft.
 
-**Shape.** Keep square corners for UI. In scenes, geometry can be anything, but prefer hard-edged solids (slabs, extruded type, planes, wire frames) over spheres and blobs, so the 3D reads as the same brand as the UI.
+**Shape.** Square corners everywhere in UI. Scene geometry is slabs, boxes and cylinders. Consistent.
 
-**Texture.** Add film grain (a subtle animated noise overlay at 3 to 4% opacity) over dark sections and scenes. It is the cheapest way to make flat black feel like a material, and it hides banding in gradients. The 48 px grid stays as a secondary texture, not as the only one.
+**Texture.** Grain over the whole page at 4%. The 48 px grid demoted to a secondary texture. Done.
 
-**Depth.** Keep `.brutal` offset shadows for UI cards. Add real depth where it matters: parallax layers in the hero, the 3D scene, images that sit in space rather than in a frame.
+**Depth.** `.brutal` kept for cards. Real depth in the hero field, the speaker scenes, and the lead piece's title overlapping the clip. Done.
 
-**Imagery.** Stop framing everything in a fake browser window. Work pieces should be shown as **motion** (looping clips, 5 to 8 s, muted) at large sizes, full-bleed where possible. Engineering case studies can keep a device or browser frame, but a simpler one (a single 2 px rule and a title bar, no traffic-light dots).
+**Imagery.** Browser chrome gone. Work is shown as motion, full-bleed for the lead. Engineering screenshots on a plane with a caption bar. The remaining gap is the Meeting Intelligence cover.
 
-**Voice.** The current copy is already the right voice: first person, short, slightly dry. Keep it. Remove hedges like "I try new tech in the open" from the hero.
+**Voice.** Hero support line is one sentence. Hedges removed. Work descriptions and the Quarr studies are in the same dry first person. The headline is the one piece of copy still to decide.
 
-### 4.4 Logo and marks
+### 4.4 Logo and marks — **done**
 
-There is no mark, only the name in mono caps plus a red square. That is fine as a wordmark, and the red square can become the brand's atomic unit: it appears as the cursor marker, as the loading indicator, as the 3D hero's primitive, as the bullet. Design one square-based mark (for favicon, OG, loader) and use it everywhere the red square currently appears.
+The red square is the mark. It is the favicon (no monogram), the nav and footer mark, the cursor companion, the bullet, and the quote form's success state. No separate logotype is needed; the name in mono caps plus the square is the wordmark.
 
 ---
 
 ## 5. Page structure
 
-### 5.1 Homepage: five sections, one scroll story
+### 5.1 Homepage: five sections, one scroll story — **built**
 
-Target length: **about 5 viewport heights on desktop, 7 on mobile.** Nothing on the homepage that is not either showing work or asking for the quote.
+Target was about 5 viewport heights on desktop and 7 on mobile. Measured: **4.6 and 6.8**.
 
-| # | Section | Job | Content | Weight (see 5.3) |
-|---|---|---|---|---|
-| 1 | **Hero** | Prove the claim in three seconds. | Real-time scene or showreel, headline, one line of support copy, two CTAs: "See the work" and "Get a quote". | Immersive |
-| 2 | **Selected work** | Show three creative pieces. | Lead piece full-bleed with a looping clip; two more in a two-up grid. Each: clip, title, one line, tags, link. | Immersive |
-| 3 | **What I build** | Translate work into something buyable. | The three packages as three large rows, each with a short visual (a clip crop or a small live canvas), name, one outcome line, "from" price, link to pricing. Fourth row, small: "Full-stack and AI under the hood" linking to the engineering case studies. | Editorial |
-| 4 | **Proof** | Lower risk. | One strip: Moementum live with 10 clients, KnowledgeOS open source, years shipping, the current client count. Up to two testimonials when they exist. The oversized marquee can live here with real words ("Shipped", "Live", client names). | Utility |
-| 5 | **CTA** | Convert. | Headline ("Tell me what you're building."), one paragraph, "Get a quote" primary, "Book a call" secondary, email. No embedded form. | Editorial |
+| # | Section | Job | What is there | Weight | Gaps |
+|---|---|---|---|---|---|
+| 1 | **Hero** | Prove the claim in three seconds. | Tiered R3F scene, headline, one sentence, "See the work" + "Get a quote". Pins for 50svh while Selected work slides over it. | Immersive | Headline is a draft. Mobile LCP over budget. |
+| 2 | **Selected work** | Show the creative pieces. | Benda Offroad full-bleed lead with `text-mega` title over the clip; four more in a two-up grid, each with clip, tags, one line, links. | Immersive | Client pieces lack year and study. |
+| 3 | **What I build** | Translate work into something buyable. | Three large rows: number, name, outcome, "from" price (count-up once set), timeline, link to `/services#id`. Fourth small row to the engineering case studies. | Editorial (plane-1) | Prices. Inline visuals per row deferred. |
+| 4 | **Proof** | Lower risk. | Two proof cards (10 active clients on Moementum; KnowledgeOS open source) over the marquee. Switches to reviews automatically once any are approved. | Utility (plane-2) | A third verifiable fact; eventually real reviews. |
+| 5 | **Contact** | Convert. | "Tell me what you're building.", one paragraph, Get a quote + Book a call + email. No form. | Editorial (plane-1) | Book a call hidden until `NEXT_PUBLIC_BOOKING_URL` is set. |
 
-Removed from the homepage: Engineering range as a full section (becomes a row in What I build and a strip on `/about`), About, Experience, Writing, the embedded quote form.
+Scroll-depth events fire once per view for work, services, reviews and contact.
 
 ### 5.2 Other pages
 
-**`/work`** (new index page): all creative pieces plus the engineering case studies, filterable by type. This gives "Work" in the nav a real destination instead of a hash link.
+| Page | Audit ask | Status |
+|---|---|---|
+| `/work` | Index of creative pieces plus engineering studies, filterable. | Built without the filter; one type of creative piece so far. |
+| `/work/[slug]` creative template | Full-bleed clip, brief, sequence with sticky captions, how it was built, result, next. | Built (`CreativeStudyLayout`). Used by the two Quarr pieces. |
+| `/work/[slug]` engineering template | Tighten: merge Overview + Problem, fold Challenges + Decisions into Notes, replace the browser frame. | Frame replaced. Section merge deferred; seven sections remain. |
+| `/services` | Rename from pricing with redirect, real prices, process, FAQ, CTA, one visual per package. | Built with redirect. Prices and per-package visuals open. |
+| `/about` | Bio, engineering strip, collapsed experience, stack, resume, location, review link. | Built. Review link is in "Elsewhere". |
+| `/lab` | Hidden from nav until three entries. | Two entries; footer and About only. |
+| `/blog` | Footer and About only. | Owner chose to keep it in the nav. Reasonable: it is posted to weekly and is not an empty page. |
+| `/quote` | Consider a two-step form. | Built. Step one's choices persist in sessionStorage and fire `quote_step`. |
 
-**`/work/[slug]`**: two templates.
-- *Creative piece*: full-bleed hero clip or live embed, one paragraph brief, large stills and clips in a vertical sequence with sticky captions, a short "how it was built" block (stack, performance budget, one or two technical notes), result, next piece. Image-led, light on text.
-- *Engineering case study*: the current template is good. Tighten by merging Overview and Problem, and collapse Challenges and Decisions into one "Notes" section with expandable items. Replace the traffic-light browser frame.
+### 5.3 Three section weights — **in use**
 
-**`/services`** (rename of `/pricing`, keep `/pricing` as a redirect): packages with real prices, process, FAQ, CTA. Remove the embedded form; the CTA goes to `/quote`. Add one visual per package.
+| Weight | Layout | Background | Type | Motion | Where it is used |
+|---|---|---|---|---|---|
+| **Immersive** | Full-bleed, no rail. Content floats over media. | Scene, clip or large image. Grain. | `--text-mega`, often over the media. | Scroll-linked: pinning, parallax, scrubbed sequences. | Hero, lead work card, launch page opener and sequence, creative study hero. |
+| **Editorial** | The rail grid. Label and number left, content right. | A plane one step from its neighbours. | h2 at `--text-h2`, body 1.125 rem. | Entrance reveals, hover states. | `Section` everywhere else. |
+| **Utility** | Full-width band, compact. | Thin rules. | Mono labels and numbers. | Minimal. Marquee allowed. | Proof, footer. |
 
-**`/about`**: the bio, a photo or a short self-portrait clip, the engineering strip (three case studies as compact cards), the experience timeline (collapsed by default), the tech stack, resume link, location, the review form at the bottom. This is where recruiters and the curious go. It can be long.
-
-**`/lab`**: unchanged structure, but hidden from the nav until it has three or more entries. Link it from the footer and from `/about`.
-
-**`/blog`**: unchanged. Linked from footer and `/about`. Not in the primary nav.
-
-**`/quote`**: unchanged. It is good. Consider a two-step form (project type and budget first, details second) to lift completion from ad traffic, with the first step's choices stored so a bounce still records intent.
-
-### 5.3 Three section weights
-
-Every section on the site should be one of these three, and the homepage should alternate them. This is the fix for F8.
-
-| Weight | Layout | Background | Type | Motion |
-|---|---|---|---|---|
-| **Immersive** | Full-bleed, edge to edge, no rail. Content floats over media. | Scene, clip or large image. Grain overlay. | Display type at 8 to 11 rem, often in the media. | Scroll-linked: pinning, parallax, scrubbed sequences. |
-| **Editorial** | The current rail grid. Label on the left, content right. | Near-black plane, may shift one step lighter or darker than its neighbours. | h2 at `--text-h2`, body at 1.125 rem. | Entrance reveals only. Hover states on rows. |
-| **Utility** | Full-width band, compact, no rail label or a tiny one. | Thin 2 px rules top and bottom. | Mono labels and numbers. | Minimal. Marquee allowed. |
-
-Rule: never two Immersive sections back to back on the homepage except Hero into Selected work, where the transition itself is the design moment (see 6.2).
+Rule held: the only place two Immersive sections touch is Hero into Selected work, and that join is the pinned transition.
 
 ### 5.4 Copy direction for key surfaces
 
-- **Hero headline.** Current: "Websites people remember, engineered to last." Decent, but passive. Options in the same voice: "Websites that move. Engineering that holds." / "Immersive sites, built like software." Keep one italic red word.
-- **Hero support line.** One sentence, max 20 words. Drop the Lab reference.
-- **Engineering outcome lines.** Rewrite for a buyer. Moementum: "A coaching platform with 10 paying clients logging in daily." KnowledgeOS: "An AI assistant over your own documents, every answer cited." Meeting Intelligence: "Live translated meetings, searchable afterwards."
-- **Proof numbers.** Use numbers you can defend: years shipping, live products, clients active now. No invented logos.
+- **Hero headline.** Still "Websites people remember, engineered to last." Alternatives are in a comment in `Hero.tsx`: "Websites that move. Engineering that holds." / "Immersive sites, built like software." Decide, keep one italic red word, and consider A/B via ad landing variants once ads run.
+- **Hero support line.** Done: "Immersive landing pages, brand sites and interactive 3D, built on years of shipping full-stack and AI systems."
+- **Engineering outcome lines.** Done, with "active" rather than "paying" clients because only "active" is verified.
+- **Work descriptions.** Marked DRAFT in `work.ts`. They are serviceable. Review once the client pieces have years.
+- **Proof numbers.** Two defensible facts. Add a third only when it can carry a link.
 
 ---
 
@@ -302,235 +314,233 @@ Rule: never two Immersive sections back to back on the homepage except Hero into
 
 ### 6.1 Principles
 
-1. **Motion is content, not decoration.** On this site, motion is what the client is buying. Every effect should be something you would be happy to sell. Delete anything that only exists to look busy.
-2. **Scroll is the timeline.** Prefer scroll-linked (scrubbed) motion over time-based autoplay. The visitor controls the pace, nothing moves while they read, and it demos "scroll-driven motion" from the package copy.
-3. **Physical easing.** One ease for entrances (`[0.16, 1, 0.3, 1]`, already in use), one for exits (`[0.7, 0, 0.84, 0]`), springs for pointer-following only. No bounce, no elastic.
-4. **Durations are short.** 0.4 to 0.8 s for UI reveals, 0.6 to 1.0 s for page transitions. Pinned sequences are the only thing allowed to take seconds, and the visitor scrubs those.
-5. **One hero moment per page.** Each page gets one Immersive section that carries the budget. The rest is Editorial and Utility.
-6. **Budget first.** 60 fps on a 2022 mid-range Android in the Instagram in-app browser is the target, because that is where the ad clicks come from. Set budgets before building: hero scene under 1.5 MB total transfer, under 100k triangles, one draw call per material, no post-processing on mobile, first paint before the scene loads.
-7. **Always a fallback.** Reduced motion, Save-Data, no WebGL and low-end devices each get a poster frame or a CSS-only version. The current codebase already does this well; keep the discipline.
-8. **Measure.** Track `hero_scene_loaded`, `hero_scene_fallback`, and scroll depth to the CTA in Plausible so you know what the ad audience actually sees.
+These were the brief and they are now the rules to hold additions to.
 
-### 6.2 Where motion goes, section by section
+1. **Motion is content, not decoration.** Every effect on the site is something a client could buy: the scene, the pinned sequence, the transitions, the clips.
+2. **Scroll is the timeline.** The hero tilt, the launch sequence, the marquee and the nav progress line are all scroll-linked. Nothing autoplays except muted clips on screen.
+3. **Physical easing.** Entrances `[0.16, 1, 0.3, 1]`, exits `[0.7, 0, 0.84, 0]`, springs only for the cursor and nav progress. No bounce.
+4. **Durations are short.** Reveals 0.4 to 0.8 s, transitions 0.2 s out / 0.6 s in, count-ups 0.4 s. Only pinned sequences take longer, and the visitor scrubs them.
+5. **One hero moment per page.** Home: the scene. Launch page: the sequence. Configurator: the camera intro. Creative study: the lead clip. Everything else is Editorial or Utility.
+6. **Budget first.** Target is 60 fps on a 2022 mid-range Android in the Instagram in-app browser. Hero field: one instanced mesh, one draw call, one point light plus two fills, no post-processing, fog instead of geometry. Speaker: primitives, Lightformers, ≈ 290 KB gzipped scene JS, no model or HDR download. Clips all under 850 KB.
+7. **Always a fallback.** Four hero tiers. Clips never render under Save-Data or reduced motion (poster instead). Transitions and grain go static under reduced motion. Cursor companion only on fine pointers.
+8. **Measure.** `hero_scene_loaded {tier}`, `hero_scene_fallback {reason}`, `scroll_depth {section}`, `quote_step`, `quote_start`, `quote_submit`, `booking_click`.
+
+### 6.2 Where motion goes, section by section — status
 
 **Global**
-- *Page transitions.* A short (0.6 s) wipe or curtain between routes using the View Transitions API with a Framer Motion fallback. The red square or a red plane wiping across is on-brand. This single feature does more to make the site feel "built" than anything else on this list, because it demonstrates "page transitions" from the Brand Website package.
-- *Preloader.* Only on first load of the homepage, only while the hero scene loads, max 1.5 s, showing the red square mark. Skip it entirely if the scene is cached or the device gets the fallback.
-- *Cursor.* A small custom cursor (the red square, 8 px) that scales on interactive elements, desktop only. Cheap, reinforces the mark. Hide on touch.
-- *Grain.* Full-page animated noise at 3 to 4% opacity, CSS or a tiny canvas, disabled on reduced motion.
-- *Smooth scroll.* Keep Lenis. Sync GSAP ScrollTrigger to it if GSAP is adopted (6.3).
+- *Page transitions.* ✅ View Transitions via `app/template.tsx`; header held still with a named group.
+- *Preloader.* Skipped on purpose. The poster paints first and the scene fades in on its first frame, so there is nothing to wait for.
+- *Cursor.* ✅ Red square companion, fine pointer only, grows on interactive elements, reads "View" over work media. Native cursor kept.
+- *Grain.* ✅ Fixed layer at 4%.
+- *Smooth scroll.* ✅ Lenis. No GSAP.
 
-**Hero (Immersive)**
-- The real-time scene (7.2) fills the viewport behind the type.
-- Headline reveal as today (per-word mask lift), but the scene should already be visible before the words land.
-- Scroll from hero into Selected work is **pinned**: as the visitor scrolls, the scene recedes or breaks apart and the first work clip slides up to replace it. Roughly 1.5 viewport heights of scroll for the transition. This is the one place two Immersive sections touch.
+**Hero**
+- ✅ Scene fills the viewport behind the type and is visible before the words land (CSS reveals, not Framer).
+- ✅ Pinned transition into Selected work: sticky hero for 50svh while the work section slides over it. The audit asked for roughly 1.5 viewport heights; 0.5 was chosen to keep the page short on phones. Revisit if analytics show people stopping in the hero.
 
-**Selected work (Immersive)**
-- Lead piece: full-bleed clip with a slight parallax (clip moves at 0.85× scroll speed). Title in display type overlapping the clip's bottom edge.
-- Secondary pieces: two-up grid. Clips play only on screen (current `MediaPreview` behaviour). On hover: clip scales 1.03 and a red rule draws under the title.
-- Optional: a horizontal scroll strip on desktop if there are five or more pieces. Not before.
+**Selected work**
+- ✅ Lead piece full-bleed with the title in `--text-mega` over the clip's bottom edge, darkened strip under the title.
+- ✅ Two-up grid; clips play on screen only; hover scales the clip, slides the title, draws the red rule.
+- Parallax on the lead clip (0.85× scroll) was not added. Low priority.
+- Horizontal strip at five or more pieces: there are now five; still not warranted on desktop. Revisit at eight.
 
-**What I build (Editorial)**
-- Three large rows. On hover or when a row is centred in the viewport on mobile, a small inline visual plays (a 3 s clip crop or a tiny live canvas, 320 px wide).
-- Price and timeline in mono, revealed with a counter tick (numbers count up over 0.4 s once on view). Small, satisfying, cheap.
+**What I build**
+- ✅ Large rows, count-up on price (once prices exist).
+- ⏳ Inline visual per row (3 s clip crop or small canvas) deferred.
 
-**Proof (Utility)**
-- The oversized scroll-linked marquee stays, with real words.
-- Numbers count up once on view.
+**Proof**
+- ✅ Marquee with real words. ✅ Count-ups on stats.
 
-**CTA (Editorial)**
-- Display headline reveal. The red emphasis word.
-- The button's `.brutal` press stays.
+**Contact**
+- ✅ Display headline, red emphasis word, `.brutal` press.
 
-**Creative case study pages (Immersive at top, Editorial below)**
-- Hero clip full-bleed, then a scrubbed image sequence or a pinned side-by-side of stills with sticky captions.
-- "How it was built" can include a small live embed of the piece (an iframe or a canvas) with a performance readout.
+**Creative case study pages**
+- ✅ Lead clip, sequence with sticky captions, how it was built with measured budget.
+- Live embed of the piece inside the study was not added; the "View live" link opens the demo instead.
 
-**Engineering case study pages (Editorial)**
-- Current motion is right. Add one thing: the architecture diagram draws itself on view (SVG stroke animation, 1 s).
+**Engineering case study pages**
+- ✅ Architecture diagram draws on view.
 
 **Services page**
-- Package cards: on hover, the card lifts (the `.brutal` press inverted) and its visual plays.
-- FAQ: the existing `<details>` with a height animation.
+- ✅ FAQ with `<details>`. ⏳ Package card hover lift and per-package visual deferred.
 
 **Quote page**
-- Step transitions if the form becomes two-step (slide, 0.4 s). Success state: the red square mark animates in.
+- ✅ Two steps; success state lands the red square.
 
-### 6.3 Library recommendations
+### 6.3 Libraries: what was recommended and what was used
 
-The repo has Framer Motion 13 and Lenis. Recommendation for the redesign:
+| Need | Recommended | Used | Note |
+|---|---|---|---|
+| Smooth scroll | Lenis | **Lenis** | Owns scroll sitewide. |
+| Scroll-linked and pinned sequences | GSAP + ScrollTrigger | **Framer `useScroll` + CSS sticky** | Sufficient for the hero tilt, the 400svh launch sequence and the nav progress. Add GSAP only if a future piece needs timeline sequencing Framer cannot express. |
+| UI entrances, presence | Framer Motion | **Framer Motion**, plus CSS keyframes for on-load reveals | CSS for anything that must show before hydration (LCP). |
+| Page transitions | View Transitions API with Framer fallback | **React `<ViewTransition>`** | Browsers without the API swap pages plainly. |
+| Real-time 3D | Three.js via R3F + drei | **R3F 9, drei 10, three 0.186** | Dynamic import, `ssr: false`. |
+| Scroll scrubbing in 3D | Drive from the page's scroll system | **Scene reads the page scroll value** | One scroll owner. |
+| Shaders | GLSL via `shaderMaterial` | **Not needed yet** | Standard materials and Lightformers cover both scenes. |
+| Text splitting | Framer per-word | **Framer per-word (on scroll), CSS per-word (on load)** | |
+| Image sequences | Canvas with WebP frames | **Not needed** | The launch sequence is live 3D. |
 
-| Need | Use | Why |
-|---|---|---|
-| Smooth scroll | **Lenis** (keep) | Already integrated with the scroll-lock fixes. |
-| Scroll-linked and pinned sequences | **GSAP + ScrollTrigger** | Pinning, scrubbing and timeline sequencing are far better in GSAP than in Framer's `useScroll`. GSAP has been free for all uses since 2025. Sync its ticker to Lenis. |
-| UI entrances, layout animations, presence | **Framer Motion** (keep, as `motion`) | Already in use for reveals, nav, palette. Keep it for component-level motion. |
-| Page transitions | **View Transitions API** with `motion` fallback | Native, cheap, works with the App Router. |
-| Real-time 3D | **Three.js via React Three Fiber + Drei** | R3F fits the React codebase. Drei gives you `ScrollControls`, `Environment`, `MeshTransmissionMaterial`, instancing helpers. |
-| Scroll scrubbing in 3D | Drive the R3F scene from GSAP ScrollTrigger progress or Lenis scroll value, not from `ScrollControls`, so one scroll system owns the page. |
-| Shaders | **GLSL via R3F `shaderMaterial`** | For the hero's material, grain, and any displacement effects. |
-| Text splitting | `motion`'s per-word approach (keep) or GSAP SplitText (now free). | Already solved; SplitText only if you need per-character. |
-| Image sequences | **Canvas with preloaded WebP frames**, scrubbed by ScrollTrigger | Only if a case study needs it. Keep under 60 frames at 1280 px. |
+Still do not add: Locomotive Scroll, AOS, Swiper, Lottie for anything structural, Spline embeds.
 
-Do not add: Locomotive Scroll (conflicts with Lenis), AOS, Swiper, Lottie for anything structural, Spline embeds (heavy, off-brand, and a client would wonder why you did not build it).
+### 6.4 Performance and accessibility budget — status
 
-### 6.4 Performance and accessibility budget
-
-- **LCP under 2.5 s on 4G** with the hero poster as LCP element, not the canvas. Scene mounts after first paint.
-- **CLS zero.** Reserve every media box with an aspect ratio (already done in `MediaPreview`).
-- **Main-thread idle before scene init.** Use `requestIdleCallback` or a 300 ms delay after hydration before mounting R3F.
-- **Device tiers.** Detect via `navigator.hardwareConcurrency`, `deviceMemory`, and a quick WebGL capability probe. Three tiers: full (desktop), lite (no post-processing, half resolution, fewer instances), poster (static image). The Instagram in-app browser on Android should mostly land in lite.
-- **Reduced motion** keeps everything it keeps today, and the hero scene renders a single still frame instead of animating.
-- **Contrast.** Red `#ff2b1f` on black is about 5.6:1, fine for large type and labels, borderline for small body text. Keep body text in white and greys. Never set body copy over a moving scene without a solid or heavily darkened plane behind it.
-- **Focus.** Keep the visible focus ring. Custom cursor must not remove the native one for keyboard users.
-- **Autoplay video** always muted, `playsInline`, with `preload="none"` and poster. Already done.
-
----
-
-## 7. Design elements and 3D: specific proposals
-
-### 7.1 The site is the first case study
-
-Before building anything else, decide that this redesign ships as a Selected work entry titled something like "waleedajaz.com, 2026": a clip of the hero, two stills, a short note on the stack and the performance budget, and a link to the repo if you are comfortable with that. It fills the empty flagship slot immediately and makes the pitch self-evidencing.
-
-Two more self-initiated pieces to fill the other slots while client work accrues, each scoped to a week or less:
-
-- **A product configurator demo.** One hard-surface object (a speaker, a bottle, a watch, something with material variety), three colourways, orbit and a scripted camera move, a spec panel. Demonstrates the Interactive 3D package directly. Can live at `/lab/configurator` and be embedded.
-- **A fictional launch page.** One long-form page for an imagined product with scroll-driven motion, a pinned sequence, and a waitlist form. Demonstrates the Immersive Landing Page package. Make the product plausible and clearly fictional.
-
-Both are honest, both show the exact deliverable a client is buying, and both take less time than waiting for a client to let you publish.
-
-### 7.2 The hero scene
-
-Three directions that fit the brand attributes. Pick one.
-
-**A. The grid, made physical (recommended first build).** Take the existing 48 px grid literally: a field of instanced black slabs on a plane, lit by a single red light that follows the cursor. Slabs near the light rise a few centimetres and catch a red rim. On scroll, the field tilts and the camera pulls back, revealing it as a surface the headline was sitting on. Instanced mesh, one material, one light, no post-processing. Under 500 KB, works at 60 fps on lite tier. Fallback: the current `HeroGrid` canvas, which becomes the lite-tier version. This is the direct evolution of what already exists and the uncommitted `HeroSpotlight` is a CSS sketch of the same idea.
-
-**B. Extruded type.** The headline's emphasis word as a 3D extrusion in Fraunces Italic, red, rotating slowly, with the rest of the headline flat in HTML. Cursor tilts it. On scroll it falls through the floor. Needs a font-to-geometry step (Troika or a pre-baked glyph mesh) and careful kerning. Strong brand gesture, more fragile on low-end devices.
-
-**C. Light and material study.** A single dark slab with a transmissive edge, a red light sweeping across it, grain and chromatic aberration. Very "premium agency". Risk: it looks like everyone else's 2024 portfolio and says nothing specific about you.
-
-Direction A is specific to this brand, cheap, and extends what is already built. Build it first. If it lands, direction B can be a later iteration.
-
-### 7.3 Section-level design elements
-
-- **Numbers and labels.** Keep the mono label vocabulary and extend it: section numbers (`01` to `05`) in the rail on Editorial sections, a running scroll progress indicator in the nav as a thin red line.
-- **The red rule as a motif.** A 2 px red line that draws itself under headings, across the viewport between Immersive sections, and along the architecture diagram. One motif, many sizes.
-- **Media frames.** Replace the browser-chrome frame with a 2 px rule and a mono caption bar reading the piece's name and year. Clips sit edge to edge inside it.
-- **Work card hover.** Clip plays, title slides 8 px right, the red rule draws under it, cursor grows and reads "View".
-- **Marquee.** Keep the solid and outlined alternation. Use it in exactly one place per page.
-- **Image treatment.** Screenshots of dark dashboards against a black site disappear. Put engineering screenshots on a `#161616` plane with the grain overlay, or show them at an angle in 3D space on the case study page (a single plane with perspective, no fake laptop).
-
-### 7.4 Component changes
-
-| Component | Change |
+| Budget | Status |
 |---|---|
-| `Hero` | Replace `HeroGrid` canvas with the R3F scene plus tiered fallbacks. Keep headline mechanics. Remove the availability line (move to footer). |
-| `SelectedWork` / `WorkCard` | Full-bleed lead slot. Caption bar frame. Hover choreography. |
-| `EngineeringRange` / `ProjectCard` | Demote to a compact three-up strip with a one-line outcome and a link. Remove browser-chrome `ProjectVisual`. |
-| `Services` | Becomes "What I build" rows with visuals and prices. |
-| `Testimonials` | Becomes Proof. Real words in the marquee. Count-up numbers. |
-| `About`, `Experience`, `Writing` | Move to `/about`. |
-| `ContactCTA` | Drop the embedded `QuoteForm`. Two buttons and an email. |
-| `Navbar` | Work, Services, Pricing, About, Get a quote. Remove theme toggle. Keep search. Add scroll progress line. |
-| `Footer` | Add location, availability, Instagram and X once set, Lab and Blog links, the review form link. |
-| `ogImage` | Render from a hero still with the headline overlaid. |
-| New: `Scene`, `SceneFallback`, `PageTransition`, `Cursor`, `Grain`, `CountUp`, `PinnedSequence`. |
+| LCP under 2.5 s on 4G, poster as LCP element | **Open.** 4.8 s in Lighthouse's mobile preset. LCP element is small header text, so fonts and main-thread time (TBT 380 ms) are the suspects. Next: find the blocking font, preload or subset, defer non-critical client code. |
+| CLS zero | ✅ Measured 0. |
+| Main thread idle before scene init | ✅ Tier decided on idle after hydration; three.js downloads only then. |
+| Device tiers | ✅ `full`, `lite`, `still`, `fallback` (see 0.2). Not yet observed on a real mid-range Android. |
+| Reduced motion | ✅ Scene renders one frame; clips show posters; transitions and grain static; cursor off. |
+| Contrast | ✅ Lighthouse accessibility 100. Section numbers lifted to pass. Red stays off body text. |
+| Focus | ✅ Visible ring kept; cursor companion does not hide the native cursor. |
+| Autoplay video | ✅ Muted, `playsInline`, `preload="none"`, poster, on-screen only. |
 
 ---
 
-## 8. UX principles to hold the redesign to
+## 7. Design elements and 3D: what was built
 
-1. **One job per section, one CTA per section.** If a section does two things, split it or cut one.
-2. **Show before tell.** Media above copy in every work and service block. The visitor should understand what you make before reading a word.
-3. **Price on the page.** Visitors from ads will not fill a form to learn a price. A "from" number qualifies leads and saves everyone time.
-4. **Mobile is the primary viewport.** Most ad clicks are phones in in-app browsers. Design the homepage at 390 px first, then expand. Every Immersive section needs a mobile composition, not a scaled desktop one.
-5. **Never ship an empty state to the public.** If a section or page has no content, it does not render and is not linked. The codebase already does this for Work and Lab; extend it to the nav.
-6. **Three clicks to a quote from anywhere.** Nav button, section CTA, footer. Already true; keep it true.
-7. **Trust signals near the ask.** Proof sits directly above the CTA, and the quote page repeats one line of proof under the form heading.
-8. **Fallbacks are designs, not apologies.** The poster-tier hero and the reduced-motion site should look intentional. Design them.
-9. **Measure the funnel.** Hero loaded, scrolled to work, scrolled to CTA, quote start, quote submit. The events are mostly wired; add the scroll-depth ones.
-10. **Consistency over novelty below the fold.** Spend the novelty budget on the hero, the work section and transitions. Everything else should be calm.
+### 7.1 Filling the flagship slot
+
+The audit proposed shipping the redesign itself as piece one. That was tried and dropped: a clip of the site inside the site read as the page repeating itself. The lineup instead:
+
+1. **Benda Offroad** (lead): bilingual EN/AR dealer site with a full-bleed desert video hero. Live link.
+2. **3dbanao**: live 3D keychain configurator with WhatsApp ordering. Live link.
+3. **CreateXworks**: 3D-printing studio site with a print-status loader. Live link.
+4. **Quarr One configurator**: self-initiated. Demonstrates the Interactive 3D package. Live at `/lab/configurator`, study at `/work/quarr-configurator`.
+5. **Quarr One launch page**: self-initiated. Demonstrates the Immersive Landing Page package. Live at `/lab/launch`, study at `/work/quarr-launch`.
+
+The Quarr pieces are explicitly fictional (banner on every screen, waitlist sends nothing) and their studies publish measured budgets, which is the honest version of a "look what I can do" demo. The client pieces need years and, when there is something to say, a `study` each so they stop linking straight out.
+
+### 7.2 The hero scene — direction A, built
+
+The 48 px grid taken literally: an instanced field of slabs (34 × 22 on `full`, 26 × 18 on `lite`) on a plane, one red point light that follows the pointer or drifts on touch, slabs near the light rising and catching it on their edges, fog losing the field's edges, the camera pulling back and the field tilting as the page scrolls. One material, one draw call, no post-processing. A scrim keeps the copy legible from the bottom on phones and from the left on desktop.
+
+Directions B (extruded type) and C (light and material study) remain future options. B would be the natural next iteration if the field starts to feel familiar.
+
+### 7.3 Section-level design elements — status
+
+- **Numbers and labels.** ✅ Section numbers 01 to 04 in the rail; red scroll-progress line on the header rule.
+- **The red rule as a motif.** ✅ Draws under work titles on hover, along architecture connectors, under the nav links. Not yet used as a full-width rule between Immersive sections; the plane steps do that job.
+- **Media frames.** ✅ Caption bar with name on a `#161616` plane; no browser chrome.
+- **Work card hover.** ✅ Clip scale, title slide, rule draw, cursor reads "View".
+- **Marquee.** ✅ One place on the homepage, real words.
+- **Image treatment.** ✅ Engineering screenshots on a plane with grain. Angled-in-3D presentation on case study pages not done; not needed.
+
+### 7.4 Component changes — status
+
+| Component | Audit ask | Status |
+|---|---|---|
+| `Hero` | R3F scene with tiers; keep headline mechanics; move availability to footer | ✅ via `HeroBackdrop`. Headline copy pending. |
+| `SelectedWork` / `WorkCard` | Full-bleed lead, caption frame, hover choreography | ✅ `LeadWorkCard` added. |
+| `EngineeringRange` / `ProjectCard` | Demote to compact strip; remove browser chrome | ✅ |
+| `Services` | "What I build" rows with visuals and prices | ✅ rows and price slots; ⏳ visuals, prices. |
+| `Testimonials` | Proof mode, real marquee words, count-ups | ✅ |
+| `About`, `Experience`, `Writing` | Move to `/about` | ✅ |
+| `ContactCTA` | Drop the form | ✅ |
+| `Navbar` | Work, Services, About, Get a quote; no theme toggle; progress line | ✅ plus Blog. |
+| `Footer` | Location, availability, socials, secondary links | ✅ Socials render once handles are set. |
+| `ogImage` | Hero still with headline | ✅ |
+| New | `Scene`, `SceneFallback`, `PageTransition`, `Cursor`, `Grain`, `CountUp`, `PinnedSequence` | ✅ as `HeroScene` + `HeroBackdrop` + `HeroGrid`, `template.tsx`, `Cursor`, `.grain`, `CountUp`, and the launch page's sticky sequence. Plus `CreativeStudyLayout`, `ScrollDepth`, `sceneTier`, the speaker scenes. |
 
 ---
 
-## 9. Prioritised plan
+## 8. UX principles to hold the site to
 
-Ordered so each step is shippable on its own and the site is never worse than before.
+1. **One job per section, one CTA per section.** Holding. The homepage has one primary action per section.
+2. **Show before tell.** Holding for work. Not yet for What I build rows or package cards, which are still text-first.
+3. **Price on the page.** **Not yet.** The single biggest open item.
+4. **Mobile is the primary viewport.** Homepage measured at 390 px: 6.8 viewport heights, no horizontal overflow, lead clip in 4:5. LCP still over budget on the mobile preset.
+5. **Never ship an empty state to the public.** Holding. Lab and Reviews out of the nav; placeholders filtered from builds; `/lab` only in the sitemap when it has entries.
+6. **Three clicks to a quote from anywhere.** Holding: nav button, section CTA, footer link.
+7. **Trust signals near the ask.** Holding: Proof sits directly above Contact.
+8. **Fallbacks are designs, not apologies.** Holding: the 2D grid, the still frame and the posters are deliberate.
+9. **Measure the funnel.** Wired end to end. Needs `NEXT_PUBLIC_PLAUSIBLE_SCRIPT_URL` set in production for any of it to record.
+10. **Consistency over novelty below the fold.** Holding. Novelty is spent in the hero, the lead piece and transitions; the rest is calm.
 
-Status key: ✅ done · ⏳ open. Details in section 0.
+---
 
-### Phase 0: content, one week, no design work
+## 9. Plan and status
+
+Status key: ✅ done · ⏳ open.
+
+### Phase 0: content
 - ⏳ Set prices in `pricing.ts`. Set Instagram and X in `config.ts`.
-- ⏳ Cut three clips (5 to 8 s, 1280 px, under 1.5 MB) and posters: the current site hero, Moementum, KnowledgeOS.
+- ✅ Clips and posters: five pieces recorded from the live sites (the audit's "site hero, Moementum, KnowledgeOS" list was replaced by the real work lineup).
 - ✅ Hide Lab and Reviews from the nav. Remove the theme toggle.
 - ✅ Write the three buyer-facing outcome lines.
+- ⏳ Decide the hero headline.
 
-### Phase 1: structure, one to two weeks ✅
-- ✅ Reorder the homepage to the five sections. Move About, Experience, Writing to `/about`. Remove the embedded quote form from home and pricing.
-- ✅ Build `/work` index. Rename pricing to services with a redirect.
-- ✅ Introduce the three section weights and the grain overlay. Replace the browser-chrome frame.
-- ✅ Add page transitions.
-- ✅ Pulled forward from 7.3: scroll progress line in the nav, section numbers in the rail, work card hover.
+### Phase 1: structure ✅
+- ✅ Five-section homepage; About, Experience, Writing to `/about`; forms removed from home and services.
+- ✅ `/work` index. `/pricing` → `/services` with redirect.
+- ✅ Section weights, plane range, grain. Browser-chrome frame replaced.
+- ✅ Page transitions.
+- ✅ Scroll progress line, section numbers, work card hover.
 
-### Phase 2: the hero and the first piece, two to three weeks ⏳ next
-Read section 0.3 first.
-- Build hero direction A in R3F with the three device tiers and the pinned transition into Selected work.
-- Publish the site itself as Selected work piece one, with the clip from Phase 0 updated.
-- New OG image from a hero still.
+### Phase 2: the hero and the first piece ✅
+- ✅ Hero direction A in R3F with four tiers and the pinned transition.
+- ✅ ~~Site itself as piece one~~ replaced by three client sites.
+- ✅ OG image from a hero still.
 
-### Phase 3: fill the portfolio, two to four weeks
-- Configurator demo. Fictional launch page. Publish both as work pieces and Lab entries.
-- Creative case study template.
+### Phase 3: fill the portfolio ✅
+- ✅ Configurator demo and fictional launch page, as work pieces and Lab entries.
+- ✅ Creative case study template.
 
-### Phase 4: polish and measurement, ongoing
-- Custom cursor, count-ups, architecture diagram draw-on.
-- Scroll-depth events. Two-step quote form. A/B the hero headline via ad landing variants.
-- Lighthouse and real-device pass on a mid-range Android in the Instagram browser.
+### Phase 4: polish and measurement
+- ✅ Cursor, count-ups, diagram draw-on, scroll-depth events, two-step quote form.
+- ⏳ Mobile LCP under 2.5 s.
+- ⏳ Real-device pass on a mid-range Android in the Instagram in-app browser.
+- ⏳ A/B hero headline via ad landing variants.
+- ⏳ Inline visuals for What I build rows and package cards.
+- ⏳ Engineering case study tightening.
+- ⏳ Years and studies for the client pieces; Meeting Intelligence cover image.
+- ⏳ Commit the Phase 2 to 4 work.
 
-Ads should not start before Phase 2 ships. Phase 3 is what makes them efficient.
+**Ads can start once Phase 0's two open items (prices, socials) are in and LCP is under budget.** Everything else in Phase 4 improves efficiency rather than gating launch.
 
 ---
 
 ## 10. Reference points
 
-For the team's shared vocabulary, not for copying. Look at these for the specific thing named.
+For shared vocabulary, not for copying.
 
-- **Scroll-pinned hero into work** and restrained GSAP choreography: Awwwards-winning studio sites from 2024 to 2026 by Locomotive, Immersive Garden, and Resn. Note how little actually moves at once.
-- **Instanced-geometry heroes** with a single light source: Bruno Simon's course demos and the R3F `Instances` examples. The restraint is the point.
-- **Type-led brutalism with real depth**: Studio Dumbar's and Pentagram's recent digital work shows hard edges coexisting with motion and material.
-- **Pricing on a freelancer site**: look at how senior independent developers and small studios present "from" prices with a scope list. The current `PackageCard` is already close.
-- **Case studies for engineering work aimed at buyers**: Linear's and Vercel's customer stories. Outcome first, architecture second, screenshots on a plane rather than in a laptop.
+- **Scroll-pinned hero into work** and restrained choreography: Awwwards-winning studio sites from 2024 to 2026 by Locomotive, Immersive Garden, and Resn. Note how little moves at once.
+- **Instanced-geometry heroes** with a single light source: Bruno Simon's course demos and the R3F `Instances` examples. The hero field is in this family.
+- **Type-led brutalism with real depth**: Studio Dumbar's and Pentagram's recent digital work.
+- **Pricing on a freelancer site**: senior independents and small studios presenting "from" prices with a scope list. `PackageCard` and the What I build rows are ready for the numbers.
+- **Case studies for engineering work aimed at buyers**: Linear's and Vercel's customer stories. Outcome first, architecture second, screenshots on a plane.
 
 ---
 
-## Appendix A: homepage length estimate, build before the redesign
+## Appendix A: homepage length
 
-Measured as approximate viewport heights at 1440 × 900, production content (placeholders excluded):
+Approximate viewport heights at 1440 × 900, production content.
 
-| Section | Height |
-|---|---|
-| Hero | 0.8 |
-| Engineering range (as "Work") | 1.3 |
-| Hire me for | 0.7 |
-| Proof + marquee | 1.0 |
-| About + stack | 1.2 |
-| Experience | 1.6 |
-| Writing | 0.7 |
-| Contact + form | 1.4 |
-| Footer | 0.2 |
-| **Total** | **≈ 8.9** |
+| Section | Before (f67651d) | Now |
+|---|---|---|
+| Hero | 0.8 | 1.0 (100svh) + 0.5 pin |
+| Selected work | hidden | ≈ 1.6 |
+| Engineering range | 1.3 | row in What I build |
+| Hire me for / What I build | 0.7 | ≈ 0.8 |
+| Proof + marquee | 1.0 | ≈ 0.7 |
+| About + stack | 1.2 | moved to `/about` |
+| Experience | 1.6 | moved to `/about` |
+| Writing | 0.7 | moved to `/about` |
+| Contact (+ form before) | 1.4 | ≈ 0.5 |
+| Footer | 0.2 | 0.3 |
+| **Total** | **≈ 8.9** | **4.6 measured** (6.8 at 390 × 844) |
 
-Target after redesign: about 5. **Measured after Phase 1: 4.6 at 1440 × 900, 6.8 at 390 × 844.**
+## Appendix B: where things live now
 
-## Appendix B: files touched by the audit's recommendations
-
-Phase 1 touched most of these; `src/app/pricing/` is now `src/app/services/`. Section 0.1 lists where each change landed.
-
-Content: `src/data/config.ts`, `nav.ts`, `work.ts`, `lab.ts`, `pricing.ts`, `proof.ts`, `services.ts`, `projects.ts`.
-Pages: `src/app/page.tsx`, new `src/app/about/page.tsx`, new `src/app/work/page.tsx`, `src/app/pricing/page.tsx` (rename), `src/app/work/[slug]/page.tsx`.
-Sections: everything in `src/components/sections/`.
-Components: `Navbar`, `Footer`, `WorkCard`, `MediaPreview`, `ProjectCard`, `ProjectVisual`, `PackageCard`, `ScrollMarquee`, `Hero`, `HeroGrid`, `HeroSpotlight` (uncommitted), `CaseStudyLayout`.
-Styles: `src/app/globals.css` (depth range tokens, grain, section weight utilities, remove or isolate light theme).
-Meta: `src/lib/ogImage.tsx`, `src/app/opengraph-image.tsx` and per-route variants.
-New: `src/components/scene/*` (R3F), `PageTransition`, `Cursor`, `Grain`, `CountUp`, `PinnedSequence`.
+Content: `src/data/config.ts`, `nav.ts`, `work.ts` (pieces + creative studies), `lab.ts`, `pricing.ts`, `proof.ts`, `services.ts`, `projects.ts` (engineering studies), `experience.ts`, `techStack.ts`.
+Pages: `src/app/page.tsx`, `about/`, `work/` + `work/[slug]/`, `services/`, `quote/`, `lab/` + `lab/configurator/` + `lab/launch/`, `reviews/`, `blog/`, `template.tsx` (transitions), `layout.tsx` (fonts, grain, cursor, analytics).
+Sections: `src/components/sections/` (Hero, SelectedWork, EngineeringRange, Services, Testimonials, ContactCTA, About + Stack, Experience, Writing).
+Scenes: `src/components/scene/HeroScene.tsx`, `HeroBackdrop.tsx`, `speaker/` (SpeakerModel, Studio, ConfiguratorScene, LaunchScene, colorways). Tiering in `src/lib/sceneTier.ts`, `useSceneTier.ts`. 2D fallback `src/components/HeroGrid.tsx`.
+Lab demos: `src/components/lab/Configurator.tsx`, `LaunchPage.tsx`.
+Case studies: `src/components/case-study/CaseStudyLayout.tsx` (engineering), `CreativeStudyLayout.tsx`, `ArchitectureDiagram.tsx`.
+UI: `Section` (+ `SectionLabel`, `SectionIndex`, tones), `PageHeader`, `Button`, `CountUp`, `Reveal`, `RevealText`, `MediaPreview`, `WorkCard` + `LeadWorkCard`, `ProjectCard`, `ProjectVisual`, `PackageCard`, `ProofCard`, `ScrollMarquee`, `Cursor`, `ScrollDepth`.
+Styles: `src/app/globals.css` (planes, grain, view transitions, `fade-up`, `text-mega`, unused light tokens).
+Meta: `src/lib/ogImage.tsx` + per-route `opengraph-image.tsx`; `public/og/hero.jpg`.
+Media: `public/work/<slug>/preview.mp4` + `poster.jpg` (+ `exploded.jpg`, `opener.jpg` for the studies), `public/lab/configurator/poster.jpg`.
+Analytics: `src/lib/analytics.ts`, `AnalyticsListener.tsx`, `ScrollDepth.tsx`, `lib/attribution.ts`.

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Section, type SectionTone } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
+import { CountUp } from "@/components/ui/CountUp";
 import { formatPrice, packages } from "@/data/pricing";
 
 /**
@@ -57,7 +58,7 @@ export function Services({ index, tone }: { index?: number; tone?: SectionTone }
                       <div>
                         <dt className="text-foreground-subtle text-[11px] tracking-[0.14em] uppercase">From</dt>
                         <dd className="text-foreground mt-1 text-lg font-bold">
-                          {price ?? <span className="text-sm">Quote on request</span>}
+                          {price ? <CountUp value={price} /> : <span className="text-sm">Quote on request</span>}
                         </dd>
                       </div>
                       <div>
