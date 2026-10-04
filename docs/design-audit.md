@@ -2,7 +2,7 @@
 
 **Site:** waleedajaz.com (Next.js 16, Tailwind 4, Framer Motion, Lenis, React Three Fiber)
 **Original audit:** 4 October 2026, against commit `f67651d`.
-**This revision:** 4 October 2026, against the working tree after the redesign phases 1 to 4 (commit `e447110` plus uncommitted work). Sections 1 to 9 now describe the site **as it is**, with the pre-redesign state kept only where it explains a decision. Section 0 is the implementation log.
+**This revision:** 4 October 2026, against `5db34c2` (phases 1 to 4 in `e447110` and `7cdc95e`, performance pass in `5db34c2`). Sections 1 to 9 now describe the site **as it is**, with the pre-redesign state kept only where it explains a decision. Section 0 is the implementation log.
 **Purpose:** handoff document. The goal of the site is to convert paid social traffic (Instagram, X, LinkedIn ads) into quote requests for creative-dev work: immersive landing pages, brand sites, interactive 3D.
 **Status:** structurally done and committed (`7cdc95e`), with a performance pass on top. **Blocking ads:** prices and social handles (owner content) and a real-device pass. Full list in 0.3 and section 1.
 
