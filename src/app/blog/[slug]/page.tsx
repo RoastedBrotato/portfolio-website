@@ -10,10 +10,18 @@ import { Badge } from "@/components/ui/Badge";
 import { RevealText } from "@/components/ui/RevealText";
 import { SectionLabel } from "@/components/ui/Section";
 import { mdxComponents, prettyCodeOptions } from "@/components/blog/mdx";
-import { FeedbackBox } from "@/components/blog/FeedbackBox";
+import { CommentForm } from "@/components/blog/CommentForm";
+import { CommentList } from "@/components/blog/CommentList";
 import { getAdjacentPosts, getAllPosts, getPostBySlug } from "@/data/blog";
-import { feedbackEnabled } from "@/lib/feedback";
+import { commentsEnabled, getPostComments } from "@/lib/comments";
 import { formatDate } from "@/lib/utils";
+
+/*
+ * Still prerendered, but no longer fully static: approved comments are read at
+ * render time. Approving one revalidates just that post; the hourly window is
+ * the safety net, as on /reviews.
+ */
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -52,6 +60,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   }
 
   const { prev, next } = getAdjacentPosts(slug);
+  const enabled = commentsEnabled();
+  const comments = enabled ? await getPostComments(slug) : [];
 
   return (
     <article>
@@ -70,6 +80,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <span className="border-accent text-accent border-2 px-2.5 py-1 font-mono text-xs font-bold tracking-[0.16em] uppercase">
                 Draft
               </span>
+            ) : null}
+            {enabled ? (
+              <a
+                href="#comments"
+                className="text-foreground-subtle hover:text-foreground font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+              >
+                {comments.length === 0
+                  ? "Leave a comment"
+                  : `${comments.length} comment${comments.length === 1 ? "" : "s"}`}
+              </a>
             ) : null}
             <Link
               href="/blog"
@@ -120,6 +140,37 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
       </Container>
 
+      {/* Straight after the prose, where a reader finishing the post looks
+          next. The form offers a private note too, so this one section
+          replaces the old feedback box rather than sitting beside it. */}
+      <section id="comments" className="border-border-strong scroll-mt-20 border-t-2">
+        <Container className="grid grid-cols-1 gap-8 py-16 sm:py-20 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
+          <div className="flex flex-col items-start gap-3">
+            <SectionLabel as="h2">Comments</SectionLabel>
+            {comments.length > 0 ? (
+              <span className="text-foreground-subtle font-mono text-xs tracking-[0.12em] uppercase">
+                {comments.length} so far
+              </span>
+            ) : null}
+          </div>
+          <div className="min-w-0">
+            {enabled ? (
+              <>
+                <CommentList comments={comments} />
+                <h3 className="text-foreground mt-12 mb-5 font-mono text-sm font-bold tracking-[0.14em] uppercase">
+                  Add yours
+                </h3>
+                <CommentForm slug={post.slug} />
+              </>
+            ) : (
+              <p className="text-foreground-subtle max-w-xl text-sm">
+                Comments are offline right now — email me instead.
+              </p>
+            )}
+          </div>
+        </Container>
+      </section>
+
       {(prev || next) && (
         <nav className="border-border-strong border-t-2">
           <Container className="divide-border grid grid-cols-1 divide-y-2 sm:grid-cols-2 sm:divide-x-2 sm:divide-y-0">
@@ -159,23 +210,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </nav>
       )}
 
-      {/* A private note to me, not a comment section — nothing sent from here
-          is published, which is why it sits below the prev/next links rather
-          than under the prose where a comment thread would go. */}
-      <section className="border-border-strong border-t-2">
-        <Container className="grid grid-cols-1 gap-8 py-16 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
-          <SectionLabel as="h2">Feedback</SectionLabel>
-          <div className="min-w-0">
-            {feedbackEnabled() ? (
-              <FeedbackBox slug={post.slug} />
-            ) : (
-              <p className="text-foreground-subtle max-w-xl text-sm">
-                The feedback box is offline right now — email me instead.
-              </p>
-            )}
-          </div>
-        </Container>
-      </section>
     </article>
   );
 }

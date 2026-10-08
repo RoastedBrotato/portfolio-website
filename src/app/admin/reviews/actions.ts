@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin, signIn, signOut } from "@/lib/adminAuth";
 import { deleteFeedback, markFeedbackRead } from "@/lib/feedback";
+import { approveComment, deleteComment, unapproveComment } from "@/lib/comments";
 import { approveReview, deleteReview, unapproveReview } from "@/lib/reviews";
 import { deleteQuote, markQuoteRead } from "@/lib/quotes";
 
@@ -51,6 +52,31 @@ export async function remove(id: string): Promise<void> {
   await deleteReview(id);
   revalidatePublicPages();
   revalidatePath("/admin/reviews");
+}
+
+/*
+ * Blog comments. Each mutation hands back the comment's slug, so only the one
+ * post it sits under is revalidated.
+ */
+
+function revalidatePost(slug: string | null): void {
+  if (slug) revalidatePath(`/blog/${slug}`);
+  revalidatePath("/admin/reviews");
+}
+
+export async function approveCommentAction(id: string): Promise<void> {
+  await requireAdmin();
+  revalidatePost(await approveComment(id));
+}
+
+export async function unapproveCommentAction(id: string): Promise<void> {
+  await requireAdmin();
+  revalidatePost(await unapproveComment(id));
+}
+
+export async function removeComment(id: string): Promise<void> {
+  await requireAdmin();
+  revalidatePost(await deleteComment(id));
 }
 
 /*

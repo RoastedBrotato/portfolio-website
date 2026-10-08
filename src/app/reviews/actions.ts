@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { clientIp, createReview, reviewsEnabled, withinRateLimit } from "@/lib/reviews";
+import { isRelationship } from "@/data/reviews";
 
 /*
  * Public submission endpoint. A Server Action is a POST route that anyone can
@@ -13,16 +14,19 @@ const LIMITS = {
   name: { min: 2, max: 60 },
   role: { max: 80 },
   company: { max: 80 },
+  project: { max: 120 },
   email: { max: 120 },
   body: { min: 30, max: 800 },
 } as const;
 
+type ReviewField = "name" | "role" | "company" | "relationship" | "project" | "email" | "body";
+
 export type ReviewFormState = {
   status: "idle" | "error" | "success";
   message?: string;
-  errors?: Partial<Record<"name" | "role" | "company" | "email" | "body", string>>;
+  errors?: Partial<Record<ReviewField, string>>;
   /** Echoed back so a validation error doesn't wipe what the visitor typed. */
-  values?: Partial<Record<"name" | "role" | "company" | "email" | "body", string>>;
+  values?: Partial<Record<ReviewField, string>>;
 };
 
 function field(formData: FormData, key: string): string {
@@ -43,6 +47,8 @@ export async function submitReview(
     name: field(formData, "name"),
     role: field(formData, "role"),
     company: field(formData, "company"),
+    relationship: field(formData, "relationship"),
+    project: field(formData, "project"),
     email: field(formData, "email"),
     body: field(formData, "body"),
   };
@@ -72,6 +78,14 @@ export async function submitReview(
 
   if (values.company.length > LIMITS.company.max)
     errors.company = `Keep this under ${LIMITS.company.max} characters.`;
+
+  // Without this a review is a quote from nobody about nothing — the one thing
+  // a reader (and I, in the queue) most needs to know.
+  const relationship = isRelationship(values.relationship) ? values.relationship : undefined;
+  if (!relationship) errors.relationship = "Pick the one that fits best.";
+
+  if (values.project.length > LIMITS.project.max)
+    errors.project = `Keep this under ${LIMITS.project.max} characters.`;
 
   if (
     values.email &&
@@ -103,6 +117,8 @@ export async function submitReview(
       name: values.name,
       role: values.role || undefined,
       company: values.company || undefined,
+      relationship,
+      project: values.project || undefined,
       email: values.email || undefined,
       body: values.body,
     });

@@ -1,5 +1,6 @@
 import type { PublicReview } from "@/types";
 import { cn } from "@/lib/utils";
+import { relationshipLabel } from "@/data/reviews";
 
 /**
  * Initials for the monogram tile. Visitors don't upload photos — an open avatar
@@ -19,15 +20,33 @@ function attribution(review: PublicReview): string | null {
   return review.role ?? review.company ?? null;
 }
 
+function formatMonth(ms: number): string {
+  return new Date(ms).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
 /** Solid background on purpose: on the homepage the card is punched out of the marquee behind it. */
 export function ReviewCard({ review, className }: { review: PublicReview; className?: string }) {
   const subtitle = attribution(review);
+  const relationship = relationshipLabel(review.relationship);
 
   return (
     <figure
-      className={cn("border-border-strong bg-background brutal border-2 p-6 sm:p-7", className)}
+      className={cn(
+        "border-border-strong bg-background brutal flex flex-col border-2 p-6 sm:p-7",
+        className,
+      )}
     >
-      <blockquote className="text-foreground text-base leading-relaxed">
+      {/* Context before the quote: who's talking, about what. Older reviews
+          predate both fields, so either can be missing. */}
+      {relationship || review.project ? (
+        <p className="text-foreground-subtle mb-4 font-mono text-xs tracking-[0.12em] uppercase">
+          {relationship ? <span className="text-accent font-bold">{relationship}</span> : null}
+          {relationship && review.project ? " · " : null}
+          {review.project ? <span className="normal-case tracking-normal">{review.project}</span> : null}
+        </p>
+      ) : null}
+
+      <blockquote className="text-foreground flex-1 text-base leading-relaxed">
         &ldquo;{review.body}&rdquo;
       </blockquote>
 
@@ -44,6 +63,12 @@ export function ReviewCard({ review, className }: { review: PublicReview; classN
           </p>
           {subtitle ? <p className="text-foreground-subtle mt-0.5 text-xs">{subtitle}</p> : null}
         </div>
+        <time
+          dateTime={new Date(review.createdAt).toISOString()}
+          className="text-foreground-subtle ml-auto shrink-0 self-start font-mono text-xs"
+        >
+          {formatMonth(review.createdAt)}
+        </time>
       </figcaption>
     </figure>
   );

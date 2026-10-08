@@ -1,23 +1,29 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/Section";
 import { adminConfigured, isAdmin } from "@/lib/adminAuth";
 import { getApprovedReviews, getPendingReviews, reviewsEnabled } from "@/lib/reviews";
 import { getAllFeedback } from "@/lib/feedback";
+import { getApprovedComments, getPendingComments } from "@/lib/comments";
+import { relationshipLabel } from "@/data/reviews";
 import { getAllQuotes } from "@/lib/quotes";
 import { budgetRanges, projectTypes, referralSources, timelines } from "@/data/pricing";
 import { getAllPosts } from "@/data/blog";
-import type { Feedback, PublicReview, QuoteRequest, Review } from "@/types";
+import type { Feedback, PostComment, PublicReview, QuoteRequest, Review } from "@/types";
 import { AdminLogin } from "./AdminLogin";
 import {
   approve,
+  approveCommentAction,
   logout,
   markQuote,
   markRead,
   remove,
+  removeComment,
   removeFeedback,
   removeQuote,
   unapprove,
+  unapproveCommentAction,
 } from "./actions";
 
 /*
@@ -28,7 +34,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Review moderation",
+  title: "Inbox",
   // Belt and braces with the robots.ts disallow — this page must never be indexed.
   robots: { index: false, follow: false },
 };
@@ -83,6 +89,14 @@ function ModerationRow({
   children: React.ReactNode;
 }) {
   const email = "email" in review ? review.email : undefined;
+  // Reviews from before these fields existed say so, rather than leaving a
+  // blank that reads like a bug.
+  const context = [
+    relationshipLabel(review.relationship) ?? "Relationship not given",
+    review.project,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <li className="border-border-strong border-2 p-5">
@@ -97,6 +111,7 @@ function ModerationRow({
         </p>
         <p className="text-foreground-subtle font-mono text-xs">{formatWhen(review.createdAt)}</p>
       </div>
+      <p className="text-foreground-subtle mt-1.5 font-mono text-xs">{context}</p>
 
       <p className="text-foreground-muted mt-3 text-sm leading-relaxed">{review.body}</p>
 
@@ -132,8 +147,10 @@ function FeedbackRow({ item }: { item: Feedback }) {
   return (
     <li className={`border-2 p-5 ${item.read ? "border-border" : "border-border-strong"}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <p className="text-foreground font-mono text-xs font-bold tracking-[0.12em] uppercase">
-          {item.read ? "Read" : "New"}
+        <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
+          {item.read ? null : <span className="text-accent mr-2">New</span>}
+          {/* Notes sent before the name field existed have none to show. */}
+          {item.name ?? <span className="text-foreground-subtle font-normal">Anonymous</span>}
         </p>
         <p className="text-foreground-subtle font-mono text-xs">{formatWhen(item.createdAt)}</p>
       </div>
@@ -154,6 +171,56 @@ function FeedbackRow({ item }: { item: Feedback }) {
         {item.read ? null : <ActionButton action={markRead} id={item.id} label="Mark read" />}
         <ActionButton action={removeFeedback} id={item.id} label="Delete" tone="danger" />
       </div>
+    </li>
+  );
+}
+
+/** "On <post title>", linked, so nothing in the inbox is about an unnamed post. */
+function PostLink({ slug, titles }: { slug: string; titles: Map<string, string> }) {
+  return (
+    <Link
+      href={`/blog/${slug}`}
+      className="text-foreground-subtle hover:text-foreground font-mono text-xs underline-offset-4 transition-colors hover:underline"
+    >
+      On: {titles.get(slug) ?? slug}
+    </Link>
+  );
+}
+
+function CommentRow({
+  comment,
+  titles,
+  children,
+}: {
+  comment: PostComment;
+  titles: Map<string, string>;
+  children: React.ReactNode;
+}) {
+  return (
+    <li className="border-border-strong border-2 p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
+          {comment.name}
+        </p>
+        <p className="text-foreground-subtle font-mono text-xs">{formatWhen(comment.createdAt)}</p>
+      </div>
+      <div className="mt-1.5">
+        <PostLink slug={comment.slug} titles={titles} />
+      </div>
+
+      <p className="text-foreground-muted mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+        {comment.body}
+      </p>
+
+      {comment.email ? (
+        <p className="text-foreground-subtle mt-3 font-mono text-xs">
+          <a href={`mailto:${comment.email}`} className="hover:text-foreground transition-colors">
+            {comment.email}
+          </a>
+        </p>
+      ) : null}
+
+      <div className="mt-5 flex flex-wrap gap-3">{children}</div>
     </li>
   );
 }
@@ -253,12 +320,15 @@ export default async function AdminReviewsPage() {
     );
   }
 
-  const [pending, approved, feedback, quotes] = await Promise.all([
-    getPendingReviews(),
-    getApprovedReviews(),
-    getAllFeedback(),
-    getAllQuotes(),
-  ]);
+  const [pending, approved, pendingComments, approvedComments, feedback, quotes] =
+    await Promise.all([
+      getPendingReviews(),
+      getApprovedReviews(),
+      getPendingComments(),
+      getApprovedComments(),
+      getAllFeedback(),
+      getAllQuotes(),
+    ]);
   const unreadQuotes = quotes.filter((quote) => !quote.read).length;
 
   // Slug → title, so a note reads as the post it was left on. Falls back to the
@@ -266,6 +336,20 @@ export default async function AdminReviewsPage() {
   const titles = new Map(getAllPosts().map((post) => [post.slug, post.title]));
   const byPost = groupBySlug(feedback);
   const unread = feedback.filter((item) => !item.read).length;
+
+  // What needs me, at a glance — each links down to its section.
+  const summary = [
+    { href: "#quotes", label: "Quotes", count: unreadQuotes, of: quotes.length, noun: "new" },
+    { href: "#reviews", label: "Reviews", count: pending.length, of: null, noun: "to approve" },
+    {
+      href: "#comments",
+      label: "Comments",
+      count: pendingComments.length,
+      of: null,
+      noun: "to approve",
+    },
+    { href: "#notes", label: "Private notes", count: unread, of: feedback.length, noun: "unread" },
+  ];
 
   return (
     <Container className="py-20 sm:py-28">
@@ -281,8 +365,33 @@ export default async function AdminReviewsPage() {
         </form>
       </div>
 
+      <nav aria-label="Inbox sections" className="mt-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {summary.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className={`border-2 p-4 transition-colors ${
+              item.count > 0
+                ? "border-accent hover:bg-background-elevated"
+                : "border-border hover:border-border-strong"
+            }`}
+          >
+            <span className="text-foreground-muted block font-mono text-xs tracking-[0.12em] uppercase">
+              {item.label}
+            </span>
+            <span className="text-foreground mt-2 block font-mono text-2xl font-bold">
+              {item.count}
+            </span>
+            <span className="text-foreground-subtle block text-xs">
+              {item.noun}
+              {item.of !== null ? ` of ${item.of}` : null}
+            </span>
+          </a>
+        ))}
+      </nav>
+
       {/* Leads first: they're the one thing on this page with a clock on it. */}
-      <section className="mt-12">
+      <section id="quotes" className="mt-12 scroll-mt-20">
         <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
           Quote requests ({unreadQuotes} new / {quotes.length})
         </h2>
@@ -297,9 +406,9 @@ export default async function AdminReviewsPage() {
         )}
       </section>
 
-      <section className="mt-16">
+      <section id="reviews" className="mt-16 scroll-mt-20">
         <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
-          Pending ({pending.length})
+          Reviews — pending ({pending.length})
         </h2>
         {pending.length === 0 ? (
           <p className="text-foreground-muted mt-4 text-sm">Queue is empty.</p>
@@ -317,7 +426,7 @@ export default async function AdminReviewsPage() {
 
       <section className="mt-16">
         <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
-          Published ({approved.length})
+          Reviews — published ({approved.length})
         </h2>
         {approved.length === 0 ? (
           <p className="text-foreground-muted mt-4 text-sm">Nothing published yet.</p>
@@ -333,9 +442,47 @@ export default async function AdminReviewsPage() {
         )}
       </section>
 
+      <section id="comments" className="mt-16 scroll-mt-20">
+        <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
+          Comments — pending ({pendingComments.length})
+        </h2>
+        {pendingComments.length === 0 ? (
+          <p className="text-foreground-muted mt-4 text-sm">Queue is empty.</p>
+        ) : (
+          <ul className="mt-5 grid grid-cols-1 gap-4">
+            {pendingComments.map((comment) => (
+              <CommentRow key={comment.id} comment={comment} titles={titles}>
+                <ActionButton action={approveCommentAction} id={comment.id} label="Approve" />
+                <ActionButton action={removeComment} id={comment.id} label="Delete" tone="danger" />
+              </CommentRow>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section className="mt-16">
         <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
-          Feedback ({unread} unread / {feedback.length})
+          Comments — published ({approvedComments.length})
+        </h2>
+        {approvedComments.length === 0 ? (
+          <p className="text-foreground-muted mt-4 text-sm">Nothing published yet.</p>
+        ) : (
+          <ul className="mt-5 grid grid-cols-1 gap-4">
+            {approvedComments.map((comment) => (
+              <CommentRow key={comment.id} comment={comment} titles={titles}>
+                <ActionButton action={unapproveCommentAction} id={comment.id} label="Unpublish" />
+                <ActionButton action={removeComment} id={comment.id} label="Delete" tone="danger" />
+              </CommentRow>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Private by promise: these were sent as notes to me, and there is no
+          button here to publish one. */}
+      <section id="notes" className="mt-16 scroll-mt-20">
+        <h2 className="text-foreground font-mono text-sm font-bold tracking-[0.14em] uppercase">
+          Private notes on posts ({unread} unread / {feedback.length})
         </h2>
         {feedback.length === 0 ? (
           <p className="text-foreground-muted mt-4 text-sm">No feedback yet.</p>
@@ -344,7 +491,13 @@ export default async function AdminReviewsPage() {
             {Array.from(byPost, ([slug, items]) => (
               <div key={slug}>
                 <h3 className="text-foreground-muted font-mono text-xs tracking-[0.12em] uppercase">
-                  {titles.get(slug) ?? slug} ({items.length})
+                  <Link
+                    href={`/blog/${slug}`}
+                    className="hover:text-foreground underline-offset-4 transition-colors hover:underline"
+                  >
+                    {titles.get(slug) ?? slug}
+                  </Link>{" "}
+                  ({items.length})
                 </h3>
                 <ul className="mt-4 grid grid-cols-1 gap-4">
                   {items.map((item) => (

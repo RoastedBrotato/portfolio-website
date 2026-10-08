@@ -106,6 +106,9 @@ export interface SiteConfig {
   siteUrl: string;
 }
 
+/** How a reviewer knows me. A value from `relationships` in src/data/reviews.ts. */
+export type ReviewRelationship = "client" | "collaborator" | "colleague" | "friend" | "other";
+
 /** A visitor-submitted testimonial. `email` is collected for verification and never rendered. */
 export interface Review {
   id: string;
@@ -114,6 +117,13 @@ export interface Review {
   role?: string;
   /** Company or product name. Optional. */
   company?: string;
+  /**
+   * How they know me. Required on new submissions; reviews written before the
+   * field existed don't have it, so every reader has to cope with it missing.
+   */
+  relationship?: ReviewRelationship;
+  /** What we worked on together, in their words. Optional. */
+  project?: string;
   body: string;
   /** Private — used to follow up with the author, never sent to the client. */
   email?: string;
@@ -134,6 +144,8 @@ export interface Feedback {
   id: string;
   /** The post this was left on. Validated against the content directory on write. */
   slug: string;
+  /** Optional, and absent on notes sent before the field existed. */
+  name?: string;
   body: string;
   /** Private — so I can reply. Never rendered outside the moderation page. */
   email?: string;
@@ -141,6 +153,26 @@ export interface Feedback {
   createdAt: number;
   read: boolean;
 }
+
+/**
+ * A public comment on a blog post. The opposite of `Feedback`: written to be
+ * published, so it's held for approval like a review and has a public shape.
+ */
+export interface PostComment {
+  id: string;
+  /** The post this was left on. Validated against the content directory on write. */
+  slug: string;
+  name: string;
+  body: string;
+  /** Private — so I can reply. Never sent to the client. */
+  email?: string;
+  /** Epoch ms. Doubles as the sort score in Redis. */
+  createdAt: number;
+  status: "pending" | "approved";
+}
+
+/** What a blog post renders — the private fields stripped off. */
+export type PublicPostComment = Omit<PostComment, "email" | "status">;
 
 /**
  * A card's preview. Video is the short looping clip (muted, autoplayed while on

@@ -105,7 +105,13 @@ or update `resumeUrl` in `src/data/config.ts` if you rename it).
 
 Visitors can leave a review at `/reviews`. Submissions are **held for approval** — nothing a
 stranger types is ever live under your name until you approve it. The two most recent approved
-reviews appear on the homepage behind the scroll-driven marquee; `/reviews` lists all of them.
+reviews appear on the homepage behind the scroll-driven marquee; `/reviews` lists all of them,
+with filter chips by relationship once there's more than one kind.
+
+Every review says **how the writer knows you** (client, collaborator, colleague, friend, other —
+required) and optionally **what you worked on**. Both show on the card, so neither a reader nor
+the moderation queue gets a quote from nobody about nothing. Reviews written before these fields
+existed simply don't show them; the admin page labels them "relationship not given".
 
 ### Setup
 
@@ -128,10 +134,15 @@ clone with no `.env.local` runs fine.
 
 ### Moderating
 
-Go to `/admin/reviews`, enter `REVIEWS_ADMIN_TOKEN`, and you get two lists:
+Go to `/admin/reviews`, enter `REVIEWS_ADMIN_TOKEN`. A summary row at the top counts what needs
+you — new quotes, reviews and comments to approve, unread private notes — and links down to each.
+For reviews:
 
 - **Pending** — approve or delete. The submitter's email (if they left one) shows here and only here.
 - **Published** — unpublish (back to the queue) or delete permanently.
+
+Or, without signing in, `npm run reviews` prints everything — reviews, comments and private notes,
+each with who sent it and what it's about — using the Upstash variables in `.env.local`.
 
 Approving calls `revalidatePath` on `/` and `/reviews`, so the change is live on the next request
 rather than at the next deploy. Both pages also self-refresh hourly as a fallback.
@@ -160,59 +171,64 @@ src/lib/reviews.ts              Redis reads/writes — the only file that knows 
 src/lib/adminAuth.ts            Token check + session cookie
 src/app/reviews/                Public page and its submit Server Action
 src/app/admin/reviews/          Moderation page and its actions
-src/components/reviews/         ReviewCard, ReviewForm, ScrollMarquee
+src/components/reviews/         ReviewCard, ReviewForm, ReviewList, ScrollMarquee
+src/data/reviews.ts             The "how do you know me?" options
 src/components/sections/Testimonials.tsx   The homepage section
 ```
 
-## Post feedback
+## Post comments and private notes
 
-Every blog post ends with a small feedback box. It is **not a comment section**: submissions go
-into a private inbox and are never published anywhere, so there is no approve step and no public
-surface to approve onto. Anyone who wants to say something publicly can use `/reviews`, which
-already exists for that.
+Every post ends with one form, and the reader picks where it goes:
 
-That choice is what keeps it cheap. Nothing reader-submitted ever renders on a public page, so the
-whole class of injection, spam-display and moderation problems that comes with comments does not
-apply — the only consumer of this data is `/admin/reviews`.
+- **Post publicly** — a comment. Needs a name, is **held for approval** like a review, and once
+  approved shows under the post, oldest first. The post header shows the count and links down.
+- **Send privately** — a note to your inbox, never published anywhere. Name optional.
+
+The two are stored in **separate modules with separate keys** on purpose. Private notes were sent
+on the promise they'd stay private, so there is no "publish this note" path between them — the
+admin page offers mark read and delete on notes, nothing else. Notes sent before the name field
+existed show as "Anonymous".
 
 ### Setup
 
-**Nothing new to configure.** It reuses `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
-from the reviews setup above — the inbox is a second key prefix in the same database, not a second
-service. With those missing, the box on each post says it is offline and the build still succeeds.
-
-Two keys, alongside the review ones:
+**Nothing new to configure.** Both reuse `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
+from the reviews setup above. With those missing, the section on each post says it is offline and
+the build still succeeds.
 
 | Key | What it holds |
 |---|---|
-| `feedback:<id>` | The note itself — post slug, body, optional email, `read` flag |
-| `feedback:inbox` | Sorted set of ids, scored by creation time |
+| `comment:<id>` | A public comment — post slug, name, body, optional email, status |
+| `comments:pending` | Sorted set of ids awaiting approval |
+| `comments:approved` | Sorted set of every published id (for the admin page) |
+| `comments:post:<slug>` | Sorted set of a post's published ids (what the post renders) |
+| `feedback:<id>` | A private note — post slug, optional name, body, optional email, `read` flag |
+| `feedback:inbox` | Sorted set of note ids |
 
-### Reading it
+Blog posts are prerendered with `revalidate = 3600`. Approving, unpublishing or deleting a comment
+revalidates only the post it sits under.
 
-The same `/admin/reviews` page, below the review lists — one login, not two. Notes are grouped by
-post, newest first, with an unread count in the heading. Two actions only: **mark read** and
-**delete**. Both re-check the session server-side like the review actions do.
+### Moderating
+
+The same `/admin/reviews` page — one login. Comments get the review treatment (pending →
+approve/delete, published → unpublish/delete); private notes are grouped by post with mark read and
+delete. Every entry links to the post it was left on.
 
 ### What stops spam
 
-Same shape as the reviews form, with its own limits:
-
 - A honeypot field that only a bot fills in (fake success, so it doesn't retry).
-- Three submissions per IP per hour, in a **separate bucket** from reviews — leaving notes on a few
-  posts must not lock you out of the reviews form, and vice versa.
-- 10–1000 characters, shorter than a review because this is a note, not a testimonial.
-- The post slug is validated against `content/blog` before anything is written, so the inbox
-  cannot be seeded with junk keys by POSTing the action directly.
+- Three submissions per IP per hour, with **separate buckets** for comments, notes and reviews.
+- 10–1000 characters; public comments also reject more than one link.
+- The post slug is validated against `content/blog` before anything is written, so neither store
+  can be seeded with junk keys by POSTing the action directly.
 
 ### Where the code lives
 
 ```
-src/lib/feedback.ts             Redis reads/writes — deliberately a near-copy of reviews.ts, not
-                                an abstraction over it, so no shared code path can make it public
-src/app/blog/[slug]/actions.ts  The submit Server Action
-src/components/blog/FeedbackBox.tsx        The box itself
-src/app/admin/reviews/          Reads the inbox; markRead / removeFeedback live in its actions.ts
+src/lib/comments.ts             Public comments — reads/writes, the only public read path
+src/lib/feedback.ts             Private notes — no public getter, and there must not be one
+src/app/blog/[slug]/actions.ts  The submit Server Action (routes by the reader's choice)
+src/components/blog/CommentForm.tsx, CommentList.tsx
+src/app/admin/reviews/          Moderation for both
 ```
 
 ## Project structure
@@ -233,8 +249,8 @@ src/
     layout/                Navbar, Footer
     sections/               Hero, SelectedWork, EngineeringRange, Services ("What I build"),
                               Testimonials (Proof), ContactCTA, About/Stack, Experience, Writing
-    reviews/                ReviewCard, ReviewForm, ScrollMarquee
-    blog/                   mdx (MDX component map), FeedbackBox
+    reviews/                ReviewCard, ReviewForm, ReviewList, ScrollMarquee
+    blog/                   mdx (MDX component map), CommentForm, CommentList
     project/                ProjectCard (engineering strip card), ProjectVisual (screenshot frame)
     case-study/              CaseStudyLayout (engineering), CreativeStudyLayout (creative pieces),
                               ArchitectureDiagram

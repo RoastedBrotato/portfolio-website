@@ -17,6 +17,11 @@ import type { Feedback } from "@/types";
  * Rate limiting is `withinRateLimit` in ./reviews, called with the "feedback"
  * namespace so this shares no bucket with the reviews form.
  *
+ * Public comments on posts live in ./comments, a separate module with its own
+ * keys. A reader picks one or the other on the form, and a note sent here
+ * privately must never be movable onto the public side — so there is no
+ * "publish this note" path between them, and there must not be one.
+ *
  * There is no toPublic() mapper here, and there must not be one. Nothing in
  * this module is rendered anywhere but /admin/reviews. If you are adding a
  * public getter because the reviews module has one, that is the bug.
@@ -66,7 +71,8 @@ export async function getAllFeedback(): Promise<Feedback[]> {
   }
 }
 
-export type NewFeedback = Pick<Feedback, "slug" | "body"> & Partial<Pick<Feedback, "email">>;
+export type NewFeedback = Pick<Feedback, "slug" | "body"> &
+  Partial<Pick<Feedback, "name" | "email">>;
 
 /**
  * Store a note. Throws when unconfigured — unlike the reads, a write that
@@ -79,6 +85,7 @@ export async function createFeedback(input: NewFeedback): Promise<void> {
   const feedback: Feedback = {
     id: crypto.randomUUID(),
     slug: input.slug,
+    name: input.name,
     body: input.body,
     email: input.email,
     createdAt: Date.now(),

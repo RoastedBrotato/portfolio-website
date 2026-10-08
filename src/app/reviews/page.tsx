@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { ArrowDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { Reveal } from "@/components/ui/Reveal";
+import { Button } from "@/components/ui/Button";
 import { RevealText } from "@/components/ui/RevealText";
 import { SectionLabel } from "@/components/ui/Section";
-import { ReviewCard } from "@/components/reviews/ReviewCard";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
+import { ReviewList } from "@/components/reviews/ReviewList";
 import { getApprovedReviews, reviewsEnabled } from "@/lib/reviews";
 
 export const metadata: Metadata = {
@@ -50,9 +51,15 @@ export default async function ReviewsPage() {
               Reviews
             </RevealText>
             <p className="text-foreground-muted mt-6 max-w-xl text-lg leading-relaxed">
-              Everything clients and collaborators have said, unedited. If we&apos;ve worked
-              together, add yours at the bottom.
+              Everything clients, collaborators and friends have said, unedited. If we&apos;ve
+              worked together, add yours.
             </p>
+            {enabled ? (
+              <Button href="#write" size="lg" className="mt-8">
+                Write a review
+                <ArrowDown size={16} />
+              </Button>
+            ) : null}
           </div>
         </Container>
       </header>
@@ -65,15 +72,7 @@ export default async function ReviewsPage() {
               Nothing published yet — the form below is open if you&apos;d like to be first.
             </p>
           ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {reviews.map((review, i) => (
-                // h-full on both so the two cards in a row share a height —
-                // without it a short review leaves a ragged hole beside a long one.
-                <Reveal key={review.id} delay={Math.min(i * 0.06, 0.24)} className="h-full">
-                  <ReviewCard review={review} className="h-full" />
-                </Reveal>
-              ))}
-            </div>
+            <ReviewList reviews={reviews} />
           )}
         </div>
       </Container>

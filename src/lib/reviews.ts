@@ -52,6 +52,8 @@ function toPublic(review: Review): PublicReview {
     name: review.name,
     role: review.role,
     company: review.company,
+    relationship: review.relationship,
+    project: review.project,
     body: review.body,
     createdAt: review.createdAt,
   };
@@ -130,7 +132,7 @@ export function clientIp(headerList: Headers): string {
 }
 
 export type NewReview = Pick<Review, "name" | "body"> &
-  Partial<Pick<Review, "role" | "company" | "email">>;
+  Partial<Pick<Review, "role" | "company" | "relationship" | "project" | "email">>;
 
 /** Store a submission as pending. Nothing here reaches a public page until approved. */
 export async function createReview(input: NewReview): Promise<void> {
@@ -142,6 +144,8 @@ export async function createReview(input: NewReview): Promise<void> {
     name: input.name,
     role: input.role,
     company: input.company,
+    relationship: input.relationship,
+    project: input.project,
     body: input.body,
     email: input.email,
     createdAt: Date.now(),

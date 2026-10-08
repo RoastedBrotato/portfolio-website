@@ -5,6 +5,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Field, inputClass } from "@/components/ui/FormField";
 import { submitReview, type ReviewFormState } from "@/app/reviews/actions";
+import { relationships } from "@/data/reviews";
 
 const BODY_MAX = 800;
 
@@ -44,7 +45,56 @@ export function ReviewForm() {
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      {/* First, because it frames everything below it — and it's the one thing
+          a reader of the finished review most wants to know. */}
+      <fieldset>
+        <legend className="text-foreground-muted mb-2 block font-mono text-xs font-bold tracking-[0.14em] uppercase">
+          How do you know me?
+        </legend>
+        <div className="flex flex-wrap gap-2">
+          {relationships.map((option) => (
+            <label key={option.value} className="cursor-pointer">
+              <input
+                type="radio"
+                name="relationship"
+                value={option.value}
+                required
+                defaultChecked={state.values?.relationship === option.value}
+                className="peer sr-only"
+              />
+              <span className="border-border-strong text-foreground-muted hover:text-foreground peer-checked:border-accent peer-checked:bg-accent peer-checked:text-accent-foreground peer-focus-visible:outline-accent inline-block border-2 px-3.5 py-2 font-mono text-xs font-bold tracking-[0.12em] uppercase transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+                {option.label}
+              </span>
+            </label>
+          ))}
+        </div>
+        {state.errors?.relationship ? (
+          <p className="text-accent mt-1.5 text-xs" role="alert">
+            {state.errors.relationship}
+          </p>
+        ) : null}
+      </fieldset>
+
+      <div className="mt-6">
+        <Field
+          label="What we worked on"
+          name="project"
+          error={state.errors?.project}
+          hint="Optional. A project, a product, a hackathon — shown with your review."
+        >
+          <input
+            id="project"
+            name="project"
+            type="text"
+            maxLength={120}
+            defaultValue={state.values?.project}
+            className={inputClass}
+            placeholder="Rebuilding our booking site"
+          />
+        </Field>
+      </div>
+
+      <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Field label="Name" name="name" error={state.errors?.name}>
           <input
             id="name"
