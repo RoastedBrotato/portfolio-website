@@ -1,0 +1,100 @@
+---
+title: "A slime mould designed Pakistan's railways"
+description: "Re-running the Tokyo slime mould experiment on Pakistan with code, and checking how close it gets to the real Pakistan Railways network."
+date: "2026-10-09"
+tags: ["yapping", "simulation", "python"]
+draft: false
+---
+
+> "Thirty-seven cities, thirty thousand tubes, and a blob with no brain that figures out where the trains should go"
+
+Lately my adventures have brought me to Karachi, and it's a very lively and active place. Everyone around me is hustling on something, albeit not always through the best means, but taking the positive aspects from a gathering is a trait that one needs to develop.
+
+You can always learn from the ethics, persistence and motivation of other people trying to hustle and make things work. I recently came across a subreddit called firepakistan, and the people over there are only focused on retiring early and having a passive income.
+
+I like the sound of it. There's a sort of financial freedom to FIRE, and you can fool around with whatever hobbies however you want. The main issue with FIRE is the initial struggle, and no one says it's easy. It can take a lot to figure out, and you might never even reach your goals.
+
+It is human to want to improve, upgrade, want more, not be content, but all of this leads to a level of suffering that I don't find worth it. Having tawakul, praying for what's best for you, trying your best in whatever you do, and leaving the rest to Allah is a way of life that has worked for me.
+
+Aside from coding and fooling around with different tech and designs, I have been on a taste-testing spree, and the flavours here are insane. They can get you sick though, so eat at your own risk.
+
+In between all the eating, I fell down a rabbit hole. Every few years I run into the same video. Someone puts oat flakes on a map of Tokyo, one on every major city, drops a slime mould in the middle, and leaves it overnight. By morning the blob has eaten its way out to every flake, and the tubes it keeps look uncomfortably like the actual Tokyo rail network. Engineers spent decades on that network. The mould has no brain and did it in a day.
+
+Sitting in Karachi, where the whole Pakistan Railways network starts, the question that stuck was simple: how much of that network is a deliberate plan, and how much is just "this is where the river goes and this is where the people are"? And if I feed the blob Pakistan instead of Tokyo, what does it build?
+
+I don't have a petri dish the size of Pakistan, so I wrote one.
+
+## The experiment
+
+The Tokyo paper (Tero et al., *Science*, 2010) did two things. The first was the actual mould on the actual oats. The second, which is the part nobody shows in the video, was a mathematical model of how the mould behaves, so you could run it on a computer and tune it. That model is what I re-implemented.
+
+The idea is nice and dumb. Cover the land in a mesh of tiny tubes. Put food on the cities. Every step, push flow from one city to another through the tubes. Tubes that carry a lot of flow get thicker. Tubes that carry nothing shrink and starve. Repeat a couple hundred times and the mesh collapses into a network.
+
+So here's the part with actual technical details, added with AI, for anyone who's curious how it actually happened.
+
+### Building the dish
+
+The country outline comes from geoBoundaries, elevation comes from the AWS Terrain Tiles, and the real railway lines come from OpenStreetMap through Overpass, clipped to the border. The food is a hand-written list of 37 cities with rough urban populations, from Karachi and Lahore down to Zhob and Chaman, so the mould has a reason to go to Balochistan at all.
+
+Over the country polygon I lay a lattice at 0.1 degrees, with each node connected to its 8 neighbours. One detail that mattered more than I expected: the lattice is jittered. A perfectly regular grid has whole families of staircase paths with exactly equal length, and the mould can't decide between them, so you get ugly parallel strands everywhere. Nudging each node by a random amount breaks the ties and the strands merge into single routes.
+
+Anything above 4,500 metres is deleted outright, which clears out the Karakoram. For everything else, the terrain acts the way the researchers used light in the original experiment. They shone light on the sea and the mountains because the mould avoids light, so it wouldn't just run tubes across Tokyo Bay. Here, every tube's effective length is its real length multiplied by a cost from altitude and slope. A tube up a hillside is "longer" than the same tube across the Indus plain, so the mould prefers the plain without being forbidden from the hills.
+
+That gives about 7,800 nodes and just under 30,000 tubes to start with.
+
+### Making it flow
+
+Each step, for every pair of cities, unit flow gets pushed from one to the other. Pairs are weighted by the square root of the product of their populations, so Karachi to Lahore matters a lot more than Sibi to Dadu. It's a soft gravity model of demand, nothing fancy.
+
+Working out the flow in every tube means solving for the pressure at every node, which is a sparse linear system. The trick that keeps it fast is linearity: I do one sparse LU solve per city, with that city as the source and the biggest city as the drain, and then the flow for any pair is just the difference of two of those solutions. So 37 solves per step instead of 666.
+
+Then the conductivity of each tube adapts:
+
+```
+dD/dt = f(|Q|) - D
+f(Q)  = (Q/Q0)^1.8 / (1 + (Q/Q0)^1.8)
+```
+
+Flow feeds the tube, and the tube decays on its own. That exponent of 1.8 is the interesting knob. Above 1, two parallel routes carrying similar flow don't share nicely, the slightly better one wins and the other one dies. That's what makes the result look like a railway instead of a web.
+
+A tube counts as starved once its conductivity drops below 0.005. 200 steps takes about seven minutes on my laptop.
+
+## What it built
+
+![The mould's final network, tube width is conductivity](/images/blog/mold-pakistan/network.png)
+
+At the end, 98.4% of the tubes are dead. The 486 that survive add up to about 5,900 km of network, with a thick backbone of around 1,900 km, and every one of the 37 cities is still connected.
+
+![Slime mould on the left, the real Pakistan Railways network from OpenStreetMap on the right](/images/blog/mold-pakistan/comparison.png)
+
+Then the fun part, drawing it on top of the real thing.
+
+![Mould in red, Pakistan Railways in blue](/images/blog/mold-pakistan/overlay.png)
+
+Things it rediscovered on its own:
+
+- The main trunk. Karachi up to Hyderabad, splitting into two spines either side of the Indus, rejoining around Sukkur and Rahim Yar Khan, and carrying on through Multan to Faisalabad, Lahore, Rawalpindi and Peshawar. This is the Pakistan Railways main line, give or take a few bends.
+- The Quetta branch coming off the trunk near Sukkur and climbing up through Sibi, which is exactly where the real line goes.
+- A Faisalabad loop, with the mould treating Faisalabad as the junction between the Multan side and the Lahore side the way the real network does.
+
+Things it got wrong, or rather, things it was never told about:
+
+- The real line west from Quetta to the Iran border has no cities on it, so the mould has no reason to go there and it doesn't. Same with the line out to Chaman, which it keeps only as a thin thread.
+- It runs a tube up to Gilgit and along the coast to Gwadar, because I put food there. Pakistan Railways doesn't go to either place. That one's on me, not the blob.
+- Punjab is a lot denser in real life. The real network has loops and branches between Sargodha, Faisalabad, Sahiwal and Multan that the mould flattens into a couple of main routes.
+
+What surprised me is how much comes from so little. There's no knowledge of rivers, no history, no politics, no British colonial surveyors. Just population, terrain, and tubes that die if nobody uses them. And the thing that comes out is recognisably the same country.
+
+## The video
+
+A still image doesn't really sell it, because the whole point is the pruning. So I wrote a separate renderer that plays back the history of the simulation: a dark background, the dead lattice left behind as a faint grey maze, the living tubes glowing orange to yellow with particles flowing down them from Karachi to everywhere else, and a stats panel with a sparkline of how many tubes are still alive.
+
+The timing is uneven on purpose. The first 20 steps get 10 frames each, the next 40 get 5, and after that it speeds up, so the part where most of the network dies plays slowly and the long tail where nothing changes flies by. The full 40-second clip and the GIF are in the repo, they were too heavy to embed here.
+
+Everything, including the data fetching, the simulation, and the renderer, is on GitHub: [RoastedBrotato/optimal-train-route](https://github.com/RoastedBrotato/optimal-train-route). It's a handful of Python files, runs in a few minutes, and you can swap in any country and any city list.
+
+## Anyway
+
+I set out to see whether a brainless blob could plan a railway, and it more or less did. The parts it got right are the parts that are obvious once you see them, population and terrain and nothing else. The parts it got wrong are the parts where humans had a reason the mould couldn't know about.
+
+Next time I'm stuck at a level crossing, at least I'll know the mould agrees with the route.
