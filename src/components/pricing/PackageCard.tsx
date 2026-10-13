@@ -1,10 +1,11 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 /**
  * One pricing card. Takes display-ready strings rather than a Package so the
- * custom-quote card, which has no price or timeline, can use the same shell.
+ * Sufun card, which has no price or timeline and links off-site, can use the
+ * same shell.
  */
 export function PackageCard({
   id,
@@ -15,6 +16,7 @@ export function PackageCard({
   includes,
   href,
   cta,
+  external = false,
   highlighted = false,
   footer,
 }: {
@@ -28,6 +30,8 @@ export function PackageCard({
   includes: string[];
   href: string;
   cta: string;
+  /** Opens in a new tab: the card points off-site. */
+  external?: boolean;
   highlighted?: boolean;
   /** Extra content under the CTA, e.g. a Book a call button. */
   footer?: React.ReactNode;
@@ -80,9 +84,14 @@ export function PackageCard({
 
       {/* mt-auto pins the CTA to the bottom, so cards in a row line up. */}
       <div className="mt-auto flex flex-col gap-3 pt-8">
-        <Button href={href} variant={highlighted ? "primary" : "secondary"} className="w-full">
+        <Button
+          href={href}
+          external={external}
+          variant={highlighted ? "primary" : "secondary"}
+          className="w-full"
+        >
           {cta}
-          <ArrowRight size={15} />
+          {external ? <ArrowUpRight size={15} /> : <ArrowRight size={15} />}
         </Button>
         {footer}
       </div>

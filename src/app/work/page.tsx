@@ -26,10 +26,10 @@ export default function WorkPage() {
       <PageHeader
         label="Work"
         title="Work"
-        intro="Creative builds first, and the production engineering behind them — apps, RAG systems and backends shipped end to end."
+        intro="The interesting part first, then the part that has to work: the apps, donation systems and RAG platforms under the creative builds."
       />
       {work.length > 0 ? <SelectedWork items={work} id="selected" /> : null}
-      <EngineeringRange label="Engineering" tone="plane-1" />
+      <EngineeringRange tone="plane-1" />
       <ContactCTA />
     </>
   );

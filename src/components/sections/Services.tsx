@@ -88,7 +88,7 @@ export function Services({ index, tone }: { index?: number; tone?: SectionTone }
           className="group text-foreground-muted hover:text-foreground mt-8 inline-flex items-center gap-3 font-mono text-xs tracking-[0.12em] uppercase transition-colors"
         >
           <span aria-hidden className="bg-accent h-2 w-2" />
-          Full-stack and AI under the hood
+          The engineering underneath, with case studies
           <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </Link>
       </Reveal>

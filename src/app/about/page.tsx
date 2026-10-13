@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
-import { About, Stack } from "@/components/sections/About";
+import { About, Stack, Wired } from "@/components/sections/About";
 import { EngineeringRange } from "@/components/sections/EngineeringRange";
 import { Experience } from "@/components/sections/Experience";
 import { Writing } from "@/components/sections/Writing";
@@ -14,14 +14,14 @@ import { siteConfig } from "@/data/config";
 export const metadata: Metadata = pageMetadata({
   title: "About",
   description:
-    "Backend engineer turned creative developer — the background, the full-stack and AI case studies, the experience and the stack behind the work.",
+    "A backend engineer who learned to make things move: the background, the full-stack and AI case studies, the experience and the stack behind the work.",
   path: "/about",
 });
 
 const elsewhere = [
   { label: "Lab", detail: "Experiments and AI-tool tests, rough edges included.", href: "/lab" },
-  { label: "Blog", detail: "Notes from the road and from the work.", href: "/blog" },
-  { label: "Reviews", detail: "Worked with me? Leave a review.", href: "/reviews#write" },
+  { label: "Blog", detail: "Notes from the work, the road, and the occasional yap.", href: "/blog" },
+  { label: "Reviews", detail: "Worked with me? Drop your thoughts about me (or my work, haha).", href: "/reviews#write" },
 ];
 
 /*
@@ -35,15 +35,16 @@ export default function AboutPage() {
       <PageHeader
         label="About"
         title={siteConfig.name}
-        intro="Backend engineer first, creative developer now — and still the person who wires the CMS, the analytics and the backend when a project needs them."
+        intro="A backend engineer who learned to make things move. Still the one who wires the CMS, the analytics and the backend, because that's the part that has to work."
       />
       <About />
-      <EngineeringRange tone="plane-1" />
-      <Experience />
-      <Stack tone="plane-1" />
-      <Writing />
+      <Wired tone="plane-1" />
+      <EngineeringRange />
+      <Experience tone="plane-1" />
+      <Stack />
+      <Writing tone="plane-1" />
 
-      <Section id="elsewhere" label="Elsewhere" tone="plane-1">
+      <Section id="elsewhere" label="Elsewhere">
         <ul className="divide-border border-border-strong max-w-2xl divide-y border-y-2">
           {elsewhere.map((item) => (
             <li key={item.href}>
@@ -68,7 +69,7 @@ export default function AboutPage() {
         </ul>
       </Section>
 
-      <ContactCTA tone="plane-2" />
+      <ContactCTA tone="plane-1" />
     </>
   );
 }

@@ -10,7 +10,7 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Notes on building software, AI, and shipping products.",
+  description: "Notes from the work, the road, and the occasional yap.",
   alternates: {
     types: { "application/rss+xml": "/blog/rss.xml" },
   },
@@ -47,7 +47,7 @@ export default function BlogIndexPage() {
               Blog
             </RevealText>
             <p className="text-foreground-muted mt-6 max-w-xl text-lg leading-relaxed">
-              Notes on building software, AI, and whatever else is worth writing down.
+              Notes from the work, the road, and the occasional yap.
             </p>
           </div>
         </Container>

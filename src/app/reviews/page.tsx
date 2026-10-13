@@ -52,7 +52,7 @@ export default async function ReviewsPage() {
             </RevealText>
             <p className="text-foreground-muted mt-6 max-w-xl text-lg leading-relaxed">
               Everything clients, collaborators and friends have said, unedited. If we&apos;ve
-              worked together, add yours.
+              worked together, drop your thoughts about me (or my work, haha).
             </p>
             {enabled ? (
               <Button href="#write" size="lg" className="mt-8">

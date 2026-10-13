@@ -30,7 +30,7 @@ export function SelectedWork({
     >
       <Container className="mb-10 flex items-center gap-3 sm:mb-14">
         {index !== undefined ? <SectionIndex value={index} /> : null}
-        <SectionLabel>Selected work</SectionLabel>
+        <SectionLabel>Make it interesting</SectionLabel>
       </Container>
 
       <Reveal>

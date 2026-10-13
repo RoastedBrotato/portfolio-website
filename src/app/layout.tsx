@@ -67,7 +67,7 @@ const fraunces = Fraunces({
 
 const title = `${siteConfig.name} — ${siteConfig.role}`;
 const description =
-  "Creative developer building immersive landing pages, brand websites and interactive 3D product showcases — on top of real full-stack and AI engineering. Get a quote or book a call.";
+  "Make it interesting. Make it work. Landing pages, brand sites and interactive 3D with motion on top and proper engineering underneath, from one developer. Get a quote or book a call.";
 
 /*
  * Plausible's per-site script URL (Site settings → "Site installation" in the

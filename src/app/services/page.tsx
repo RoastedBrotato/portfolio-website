@@ -10,12 +10,12 @@ import { ContactCTA } from "@/components/sections/ContactCTA";
 import { TrackView } from "@/components/TrackView";
 import { RegionPrice } from "@/components/pricing/RegionPrice";
 import { RegionSwitch } from "@/components/pricing/RegionPricing";
-import { customQuote, faqs, packages, processSteps } from "@/data/pricing";
+import { faqs, packages, processSteps, sufun } from "@/data/pricing";
 
 export const metadata: Metadata = pageMetadata({
   title: "Services",
   description:
-    "Packages for immersive landing pages, brand websites and interactive 3D product showcases — what's included, typical timelines and starting prices.",
+    "Three website packages: landing pages, brand sites and interactive 3D product showcases. What's included, typical timelines and starting prices.",
   path: "/services",
 });
 
@@ -32,7 +32,7 @@ export default function ServicesPage() {
       <PageHeader
         label="Services"
         title="Packages"
-        intro="Three starting points and a custom option. Every project gets a fixed price in writing before anything starts — these are where the conversation begins."
+        intro="Three starting points, all websites. Every project gets a fixed price in writing before anything starts. Anything that isn't a website goes through Sufun, my studio."
       >
         <RegionSwitch className="mt-6" />
         <div className="mt-8">
@@ -59,12 +59,13 @@ export default function ServicesPage() {
           ))}
           <Reveal delay={0.08} className="h-full">
             <PackageCard
-              id={customQuote.id}
-              name={customQuote.name}
-              outcome={customQuote.outcome}
-              includes={customQuote.includes}
-              href={`/quote?package=${customQuote.id}`}
-              cta="Describe your project"
+              id={sufun.id}
+              name={sufun.name}
+              outcome={sufun.outcome}
+              includes={sufun.includes}
+              href={sufun.href}
+              cta={sufun.cta}
+              external
               footer={<BookCallButton placement="pricing-custom" size="md" className="w-full" />}
             />
           </Reveal>

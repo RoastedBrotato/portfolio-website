@@ -6,15 +6,15 @@ import { RevealText, type RevealWord } from "@/components/ui/RevealText";
 import { HeroBackdrop } from "@/components/scene/HeroBackdrop";
 import { siteConfig } from "@/data/config";
 
-// DRAFT — the headline and the paragraph below are yours to rewrite. The audit's
-// alternatives: "Websites that move. Engineering that holds." / "Immersive sites, built like software."
+// The thesis (docs/voice.md). The italic red word always carries the second
+// beat: the part that has to work.
 const headline: RevealWord[] = [
-  { text: "Websites" },
-  { text: "people" },
-  { text: "remember,", emphasis: true },
-  { text: "engineered" },
-  { text: "to" },
-  { text: "last." },
+  { text: "Make" },
+  { text: "it" },
+  { text: "interesting." },
+  { text: "Make" },
+  { text: "it" },
+  { text: "work.", emphasis: true },
 ];
 
 export function Hero() {
@@ -35,10 +35,18 @@ export function Hero() {
       {/* Same rail grid as every other section — the hero's rail holds the role
           tag where a section would put its label, so one left edge runs the page. */}
       <Container className="relative grid min-h-[calc(100svh-4rem)] grid-cols-1 content-center sm:min-h-[calc(100svh-5rem)] gap-8 py-20 sm:py-28 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
-        <div>
+        <div className="flex flex-col gap-5">
           <div className="fade-up">
             <SectionLabel as="p">{siteConfig.role}</SectionLabel>
           </div>
+          {/* The scene is the thesis demonstrated, so it gets a caption. Pointer
+              devices only: on a phone the light drifts on its own. */}
+          <p
+            className="text-foreground-subtle fade-up hidden max-w-[12rem] font-mono text-[11px] leading-relaxed tracking-[0.12em] uppercase lg:block"
+            style={{ animationDelay: "0.9s" }}
+          >
+            The light follows your pointer. The frame rate holds.
+          </p>
         </div>
 
         <div className="min-w-0">
@@ -54,11 +62,10 @@ export function Hero() {
           {/* CSS, not <Reveal>: this paragraph is the LCP element on a phone,
               so it must not wait for hydration to become visible. */}
           <div className="fade-up" style={{ animationDelay: "0.35s" }}>
-            {/* One sentence, under 20 words: the hero's job is the claim and the
-                two ways forward. Availability and location live in the footer. */}
+            {/* One sentence: what it is and who builds it. Availability and
+                location live in the footer. */}
             <p className="text-foreground-muted mt-8 max-w-xl text-lg leading-relaxed">
-              Immersive landing pages, brand sites and interactive 3D, built on years of shipping
-              full-stack and AI systems.
+              {siteConfig.tagline}
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">

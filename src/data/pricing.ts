@@ -50,8 +50,8 @@ export const packages: Package[] = [
   {
     id: "immersive-landing",
     name: "Immersive Landing Page",
-    // DRAFT
-    outcome: "One page that makes people stop scrolling — built to launch a product, offer or campaign.",
+    outcome:
+      "One page for a launch, an offer or a campaign. People stop scrolling, and it still loads fast on the phone the ad sent them from.",
     // DRAFT
     includes: [
       "Concept, art direction and copy structure",
@@ -66,8 +66,8 @@ export const packages: Package[] = [
   {
     id: "brand-experience",
     name: "Brand Website / Experience",
-    // DRAFT
-    outcome: "A multi-page site with a point of view, that your team can update without me.",
+    outcome:
+      "A multi-page site with a point of view. Your team updates it without me, and it works without me once it's built.",
     // DRAFT
     includes: [
       "Discovery, sitemap and art direction",
@@ -84,8 +84,8 @@ export const packages: Package[] = [
   {
     id: "interactive-3d",
     name: "Interactive 3D / Product Showcase",
-    // DRAFT
-    outcome: "Your product in real-time 3D — explorable, configurable and fast on a phone.",
+    outcome:
+      "Your product in real-time 3D: turn it, configure it, open it up. Budgeted to run on a mid-range phone, not just the demo laptop.",
     // DRAFT
     includes: [
       "3D scene built from your models or CAD (or modelled from reference)",
@@ -99,25 +99,33 @@ export const packages: Package[] = [
   },
 ];
 
-/** The fourth card. No price by design — it's the "doesn't fit a box" path. */
-export const customQuote = {
-  id: "custom" as const,
-  name: "Custom quote",
-  // DRAFT
+/**
+ * The fourth card. This site sells websites; everything else goes through
+ * Sufun, my studio, so the card links there instead of offering a "custom"
+ * option (docs/voice.md).
+ */
+export const sufun = {
+  id: "sufun" as const,
+  name: "Not a website?",
   outcome:
-    "Something that doesn't fit a package — a web app, an AI feature, an installation, or a mix.",
-  // DRAFT
+    "Software, automation, AI features, brand work: that's Sufun, my studio. Different door, same person on the call.",
   includes: [
-    "Scoped after a discovery call",
-    "Fixed price per milestone, agreed up front",
-    "Full-stack and AI work included in the range",
+    "Web and mobile apps, scoped after a discovery call",
+    "WhatsApp and workflow automation",
+    "AI features: RAG, assistants, document pipelines",
+    "Brand identity alongside the build",
   ],
+  href: "https://www.alsufun.com/",
+  cta: "Go to Sufun",
 };
 
-/** "Something else" is the catch-all at the bottom of the quote form's select. */
+/**
+ * "Something else" is the catch-all at the bottom of the quote form's select.
+ * Older leads may carry "custom" from before the Sufun card; /admin labels
+ * unknown values with the raw value, so they still read.
+ */
 export const projectTypes = [
   ...packages.map((pkg) => ({ value: pkg.id, label: pkg.name })),
-  { value: customQuote.id, label: "Custom project" },
   { value: "other", label: "Something else" },
 ] as const;
 
@@ -218,6 +226,11 @@ export const faqs = [
     question: "Why are prices different in Pakistan?",
     answer:
       "Projects outside Pakistan carry costs local ones don't: international transfer and payment-platform fees, currency conversion, and calls across time zones. International prices are set to cover those, so the work itself costs the same. The price list follows where you are; the switch on this page shows the other one.",
+  },
+  {
+    question: "Do you do things that aren't websites?",
+    answer:
+      "Not here. Software, automation, AI features and brand work go through Sufun, my studio, where there's a team for it. Same person on the first call either way.",
   },
   {
     question: "Will it be fast on mobile?",

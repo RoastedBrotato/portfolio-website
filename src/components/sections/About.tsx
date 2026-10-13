@@ -4,6 +4,30 @@ import { Reveal } from "@/components/ui/Reveal";
 import { techStack } from "@/data/techStack";
 import { siteConfig } from "@/data/config";
 
+/* The texture. A list, not a paragraph, so it reads as facts rather than filler. */
+const offTheClock = [
+  "Islamabad, Pakistan. Decent chance I'm in the mountains instead while you read this.",
+  "Anime, metal, the gym, and as much hiking and trekking as I can get away with.",
+  "Working toward a setup where I can travel and work at the same time. The digital nomad plan.",
+  "Up for a yap session over coffee if you're in town.",
+];
+
+/* Three statements, the way I actually work. The homepage says the first one. */
+const wired = [
+  {
+    title: "I build the whole thing.",
+    body: "The interface and the systems behind it, from the first call to launch. You talk to the person who builds it, so nothing is lost in a handoff.",
+  },
+  {
+    title: "Pretty isn't the hard part.",
+    body: "I'd rather ship something slightly less flashy that still works on a mid-range phone in a year than something that looks great in the mockup and falls over after launch.",
+  },
+  {
+    title: "I tinker.",
+    body: "Gadgets, new models, whatever shipped this week. Most of it goes in the Lab. Some of it ends up in client work, which is the point.",
+  },
+];
+
 /** The bio, on /about. Location and the resume sit in the rail. */
 export function About() {
   return (
@@ -29,32 +53,73 @@ export function About() {
     >
       <Reveal className="max-w-2xl">
         <div className="flex flex-col gap-5 text-base leading-relaxed text-foreground-muted">
-          <p>
-            I started as a backend engineer. A few years in, I got pulled into a project that needed
-            real ML models, not just APIs, and that was the turn. When the current wave of AI models
-            started landing, I went all in — Claude, OpenAI, Kimi, self-hosted Ollama, building RAG
-            systems from scratch. What kept me hooked wasn&apos;t the hype, it was how fast you
-            could go from idea to a working MVP.
+          <p className="text-foreground text-lg">
+            I&apos;m Waleed. A backend engineer who got bored and learned to make things move.
           </p>
           <p>
-            I don&apos;t like building on WordPress or templates — they cap what you can actually
-            do, and I&apos;d rather ship something custom that&apos;s optimized around the real
-            problem instead of around a theme. Framer is the one exception that&apos;s changed my
-            mind; it made me pay a lot more attention to what these tools can actually do.
+            I spent five years on donation systems at Qatar Charity, got pulled into a project
+            that needed real ML models rather than just APIs, and when the current wave of AI
+            models landed I went all in: Claude, OpenAI, Kimi, self-hosted Ollama, RAG systems
+            built from scratch. What kept me there wasn&apos;t the hype. It was how fast an idea
+            could become a working thing.
           </p>
           <p>
-            I ran my own company in Qatar before moving to Pakistan for better access to the kind of
-            startup teams I wanted to learn from. At this point I&apos;m only taking on projects with
-            people who care about the work — good engineering, a real environment,
-            some creative energy. I&apos;ve already done the bad-management thing.
+            These days I build websites: landing pages, brand sites, and the motion and 3D that
+            make them worth remembering, with the backend wired properly, because I&apos;m the one
+            who gets called when it isn&apos;t. Anything that isn&apos;t a website, like software,
+            automation or brand work, goes through Sufun, my studio.
           </p>
-          <p className="text-foreground-subtle">
-            Outside of work: anime, metal, the gym, and as much hiking and trekking as I can get
-            away with — there&apos;s a decent chance I&apos;m somewhere in the mountains while
-            you&apos;re reading this.
+          <p>
+            I don&apos;t build on WordPress or templates. They cap what you can do, and I&apos;d
+            rather ship something built around the actual problem than around a theme. Framer is
+            the one exception that changed my mind.
+          </p>
+          <p>
+            I ran my own company in Qatar before moving to Pakistan to be nearer the startup teams
+            I wanted to learn from. I take on projects with people who care about the work: good
+            engineering, a real environment, some creative energy. I&apos;ve already done the
+            bad-management thing.
           </p>
         </div>
       </Reveal>
+
+      <Reveal delay={0.1} className="mt-14 max-w-2xl">
+        <p className="text-foreground-subtle font-mono text-xs tracking-[0.14em] uppercase">
+          Off the clock
+        </p>
+        <ul className="mt-4 flex flex-col gap-2.5">
+          {offTheClock.map((line) => (
+            <li
+              key={line}
+              className="text-foreground-muted flex items-start gap-3 text-base leading-relaxed"
+            >
+              <span aria-hidden className="bg-accent mt-[0.6em] h-1.5 w-1.5 shrink-0" />
+              {line}
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+    </Section>
+  );
+}
+
+/** Three short statements on /about: how I work, in the voice of the blog. */
+export function Wired({ tone }: { tone?: SectionTone }) {
+  return (
+    <Section id="wired" label="How I'm wired" tone={tone}>
+      <div className="grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-3">
+        {wired.map((item, i) => (
+          <Reveal key={item.title} delay={Math.min(i * 0.08, 0.16)}>
+            <span className="text-accent font-mono text-xs font-bold tracking-[0.16em]">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <h3 className="font-display text-foreground mt-3 text-2xl leading-[1.1] font-bold tracking-tight">
+              {item.title}
+            </h3>
+            <p className="text-foreground-muted mt-3 text-base leading-relaxed">{item.body}</p>
+          </Reveal>
+        ))}
+      </div>
     </Section>
   );
 }

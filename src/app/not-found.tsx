@@ -10,16 +10,16 @@ export default function NotFound() {
           404
         </span>
         <h1 className="font-display mt-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          This page doesn&apos;t exist.
+          Looks like we wandered off-trail.
         </h1>
         <p className="mt-4 max-w-md text-base leading-relaxed text-foreground-muted">
-          The page you&apos;re looking for may have moved or been renamed.
+          Even the best routes have detours. Let&apos;s get you back to the work.
         </p>
-        <Button href="/" className="mt-8">
-          Back home
+        <Button href="/work" className="mt-8">
+          Back to the work
         </Button>
-        <Link href="/work" className="mt-4 text-sm text-foreground-muted hover:text-foreground">
-          View selected work
+        <Link href="/" className="mt-4 text-sm text-foreground-muted hover:text-foreground">
+          Or start from the top
         </Link>
       </Container>
     </section>
