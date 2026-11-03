@@ -3,7 +3,7 @@ import { SiteConfig } from "@/types";
 /** Central place for personal/site information. */
 export const siteConfig: SiteConfig = {
   name: "Waleed Ajaz",
-  // DRAFT — edit freely. Shows in the hero rail, the footer and the OG images.
+  // Shows in the hero rail, the footer and the OG images.
   role: "Creative Developer",
   tagline: "Immersive websites, interactive 3D and the full-stack engineering underneath them.",
   email: "waleed@alsufun.com",
@@ -14,7 +14,7 @@ export const siteConfig: SiteConfig = {
   // Set NEXT_PUBLIC_BOOKING_URL (Cal.com or Calendly) in the environment, or
   // paste the link here. NEXT_PUBLIC_ so it's inlined into the client navbar too.
   bookingUrl: process.env.NEXT_PUBLIC_BOOKING_URL ?? "",
-  location: "Islamabad, Pakistan",
+  location: "Doha · Islamabad",
   availability: "Booking client projects",
   resumeUrl: "/resume.pdf",
   // Feeds metadataBase, every URL in sitemap.xml, the sitemap reference in

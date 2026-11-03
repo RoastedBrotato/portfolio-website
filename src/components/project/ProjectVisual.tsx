@@ -44,7 +44,7 @@ const variantContent: Record<Variant, React.ReactNode> = {
       <div className="flex items-center gap-2 text-accent">
         <span className="relative flex h-1.5 w-1.5">
           <span className="absolute inline-flex h-full w-full animate-ping bg-accent opacity-60" />
-          <span className="relative inline-flex h-1.5 w-1.5 bg-accent" />
+          <span className="relative inline-flex h-1.5 w-1.5 bg-accent rounded-full" />
         </span>
         <span className="font-mono text-[11px]">real-time update pushed</span>
       </div>
@@ -92,7 +92,7 @@ export function ProjectVisual({
   caption?: string;
 }) {
   return (
-    <figure className="group border-border-strong bg-plane-3 relative overflow-hidden border-2">
+    <figure className="group border-border-strong bg-plane-3 relative overflow-hidden border">
       <div className="p-3 sm:p-5">
         <div className="border-border aspect-[16/10] overflow-hidden border">
           {image ? (
@@ -110,9 +110,9 @@ export function ProjectVisual({
           )}
         </div>
       </div>
-      <figcaption className="border-border-strong text-foreground-subtle flex items-center justify-between gap-4 border-t-2 px-4 py-2.5 font-mono text-[11px] tracking-[0.14em] uppercase">
+      <figcaption className="border-border-strong text-foreground-subtle flex items-center justify-between gap-4 border-t px-4 py-2.5 text-xs uppercase tracking-[0.08em]">
         <span className="text-foreground flex min-w-0 items-center gap-2 font-bold">
-          <span aria-hidden className="bg-accent h-1.5 w-1.5 shrink-0" />
+          <span aria-hidden className="bg-accent h-1.5 w-1.5 rounded-full shrink-0" />
           <span className="truncate">{title}</span>
         </span>
         {caption ? <span className="hidden truncate sm:block">{caption}</span> : null}

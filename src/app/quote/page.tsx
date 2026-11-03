@@ -23,7 +23,7 @@ export default function QuotePage() {
         aside={
           <a
             href={`mailto:${siteConfig.email}`}
-            className="text-foreground-muted hover:text-foreground font-mono text-xs tracking-[0.08em] break-all transition-colors"
+            className="text-foreground-muted hover:text-foreground text-sm break-all transition-colors"
           >
             {siteConfig.email}
           </a>

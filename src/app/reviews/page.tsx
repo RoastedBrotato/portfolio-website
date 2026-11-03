@@ -6,7 +6,7 @@ import { RevealText } from "@/components/ui/RevealText";
 import { SectionLabel } from "@/components/ui/Section";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
 import { ReviewList } from "@/components/reviews/ReviewList";
-import { getApprovedReviews, reviewsEnabled } from "@/lib/reviews";
+import { getPublishedReviews, reviewsEnabled } from "@/lib/reviews";
 
 export const metadata: Metadata = {
   title: "Reviews",
@@ -23,11 +23,12 @@ export const revalidate = 3600;
 
 export default async function ReviewsPage() {
   const enabled = reviewsEnabled();
-  const reviews = enabled ? await getApprovedReviews() : [];
+  // The list doesn't need the database; only the form does.
+  const reviews = await getPublishedReviews();
 
   return (
     <>
-      <header className="border-border-strong relative overflow-hidden border-b-2">
+      <header className="border-border-strong relative overflow-hidden border-b">
         <div
           aria-hidden
           className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
@@ -36,7 +37,7 @@ export default async function ReviewsPage() {
           <div className="flex flex-col items-start gap-5">
             <SectionLabel as="p">Reviews</SectionLabel>
             {reviews.length > 0 ? (
-              <p className="text-foreground-subtle font-mono text-xs tracking-[0.12em] uppercase">
+              <p className="text-foreground-subtle text-sm">
                 {reviews.length} published
               </p>
             ) : null}
@@ -77,7 +78,7 @@ export default async function ReviewsPage() {
         </div>
       </Container>
 
-      <section id="write" className="border-border-strong scroll-mt-20 border-t-2 py-20 sm:py-28">
+      <section id="write" className="border-border-strong scroll-mt-20 border-t py-20 sm:py-28">
         <Container className="grid grid-cols-1 gap-8 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
           <div className="flex flex-col items-start gap-5">
             <SectionLabel>Leave one</SectionLabel>

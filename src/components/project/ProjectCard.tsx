@@ -6,7 +6,7 @@ import { ProjectVisual } from "@/components/project/ProjectVisual";
 import { visualVariantFor } from "@/lib/projectVisuals";
 
 const secondaryLink =
-  "text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors";
+  "text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors";
 
 /**
  * Compact case-study card for the "Under the hood" strip. Deliberately
@@ -41,7 +41,7 @@ export function ProjectCard({ project }: { project: Project }) {
       <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-6">
         <Link
           href={`/work/${project.slug}`}
-          className="text-foreground decoration-accent hover:text-accent inline-flex items-center gap-1.5 font-mono text-xs font-bold tracking-[0.12em] uppercase underline decoration-2 underline-offset-4 transition-colors"
+          className="text-foreground decoration-accent hover:text-accent inline-flex items-center gap-1.5 text-sm font-medium underline decoration-2 underline-offset-4 transition-colors"
         >
           Case study
           <ArrowUpRight size={15} />

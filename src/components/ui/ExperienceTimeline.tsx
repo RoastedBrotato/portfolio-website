@@ -20,7 +20,7 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
           className="relative pb-12 last:pb-0"
         >
           <span
-            className={`absolute top-2 h-2.5 w-2.5 border-2 ${MARKER_OFFSET} ${
+            className={`absolute top-2 h-2.5 w-2.5 border ${MARKER_OFFSET} ${
               item.current ? "border-accent bg-accent" : "border-border-strong bg-background"
             }`}
           />
@@ -29,17 +29,17 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
               {item.role}{" "}
               <span className="text-foreground-muted font-normal">· {item.company}</span>
             </h3>
-            <span className="text-foreground-subtle shrink-0 font-mono text-xs tracking-[0.08em] uppercase sm:text-right">
+            <span className="text-foreground-subtle shrink-0 text-xs uppercase tracking-[0.08em] sm:text-right">
               {item.startDate} — {item.endDate}
             </span>
           </div>
-          <p className="text-foreground-subtle mt-1.5 font-mono text-xs tracking-[0.08em] uppercase">
+          <p className="text-foreground-subtle mt-1.5 text-xs uppercase tracking-[0.08em]">
             {item.location}
           </p>
           {/* Collapsed by default so the page reads as a timeline, not a CV;
               <details> keeps every bullet in the HTML and keyboard-operable. */}
           <details open={item.current} className="group mt-4">
-            <summary className="text-foreground-muted hover:text-foreground inline-flex cursor-pointer list-none items-center gap-2 font-mono text-xs tracking-[0.12em] uppercase transition-colors [&::-webkit-details-marker]:hidden">
+            <summary className="text-foreground-muted hover:text-foreground inline-flex cursor-pointer list-none items-center gap-2 text-sm transition-colors [&::-webkit-details-marker]:hidden">
               <Plus
                 size={14}
                 aria-hidden
@@ -53,7 +53,7 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
                   key={point}
                   className="text-foreground-muted flex items-start gap-3 text-sm leading-relaxed"
                 >
-                  <span className="bg-accent mt-[0.5em] h-1.5 w-1.5 shrink-0" />
+                  <span className="bg-accent mt-[0.5em] h-1.5 w-1.5 rounded-full shrink-0" />
                   {point}
                 </li>
               ))}

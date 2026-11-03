@@ -61,8 +61,8 @@ export function renderOgImage({ tag, headline }: { tag: string; headline: string
           fontWeight: 500,
           letterSpacing: 4,
           textTransform: "uppercase",
-          color: "#000000",
-          backgroundColor: "#ff2b1f",
+          color: "#ffffff",
+          backgroundColor: "#2b3cf0",
           padding: "8px 14px",
           alignSelf: "flex-start",
         }}

@@ -86,13 +86,13 @@ export function CommandPaletteProvider({
         onOpenChange={setOpen}
         label="Search"
         overlayClassName="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
-        contentClassName="fixed left-1/2 top-24 z-[101] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden border-2 border-border-strong bg-background-elevated shadow-2xl outline-none sm:top-[20vh]"
+        contentClassName="fixed left-1/2 top-24 z-[101] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden border border-border-strong bg-background-elevated shadow-2xl outline-none sm:top-[20vh]"
         shouldFilter
         loop
       >
         <CommandInput
           placeholder="Search sections, projects, blog..."
-          className="w-full border-b-2 border-border-strong bg-transparent px-4 py-3.5 text-sm text-foreground placeholder:text-foreground-subtle focus:outline-none"
+          className="w-full border-b border-border-strong bg-transparent px-4 py-3.5 text-sm text-foreground placeholder:text-foreground-subtle focus:outline-none"
         />
         <CommandList className="max-h-80 overflow-y-auto p-2">
           <CommandEmpty className="py-10 text-center text-sm text-foreground-subtle">

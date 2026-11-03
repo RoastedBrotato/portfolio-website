@@ -12,7 +12,7 @@ export function About() {
       label="Bio"
       aside={
         <div className="flex flex-col gap-3 lg:items-start">
-          <p className="text-foreground-subtle font-mono text-xs tracking-[0.12em] uppercase">
+          <p className="text-foreground-subtle text-sm">
             {siteConfig.location}
           </p>
           <a
@@ -37,16 +37,15 @@ export function About() {
             could go from idea to a working MVP.
           </p>
           <p>
-            I don&apos;t like building on WordPress or templates — they cap what you can actually
-            do, and I&apos;d rather ship something custom that&apos;s optimized around the real
-            problem instead of around a theme. Framer is the one exception that&apos;s changed my
-            mind; it made me pay a lot more attention to what these tools can actually do.
+            I build custom rather than on templates: a site shaped around the business and what it
+            sells, not around a theme. Framer is the one tool that&apos;s made me rethink that, and
+            I keep an eye on what it can do.
           </p>
           <p>
-            I ran my own company in Qatar before moving to Pakistan for better access to the kind of
-            startup teams I wanted to learn from. At this point I&apos;m only taking on projects with
-            people who care about the work — good engineering, a real environment,
-            some creative energy. I&apos;ve already done the bad-management thing.
+            I ran my own studio in Qatar, AlSufun, and still build for clients in Doha; I&apos;m
+            now based in Islamabad, closer to the startup teams I wanted to learn from. The
+            projects I take on have one thing in common: the people behind them care how the work
+            turns out.
           </p>
           <p className="text-foreground-subtle">
             Outside of work: anime, metal, the gym, and as much hiking and trekking as I can get
@@ -69,7 +68,7 @@ export function Stack({ tone }: { tone?: SectionTone }) {
         <dl className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-[max-content_1fr] sm:gap-y-5">
           {techStack.map((group) => (
             <div key={group.category} className="contents">
-              <dt className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent">
+              <dt className="text-sm font-medium text-accent">
                 {group.category}
               </dt>
               <dd className="pb-3 text-sm leading-relaxed text-foreground-muted sm:pb-0">

@@ -21,7 +21,7 @@ const SPECS: [string, string][] = [
 ];
 
 const control =
-  "border-border-strong text-foreground hover:bg-background-elevated-hover inline-flex h-11 items-center justify-center gap-2 border-2 px-4 font-mono text-xs font-bold tracking-[0.12em] uppercase transition-colors";
+  "border-border-strong text-foreground hover:bg-background-elevated-hover inline-flex h-11 items-center justify-center gap-2 border px-4 text-sm font-medium transition-colors";
 
 /**
  * The Interactive 3D package as a working piece: a product you can turn,
@@ -40,7 +40,7 @@ export function Configurator() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem]">
-      <div className="border-border-strong bg-plane-2 relative aspect-[4/5] border-b-2 sm:aspect-[16/10] lg:border-r-2 lg:border-b-0">
+      <div className="border-border-strong bg-plane-2 relative aspect-[4/5] border-b sm:aspect-[16/10] lg:border-r-2 lg:border-b-0">
         {scene ? (
           <div className={cn("absolute inset-0 transition-opacity duration-700", ready ? "opacity-100" : "opacity-0")}>
             <ConfiguratorScene
@@ -62,20 +62,20 @@ export function Configurator() {
               sizes="(min-width: 1024px) 70vw, 100vw"
               className="object-cover"
             />
-            <p className="bg-background/80 text-foreground-muted absolute bottom-4 left-4 px-3 py-2 font-mono text-[11px] tracking-[0.14em] uppercase">
+            <p className="bg-background/80 text-foreground-muted absolute bottom-4 left-4 px-3 py-2 text-xs uppercase tracking-[0.08em]">
               Still frame · this device can&apos;t run the 3D
             </p>
           </>
         ) : null}
 
         {scene && !ready ? (
-          <p className="text-foreground-subtle absolute inset-0 flex items-center justify-center font-mono text-xs tracking-[0.16em] uppercase">
+          <p className="text-foreground-subtle absolute inset-0 flex items-center justify-center text-sm">
             Loading scene
           </p>
         ) : null}
 
         {scene ? (
-          <p className="text-foreground-subtle pointer-events-none absolute top-4 left-4 font-mono text-[11px] tracking-[0.14em] uppercase">
+          <p className="text-foreground-subtle pointer-events-none absolute top-4 left-4 text-xs uppercase tracking-[0.08em]">
             Drag to turn
           </p>
         ) : null}
@@ -83,14 +83,14 @@ export function Configurator() {
 
       <aside className="flex flex-col gap-8 p-6 sm:p-8">
         <div>
-          <p className="text-accent font-mono text-xs font-bold tracking-[0.16em] uppercase">Quarr One</p>
+          <p className="text-accent text-sm font-medium">Quarr One</p>
           <h2 className="font-display text-foreground mt-2 text-3xl font-bold tracking-tight">
             {COLORWAYS[colorway].label}
           </h2>
         </div>
 
         <fieldset>
-          <legend className="text-foreground-subtle font-mono text-[11px] tracking-[0.14em] uppercase">
+          <legend className="text-foreground-subtle text-xs uppercase tracking-[0.08em]">
             Colourway
           </legend>
           <div className="mt-3 flex gap-3">
@@ -102,7 +102,7 @@ export function Configurator() {
                 aria-label={COLORWAYS[key].label}
                 onClick={() => setColorway(key)}
                 className={cn(
-                  "h-11 w-11 border-2 transition-transform",
+                  "h-11 w-11 border transition-transform",
                   colorway === key ? "border-accent scale-110" : "border-border-strong hover:scale-105",
                 )}
                 style={{ background: COLORWAYS[key].body }}
@@ -132,10 +132,10 @@ export function Configurator() {
           </button>
         </div>
 
-        <dl className="border-border-strong divide-border divide-y border-t-2">
+        <dl className="border-border-strong divide-border divide-y border-t">
           {SPECS.map(([label, value]) => (
             <div key={label} className="flex justify-between gap-6 py-3">
-              <dt className="text-foreground-subtle font-mono text-[11px] tracking-[0.14em] uppercase">{label}</dt>
+              <dt className="text-foreground-subtle text-xs uppercase tracking-[0.08em]">{label}</dt>
               <dd className="text-foreground text-right text-sm">{value}</dd>
             </div>
           ))}

@@ -15,38 +15,34 @@ const footerLinks = [
   { label: "Lab", href: "/lab" },
   { label: "Blog", href: "/blog" },
   { label: "Reviews", href: "/reviews" },
-  { label: "Get a quote", href: "/quote" },
+  { label: "Start a project", href: "/quote" },
 ];
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-border-strong defer-render bg-plane-0 border-t-2">
-      <Container className="grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[var(--rail)_1fr_auto] lg:gap-[var(--rail-gap)]">
+    <footer className="defer-render bg-plane-0 border-t">
+      <Container className="grid grid-cols-1 gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[var(--rail)_1fr_auto] lg:gap-[var(--rail-gap)]">
         <div>
-          <p className="text-foreground flex items-center gap-2.5 font-mono text-sm font-bold tracking-[0.08em] uppercase">
+          <p className="text-foreground flex items-center gap-2.5 text-[15px] font-semibold tracking-[-0.01em]">
             {siteConfig.name}
-            <span aria-hidden className="bg-accent h-2 w-2" />
+            <span aria-hidden className="bg-accent h-1.5 w-1.5 rounded-full" />
           </p>
           <p className="text-foreground-subtle mt-1 text-sm">{siteConfig.role}</p>
         </div>
 
         <div>
-          {/* items-start keeps the marker on the first line when the label wraps. */}
-          <p className="text-foreground-muted flex items-start gap-2.5 font-mono text-xs leading-relaxed tracking-[0.15em] uppercase">
-            <span aria-hidden className="bg-accent mt-[0.4em] h-2 w-2 shrink-0" />
-            <span>
-              {siteConfig.availability} · {siteConfig.location}
-            </span>
+          <p className="text-foreground-muted text-sm">
+            {siteConfig.availability} · {siteConfig.location}
           </p>
-          <nav aria-label="Footer" className="mt-6">
-            <ul className="flex flex-wrap gap-x-6 gap-y-3">
+          <nav aria-label="Footer" className="mt-4">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
               {footerLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-foreground-muted hover:text-foreground font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+                    className="text-foreground-muted hover:text-foreground text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -56,8 +52,8 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-6 sm:col-span-2 lg:col-span-1 lg:items-end">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-col gap-5 sm:col-span-2 lg:col-span-1 lg:items-end">
+          <div className="flex items-center gap-5">
             <SocialLinks linkClassName="text-foreground-muted transition-colors hover:text-foreground" />
             <a
               href={`mailto:${siteConfig.email}`}

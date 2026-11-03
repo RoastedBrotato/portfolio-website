@@ -69,7 +69,7 @@ function ActionButton({
     <form action={action.bind(null, id)}>
       <button
         type="submit"
-        className={`border-2 px-3 py-1.5 font-mono text-xs font-bold tracking-[0.12em] uppercase transition-colors ${
+        className={`border px-3 py-1.5 font-mono text-xs font-bold tracking-[0.12em] uppercase transition-colors ${
           tone === "danger"
             ? "border-accent text-accent hover:bg-accent hover:text-accent-foreground"
             : "border-border-strong text-foreground hover:bg-foreground hover:text-background"
@@ -99,7 +99,7 @@ function ModerationRow({
     .join(" · ");
 
   return (
-    <li className="border-border-strong border-2 p-5">
+    <li className="border-border-strong border p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
           {review.name}
@@ -145,7 +145,7 @@ function groupBySlug(items: Feedback[]): Map<string, Feedback[]> {
 
 function FeedbackRow({ item }: { item: Feedback }) {
   return (
-    <li className={`border-2 p-5 ${item.read ? "border-border" : "border-border-strong"}`}>
+    <li className={`border p-5 ${item.read ? "border-border" : "border-border-strong"}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
           {item.read ? null : <span className="text-accent mr-2">New</span>}
@@ -197,7 +197,7 @@ function CommentRow({
   children: React.ReactNode;
 }) {
   return (
-    <li className="border-border-strong border-2 p-5">
+    <li className="border-border-strong border p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
           {comment.name}
@@ -247,7 +247,7 @@ function QuoteRow({ quote }: { quote: QuoteRequest }) {
   ];
 
   return (
-    <li className={`border-2 p-5 ${quote.read ? "border-border" : "border-border-strong"}`}>
+    <li className={`border p-5 ${quote.read ? "border-border" : "border-border-strong"}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
           {quote.read ? null : <span className="text-accent mr-2">New</span>}
@@ -370,7 +370,7 @@ export default async function AdminReviewsPage() {
           <a
             key={item.href}
             href={item.href}
-            className={`border-2 p-4 transition-colors ${
+            className={`border p-4 transition-colors ${
               item.count > 0
                 ? "border-accent hover:bg-background-elevated"
                 : "border-border hover:border-border-strong"

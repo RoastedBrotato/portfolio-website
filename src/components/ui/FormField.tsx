@@ -1,6 +1,6 @@
-/** Shared by every form on the site: square, 2px, accent border on focus. */
+/** Shared by every form on the site: rounded, hairline, accent border on focus. */
 export const inputClass =
-  "border-border-strong bg-background-elevated text-foreground placeholder:text-foreground-subtle focus-visible:border-accent w-full border-2 px-3.5 py-2.5 text-base outline-none transition-colors";
+  "border-border-strong bg-background-elevated text-foreground placeholder:text-foreground-subtle focus-visible:border-accent w-full rounded-md border px-3.5 py-2.5 text-base outline-none transition-colors";
 
 /** Label, control, then either the error (announced) or a hint. */
 export function Field({
@@ -18,10 +18,7 @@ export function Field({
 }) {
   return (
     <div>
-      <label
-        htmlFor={name}
-        className="text-foreground-muted mb-2 block font-mono text-xs font-bold tracking-[0.14em] uppercase"
-      >
+      <label htmlFor={name} className="text-foreground mb-2 block text-sm font-medium">
         {label}
       </label>
       {children}

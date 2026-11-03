@@ -39,8 +39,8 @@ export function CommentForm({ slug }: { slug: string }) {
 
   if (state.status === "success") {
     return (
-      <div className="border-border-strong bg-background brutal max-w-xl border-2 p-6">
-        <p className="text-foreground flex items-center gap-2.5 font-mono text-sm font-bold tracking-[0.1em] uppercase">
+      <div className="border-border-strong bg-background max-w-xl border p-6">
+        <p className="text-foreground flex items-center gap-2.5 text-sm font-medium">
           <Check size={18} className="text-accent" />
           {state.visibility === "private" ? "Sent" : "Submitted"}
         </p>
@@ -82,13 +82,13 @@ export function CommentForm({ slug }: { slug: string }) {
               />
               <span
                 className={cn(
-                  "peer-focus-visible:outline-accent block h-full border-2 px-4 py-3 transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2",
+                  "peer-focus-visible:outline-accent block h-full border px-4 py-3 transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2",
                   visibility === option.value
                     ? "border-accent bg-background-elevated"
                     : "border-border text-foreground-muted hover:border-border-strong",
                 )}
               >
-                <span className="text-foreground block font-mono text-xs font-bold tracking-[0.12em] uppercase">
+                <span className="text-foreground block text-sm font-medium">
                   {option.label}
                 </span>
                 <span className="text-foreground-subtle mt-1 block text-xs">{option.hint}</span>
@@ -154,7 +154,7 @@ export function CommentForm({ slug }: { slug: string }) {
       </div>
 
       {state.status === "error" && state.message ? (
-        <p className="border-accent text-accent mt-5 border-2 px-3.5 py-2.5 text-sm" role="alert">
+        <p className="border-accent text-accent mt-5 border px-3.5 py-2.5 text-sm" role="alert">
           {state.message}
         </p>
       ) : null}

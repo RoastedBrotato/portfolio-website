@@ -21,7 +21,7 @@ export default function BlogIndexPage() {
 
   return (
     <>
-      <header className="border-border-strong relative overflow-hidden border-b-2">
+      <header className="border-border-strong relative overflow-hidden border-b">
         <div
           aria-hidden
           className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
@@ -31,7 +31,7 @@ export default function BlogIndexPage() {
             <SectionLabel as="p">Writing</SectionLabel>
             <a
               href="/blog/rss.xml"
-              className="text-foreground-muted hover:text-foreground inline-flex items-center gap-2 font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+              className="text-foreground-muted hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
             >
               <Rss size={14} />
               RSS
@@ -76,7 +76,7 @@ export default function BlogIndexPage() {
                       <h2 className="font-display text-foreground group-hover:text-accent text-xl font-bold tracking-tight transition-colors sm:text-2xl">
                         {post.title}
                         {post.draft ? (
-                          <span className="border-accent text-accent ml-3 border-2 px-2 py-0.5 align-middle font-mono text-[10px] font-bold tracking-[0.16em] uppercase">
+                          <span className="border-accent text-accent ml-3 border px-2 py-0.5 align-middle text-[11px] font-medium uppercase tracking-[0.08em]">
                             Draft
                           </span>
                         ) : null}
@@ -85,7 +85,7 @@ export default function BlogIndexPage() {
                         {post.description}
                       </p>
                     </div>
-                    <div className="text-foreground-subtle flex shrink-0 items-center gap-3 font-mono text-xs tracking-[0.08em] uppercase">
+                    <div className="text-foreground-subtle flex shrink-0 items-center gap-3 text-xs uppercase tracking-[0.08em]">
                       <time dateTime={post.date}>{formatDate(post.date)}</time>
                       <span aria-hidden>·</span>
                       <span>{post.readingMinutes} min</span>

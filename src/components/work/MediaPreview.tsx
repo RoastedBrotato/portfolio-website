@@ -74,13 +74,13 @@ export function MediaPreview({
   return (
     <div
       className={cn(
-        "border-border-strong bg-background-elevated relative aspect-[16/10] overflow-hidden border-2",
+        "border-border-strong bg-background-elevated relative aspect-[16/10] overflow-hidden rounded-[var(--radius)] border",
         className,
       )}
     >
       {!media ? (
         <div className="bg-grid flex h-full w-full items-center justify-center">
-          <span className="text-foreground-subtle font-mono text-xs tracking-[0.16em] uppercase">
+          <span className="text-foreground-subtle text-sm">
             Preview coming
           </span>
         </div>

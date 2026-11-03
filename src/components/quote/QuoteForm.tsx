@@ -190,8 +190,8 @@ export function QuoteForm({
 
   if (state.status === "success") {
     return (
-      <div className="border-border-strong bg-background brutal max-w-2xl border-2 p-7" role="status">
-        <p className="text-foreground flex items-center gap-2.5 font-mono text-sm font-bold tracking-[0.1em] uppercase">
+      <div className="border-border-strong bg-background max-w-2xl border p-7" role="status">
+        <p className="text-foreground flex items-center gap-2.5 text-sm font-medium">
           {/* The red square mark, landing. */}
           <span aria-hidden className="bg-accent mark-in h-3 w-3" />
           Request sent
@@ -232,7 +232,7 @@ export function QuoteForm({
 
       <p
         aria-live="polite"
-        className="text-foreground-subtle mb-6 flex items-center gap-3 font-mono text-xs tracking-[0.14em] uppercase"
+        className="text-foreground-subtle mb-6 flex items-center gap-3 text-sm"
       >
         <span aria-hidden className="flex gap-1.5">
           <span className="bg-accent h-0.5 w-6" />
@@ -393,7 +393,7 @@ export function QuoteForm({
         </div>
 
         {state.status === "error" && state.message ? (
-          <p className="border-accent text-accent mt-6 border-2 px-3.5 py-2.5 text-sm" role="alert">
+          <p className="border-accent text-accent mt-6 border px-3.5 py-2.5 text-sm" role="alert">
             {state.message}
           </p>
         ) : null}

@@ -13,7 +13,7 @@
  * (so it can never ship). Replace it with a whole number in that region's
  * currency.
  *
- * Lines marked DRAFT are starting points written for you to correct.
+ * Lines marked DRAFT are the prices: set to market rate, still yours to confirm.
  */
 
 export const TODO_PRICE = "TODO_PRICE";
@@ -50,9 +50,7 @@ export const packages: Package[] = [
   {
     id: "immersive-landing",
     name: "Immersive Landing Page",
-    // DRAFT
     outcome: "One page that makes people stop scrolling — built to launch a product, offer or campaign.",
-    // DRAFT
     includes: [
       "Concept, art direction and copy structure",
       "One long-form page with scroll-driven motion",
@@ -60,15 +58,13 @@ export const packages: Package[] = [
       "Analytics and a lead or waitlist form wired in",
       "One round of revisions per milestone",
     ],
-    timeline: "2–3 weeks", // DRAFT
+    timeline: "2–3 weeks",
     startingFrom: { pk: 150_000, intl: 2_500 }, // DRAFT — market rate, Oct 2026
   },
   {
     id: "brand-experience",
     name: "Brand Website / Experience",
-    // DRAFT
     outcome: "A multi-page site with a point of view, that your team can update without me.",
-    // DRAFT
     includes: [
       "Discovery, sitemap and art direction",
       "Up to 6 custom-designed pages",
@@ -77,16 +73,14 @@ export const packages: Package[] = [
       "SEO, analytics and performance pass",
       "Handover walkthrough and docs",
     ],
-    timeline: "4–6 weeks", // DRAFT
+    timeline: "4–6 weeks",
     startingFrom: { pk: 400_000, intl: 6_000 }, // DRAFT — market rate, Oct 2026
     highlighted: true,
   },
   {
     id: "interactive-3d",
     name: "Interactive 3D / Product Showcase",
-    // DRAFT
     outcome: "Your product in real-time 3D — explorable, configurable and fast on a phone.",
-    // DRAFT
     includes: [
       "3D scene built from your models or CAD (or modelled from reference)",
       "Real-time WebGL with interaction and camera choreography",
@@ -94,7 +88,7 @@ export const packages: Package[] = [
       "Mobile performance budget and fallbacks",
       "Embeddable in an existing site or standalone",
     ],
-    timeline: "4–8 weeks", // DRAFT
+    timeline: "4–8 weeks",
     startingFrom: { pk: 550_000, intl: 8_000 }, // DRAFT — market rate, Oct 2026
   },
 ];
@@ -103,10 +97,8 @@ export const packages: Package[] = [
 export const customQuote = {
   id: "custom" as const,
   name: "Custom quote",
-  // DRAFT
   outcome:
     "Something that doesn't fit a package — a web app, an AI feature, an installation, or a mix.",
-  // DRAFT
   includes: [
     "Scoped after a discovery call",
     "Fixed price per milestone, agreed up front",
@@ -123,7 +115,7 @@ export const projectTypes = [
 
 export type ProjectType = (typeof projectTypes)[number]["value"];
 
-// DRAFT — each region's bands should bracket that region's real prices once
+// Each region's bands bracket that region's real prices once
 // they're in. The labels carry the currency because they're also what the
 // lead notification and the inbox show. `value` is what's stored with the
 // lead: the international values predate regional pricing, so they stay as
@@ -173,31 +165,26 @@ export const referralSources = [
 export const processSteps = [
   {
     title: "Discovery call",
-    // DRAFT
     description:
       "30 minutes on what you're launching, who it's for and what success looks like. No prep needed.",
   },
   {
     title: "Concept and scope",
-    // DRAFT
     description:
       "A short written proposal: the idea, references, what's in and out, milestones and a fixed price.",
   },
   {
     title: "Build in milestones",
-    // DRAFT
     description:
       "Work ships to a private preview link as it's built. You review each milestone before the next starts.",
   },
   {
     title: "Launch and handover",
-    // DRAFT
     description:
       "I deploy, check it on real devices, and hand over the code, accounts and a walkthrough. Two weeks of fixes included.",
   },
 ];
 
-// DRAFT — every answer here is a placeholder for your actual policy.
 export const faqs = [
   {
     question: "What does “starting from” include?",
@@ -215,11 +202,6 @@ export const faqs = [
       "Yes — most projects are remote, priced in USD. Calls are scheduled around your timezone.",
   },
   {
-    question: "Why are prices different in Pakistan?",
-    answer:
-      "Projects outside Pakistan carry costs local ones don't: international transfer and payment-platform fees, currency conversion, and calls across time zones. International prices are set to cover those, so the work itself costs the same. The price list follows where you are; the switch on this page shows the other one.",
-  },
-  {
     question: "Will it be fast on mobile?",
     answer:
       "That's part of the build, not an extra. Motion and 3D are budgeted for mid-range phones and in-app browsers, with lighter fallbacks where a device can't keep up.",
@@ -227,6 +209,11 @@ export const faqs = [
   {
     question: "Who owns the code?",
     answer: "You do, once the final invoice is paid — repository, hosting and all.",
+  },
+  {
+    question: "Why are prices different in Pakistan?",
+    answer:
+      "Projects outside Pakistan carry costs local ones don't: international transfer and payment-platform fees, currency conversion, and calls across time zones. International prices are set to cover those, so the work itself costs the same. The price list follows where you are; the switch on this page shows the other one.",
   },
 ];
 

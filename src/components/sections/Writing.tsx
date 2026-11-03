@@ -22,7 +22,7 @@ export function Writing({ tone }: { tone?: SectionTone }) {
       aside={
         <Link
           href="/blog"
-          className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+          className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
         >
           All posts
           <ArrowUpRight size={14} />
@@ -48,7 +48,7 @@ export function Writing({ tone }: { tone?: SectionTone }) {
                 </h3>
                 <p className="text-foreground-muted mt-2 max-w-xl text-base">{post.description}</p>
               </div>
-              <div className="text-foreground-subtle flex shrink-0 items-center gap-3 font-mono text-xs tracking-[0.08em] uppercase">
+              <div className="text-foreground-subtle flex shrink-0 items-center gap-3 text-xs uppercase tracking-[0.08em]">
                 <time dateTime={post.date}>{formatDate(post.date)}</time>
                 <span aria-hidden>·</span>
                 <span>{post.readingMinutes} min</span>

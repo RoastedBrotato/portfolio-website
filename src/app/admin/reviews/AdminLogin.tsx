@@ -21,7 +21,7 @@ export function AdminLogin() {
         type="password"
         required
         autoComplete="current-password"
-        className="border-border-strong bg-background-elevated text-foreground focus-visible:border-accent w-full border-2 px-3.5 py-2.5 text-base outline-none transition-colors"
+        className="border-border-strong bg-background-elevated text-foreground focus-visible:border-accent w-full border px-3.5 py-2.5 text-base outline-none transition-colors"
       />
       {state.error ? (
         <p className="text-accent mt-2 text-xs" role="alert">

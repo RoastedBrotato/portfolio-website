@@ -1,78 +1,58 @@
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { SectionLabel } from "@/components/ui/Section";
-import { RevealText, type RevealWord } from "@/components/ui/RevealText";
-import { HeroBackdrop } from "@/components/scene/HeroBackdrop";
+import { Wordmark } from "@/components/hero/Wordmark";
+import { Marquee } from "@/components/hero/Marquee";
 import { siteConfig } from "@/data/config";
 
-// DRAFT — the headline and the paragraph below are yours to rewrite. The audit's
-// alternatives: "Websites that move. Engineering that holds." / "Immersive sites, built like software."
-const headline: RevealWord[] = [
-  { text: "Websites" },
-  { text: "people" },
-  { text: "remember,", emphasis: true },
-  { text: "engineered" },
-  { text: "to" },
-  { text: "last." },
-];
+const MARQUEE = ["Waleed Ajaz", "creative developer", "Doha · Islamabad", "3D · motion · web", "booking projects"];
 
+/**
+ * The wordmark takes the top of the hero and the intro takes the rest: a
+ * heading and a subheading, two ways forward, then the ticker. No scene, no
+ * video — the work section below is where the sites appear.
+ */
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
-      />
-      <HeroBackdrop />
-      {/* Keeps the copy on a dark plane whatever the scene is doing behind it:
-          from the bottom on phones, from the left where the text sits on lg. */}
-      <div
-        aria-hidden
-        className="from-background/85 via-background/40 pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent lg:bg-gradient-to-r lg:via-background/30"
-      />
-
-      {/* Same rail grid as every other section — the hero's rail holds the role
-          tag where a section would put its label, so one left edge runs the page. */}
-      <Container className="relative grid min-h-[calc(100svh-4rem)] grid-cols-1 content-center sm:min-h-[calc(100svh-5rem)] gap-8 py-20 sm:py-28 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
-        <div>
-          <div className="fade-up">
-            <SectionLabel as="p">{siteConfig.role}</SectionLabel>
-          </div>
+      <Container className="pt-12 pb-14 sm:pt-20 sm:pb-20">
+        <div className="fade-up">
+          <Wordmark />
         </div>
 
-        <div className="min-w-0">
-          <RevealText
-            as="h1"
-            trigger="mount"
-            delay={0.2}
-            className="font-display text-h1 text-foreground max-w-3xl leading-[1.05] font-bold tracking-tight"
-          >
-            {headline}
-          </RevealText>
-
-          {/* CSS, not <Reveal>: this paragraph is the LCP element on a phone,
-              so it must not wait for hydration to become visible. */}
-          <div className="fade-up" style={{ animationDelay: "0.35s" }}>
-            {/* One sentence, under 20 words: the hero's job is the claim and the
-                two ways forward. Availability and location live in the footer. */}
-            <p className="text-foreground-muted mt-8 max-w-xl text-lg leading-relaxed">
-              Immersive landing pages, brand sites and interactive 3D, built on years of shipping
-              full-stack and AI systems.
+        <div className="mt-12 grid grid-cols-1 gap-8 sm:mt-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end lg:gap-16">
+          <div className="fade-up" style={{ animationDelay: "0.15s" }}>
+            <h1 className="font-display text-h2 text-foreground max-w-[22ch]">
+              I&apos;m Waleed. I design and build the websites and web apps a business sells with.
+            </h1>
+          </div>
+          <div className="fade-up" style={{ animationDelay: "0.25s" }}>
+            <p className="text-foreground-muted max-w-[44ch] text-lg leading-relaxed">
+              A bit of 3D, art and motion design, and a lot of software and web development. I write
+              about the work and the experiments on{" "}
+              <Link href="/blog" className="text-foreground underline decoration-[var(--border-strong)] underline-offset-4 transition-colors hover:decoration-accent">
+                the blog
+              </Link>
+              .
             </p>
-
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Button href="/work" size="lg">
-                See the work
-                <ArrowRight size={16} />
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button href="/quote" size="lg">
+                Start a project
+                <ArrowRight size={18} />
               </Button>
-              <Button href="/quote" variant="secondary" size="lg">
-                Get a quote
+              <Button href="#work" variant="secondary" size="lg">
+                See the work
               </Button>
             </div>
+            <p className="text-foreground-subtle mt-6 text-sm">
+              {siteConfig.availability} · {siteConfig.location}
+            </p>
           </div>
         </div>
       </Container>
+
+      <Marquee items={MARQUEE} />
     </section>
   );
 }

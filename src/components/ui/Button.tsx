@@ -5,15 +5,15 @@ type Variant = "primary" | "secondary" | "ghost";
 type Size = "md" | "lg";
 
 const variantStyles: Record<Variant, string> = {
-  // The red fill casts a foreground-coloured shadow — a red offset on red would vanish.
-  primary: "border-2 border-accent bg-accent text-accent-foreground brutal-fg",
-  secondary: "border-2 border-border-strong bg-background text-foreground brutal",
+  primary: "bg-accent text-accent-foreground hover:bg-accent-hover",
+  secondary:
+    "border border-border-strong bg-transparent text-foreground hover:border-foreground/40 hover:bg-background-elevated",
   ghost: "text-foreground-muted hover:text-foreground",
 };
 
 const sizeStyles: Record<Size, string> = {
-  md: "h-11 px-5 text-xs",
-  lg: "h-14 px-7 text-sm",
+  md: "h-11 px-5 text-sm",
+  lg: "h-[3.25rem] px-7 text-base",
 };
 
 type BaseProps = {
@@ -38,11 +38,16 @@ type ButtonAsButton = BaseProps &
     href?: undefined;
   };
 
+/**
+ * The one button. Primary is the red fill and is reserved for the ask
+ * ("Start a project"); secondary is a hairline; ghost is a text link that
+ * happens to sit in a button row. 150ms colour transitions, no movement.
+ */
 export function Button(props: ButtonAsLink | ButtonAsButton) {
   const { children, variant = "primary", size = "md", className } = props;
 
   const classes = cn(
-    "inline-flex items-center justify-center gap-2 font-mono font-bold uppercase tracking-[0.12em]",
+    "inline-flex items-center justify-center gap-2 rounded-md font-medium tracking-[-0.01em] whitespace-nowrap transition-colors duration-150",
     "focus-visible:ring-accent focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
     variantStyles[variant],
     sizeStyles[size],

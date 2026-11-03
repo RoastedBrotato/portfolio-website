@@ -35,7 +35,7 @@ export function CreativeStudyLayout({ item, next }: { item: WorkItem; next?: Wor
             <SectionLabel as="p">{item.tags[0] ?? "Work"}</SectionLabel>
             <Link
               href="/work"
-              className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+              className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
             >
               <ArrowLeft size={14} />
               All work
@@ -70,7 +70,7 @@ export function CreativeStudyLayout({ item, next }: { item: WorkItem; next?: Wor
       </Section>
 
       {sequence.length > 0 ? (
-        <section className="border-border-strong border-t-2 py-20 sm:py-28">
+        <section className="border-border-strong border-t py-20 sm:py-28">
           <Container className="flex flex-col gap-20 sm:gap-28">
             {sequence.map((step, i) => (
               <Reveal key={i} className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_18rem] lg:gap-[var(--rail-gap)]">
@@ -81,7 +81,7 @@ export function CreativeStudyLayout({ item, next }: { item: WorkItem; next?: Wor
                     <span className="text-accent font-mono text-xs font-bold tracking-[0.16em]">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <p className="text-foreground-muted border-border-strong mt-3 border-t-2 pt-4 text-base leading-relaxed">
+                    <p className="text-foreground-muted border-border-strong mt-3 border-t pt-4 text-base leading-relaxed">
                       {step.caption}
                     </p>
                   </div>
@@ -93,18 +93,18 @@ export function CreativeStudyLayout({ item, next }: { item: WorkItem; next?: Wor
       ) : null}
 
       <Section label="How it was built" tone="plane-1">
-        <dl className="border-border-strong grid grid-cols-2 gap-px border-2 bg-[var(--border)] lg:grid-cols-4">
+        <dl className="border-border-strong grid grid-cols-2 gap-px border bg-[var(--border)] lg:grid-cols-4">
           {study.build.budget.map(([label, value]) => (
             <div key={label} className="bg-plane-1 p-5">
-              <dt className="text-foreground-subtle font-mono text-[11px] tracking-[0.14em] uppercase">{label}</dt>
-              <dd className="text-foreground mt-2 font-mono text-base font-bold">{value}</dd>
+              <dt className="text-foreground-subtle text-xs uppercase tracking-[0.08em]">{label}</dt>
+              <dd className="text-foreground mt-2 font-mono text-base font-medium tabular-nums">{value}</dd>
             </div>
           ))}
         </dl>
         <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-2">
           {study.build.notes.map((note) => (
             <div key={note.title}>
-              <h3 className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">{note.title}</h3>
+              <h3 className="text-foreground text-sm font-medium">{note.title}</h3>
               <p className="text-foreground-muted mt-2.5 text-base leading-relaxed">{note.body}</p>
             </div>
           ))}
@@ -116,11 +116,11 @@ export function CreativeStudyLayout({ item, next }: { item: WorkItem; next?: Wor
       </Section>
 
       {next ? (
-        <nav className="border-border-strong border-t-2">
+        <nav className="border-border-strong border-t">
           <Link href={next.caseStudy ?? `/work/${next.slug}`} className="group block">
             <Container className="flex items-center justify-between gap-8 py-12">
               <div>
-                <span className="text-foreground-subtle font-mono text-xs tracking-[0.12em] uppercase">Next piece</span>
+                <span className="text-foreground-subtle text-sm">Next piece</span>
                 <p className="font-display text-foreground group-hover:text-accent mt-2 text-3xl font-bold tracking-tight transition-colors sm:text-4xl">
                   {next.title}
                 </p>

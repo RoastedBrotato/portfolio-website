@@ -33,10 +33,10 @@ function PostImage({ src, alt }: { src?: string; alt?: string }) {
         alt={alt ?? ""}
         loading="lazy"
         decoding="async"
-        className="border-border-strong brutal w-full border-2"
+        className="border-border-strong w-full border"
       />
       {alt ? (
-        <figcaption className="text-foreground-subtle mt-4 font-mono text-xs tracking-[0.08em] uppercase">
+        <figcaption className="text-foreground-subtle mt-4 text-xs uppercase tracking-[0.08em]">
           {alt}
         </figcaption>
       ) : null}

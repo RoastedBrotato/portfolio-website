@@ -1,6 +1,7 @@
 import "server-only";
 import { Redis } from "@upstash/redis";
 import type { PublicReview, Review } from "@/types";
+import { testimonials } from "@/data/testimonials";
 
 /*
  * Review storage — Upstash Redis over its REST API.
@@ -86,6 +87,18 @@ async function readSet(key: string, limit?: number): Promise<Review[]> {
 export async function getApprovedReviews(limit?: number): Promise<PublicReview[]> {
   const reviews = await readSet(APPROVED_KEY, limit);
   return reviews.map(toPublic);
+}
+
+/**
+ * What the public pages show: the reviews clients sent directly
+ * (src/data/testimonials.ts) plus everything approved through the form, newest
+ * first. The admin page keeps using getApprovedReviews, since only those can
+ * be unpublished.
+ */
+export async function getPublishedReviews(limit?: number): Promise<PublicReview[]> {
+  const approved = await getApprovedReviews();
+  const all = [...testimonials, ...approved].sort((a, b) => b.createdAt - a.createdAt);
+  return limit ? all.slice(0, limit) : all;
 }
 
 /** The moderation queue. Admin-only — this one keeps the private email field. */

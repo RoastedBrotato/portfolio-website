@@ -65,7 +65,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <article>
-      <header className="border-border-strong relative overflow-hidden border-b-2">
+      <header className="border-border-strong relative overflow-hidden border-b">
         <div
           aria-hidden
           className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
@@ -73,18 +73,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <Container className="relative grid grid-cols-1 gap-8 py-20 sm:py-28 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
           <div className="flex flex-col items-start gap-5">
             <SectionLabel as="p">{formatDate(post.date)}</SectionLabel>
-            <span className="text-foreground-subtle font-mono text-xs tracking-[0.12em] uppercase">
+            <span className="text-foreground-subtle text-sm">
               {post.readingMinutes} min read
             </span>
             {post.draft ? (
-              <span className="border-accent text-accent border-2 px-2.5 py-1 font-mono text-xs font-bold tracking-[0.16em] uppercase">
+              <span className="border-accent text-accent border px-2.5 py-1 text-sm font-medium">
                 Draft
               </span>
             ) : null}
             {enabled ? (
               <a
                 href="#comments"
-                className="text-foreground-subtle hover:text-foreground font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+                className="text-foreground-subtle hover:text-foreground text-sm transition-colors"
               >
                 {comments.length === 0
                   ? "Leave a comment"
@@ -93,7 +93,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             ) : null}
             <Link
               href="/blog"
-              className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+              className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
             >
               <ArrowLeft size={14} />
               Back
@@ -143,12 +143,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       {/* Straight after the prose, where a reader finishing the post looks
           next. The form offers a private note too, so this one section
           replaces the old feedback box rather than sitting beside it. */}
-      <section id="comments" className="border-border-strong scroll-mt-20 border-t-2">
+      <section id="comments" className="border-border-strong scroll-mt-20 border-t">
         <Container className="grid grid-cols-1 gap-8 py-16 sm:py-20 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
           <div className="flex flex-col items-start gap-3">
             <SectionLabel as="h2">Comments</SectionLabel>
             {comments.length > 0 ? (
-              <span className="text-foreground-subtle font-mono text-xs tracking-[0.12em] uppercase">
+              <span className="text-foreground-subtle text-sm">
                 {comments.length} so far
               </span>
             ) : null}
@@ -157,7 +157,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {enabled ? (
               <>
                 <CommentList comments={comments} />
-                <h3 className="text-foreground mt-12 mb-5 font-mono text-sm font-bold tracking-[0.14em] uppercase">
+                <h3 className="text-foreground mt-12 mb-5 text-sm font-medium">
                   Add yours
                 </h3>
                 <CommentForm slug={post.slug} />
@@ -172,14 +172,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </section>
 
       {(prev || next) && (
-        <nav className="border-border-strong border-t-2">
-          <Container className="divide-border grid grid-cols-1 divide-y-2 sm:grid-cols-2 sm:divide-x-2 sm:divide-y-0">
+        <nav className="border-border-strong border-t">
+          <Container className="divide-border grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0">
             {prev ? (
               <Link
                 href={`/blog/${prev.slug}`}
                 className="group flex flex-col gap-2 py-12 sm:pr-10"
               >
-                <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.16em] uppercase transition-colors">
+                <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 text-sm transition-colors">
                   <ArrowLeft size={14} />
                   Older
                 </span>
@@ -195,7 +195,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 href={`/blog/${next.slug}`}
                 className="group flex flex-col gap-2 py-12 text-right sm:items-end sm:pl-10"
               >
-                <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.16em] uppercase transition-colors">
+                <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 text-sm transition-colors">
                   Newer
                   <ArrowRight size={14} />
                 </span>

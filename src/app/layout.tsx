@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 /*
  * Lenis's own stylesheet, and it is not optional. Its first rule is
@@ -41,33 +41,21 @@ const geistMono = Geist_Mono({
 });
 
 /*
- * Bold only. Every use of the display face on the site is `font-bold` (plus
- * the italic emphasis word), and loading the full variable font made the
- * size-adjusted fallback match the *regular* weight: on a phone the hero
- * headline wrapped to three lines in the fallback and four in Fraunces, and
- * everything below it jumped 46px when the font arrived (CLS 0.19). With the
- * 700 instance the fallback is sized to the weight that is actually drawn.
+ * The display face: a grotesk with some character in it (the g, the a, the
+ * ink traps at the heavy weights), used at 800 for the wordmark and every
+ * heading. Variable, with the optical-size and width axes so the big sizes
+ * draw tighter and the small labels looser.
  */
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: "700",
-  style: ["normal", "italic"],
+  axes: ["opsz", "wdth"],
   display: "swap",
-  /*
-   * The fallback face is declared by hand in globals.css. Next's generated one
-   * sizes Times New Roman to Fraunces' *average* width (115%), which is still
-   * about 8% too narrow for the bold that's actually drawn — enough for the
-   * hero headline to wrap one line short in the fallback and jump when the
-   * font arrives. The hand-tuned face is measured against the bold.
-   */
-  adjustFontFallback: false,
-  fallback: ["Fraunces Fallback"],
 });
 
 const title = `${siteConfig.name} — ${siteConfig.role}`;
 const description =
-  "Creative developer building immersive landing pages, brand websites and interactive 3D product showcases — on top of real full-stack and AI engineering. Get a quote or book a call.";
+  "Websites and web apps that win clients: brand sites, bilingual corporate sites, landing pages and SaaS for businesses in Qatar and Pakistan — designed, built and live in weeks. Start a project.";
 
 /*
  * Plausible's per-site script URL (Site settings → "Site installation" in the
@@ -124,7 +112,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
     >
       <head>
         {/* Picks the price region before first paint, so no one sees the
@@ -135,8 +123,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           the viewport, not against a percentage of <html> — which is `auto`
           both before Lenis mounts and after lenis.css applies. */}
       <body className="flex min-h-dvh flex-col bg-background text-foreground">
-        {/* Dark-only: there is no theme provider and no toggle. The immersive
-            direction (light on dark, depth, material) only works on dark. */}
+        {/* Light-only: there is no theme provider and no toggle. */}
         <MotionProvider>
           <CommandPaletteProvider posts={posts} projects={searchableProjects}>
             <SmoothScroll>
@@ -149,7 +136,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Cursor />
           </CommandPaletteProvider>
         </MotionProvider>
-        <div aria-hidden className="grain" />
       </body>
 
       {/*

@@ -29,7 +29,7 @@ export function ReviewList({ reviews }: { reviews: PublicReview[] }) {
       aria-pressed={filter === value}
       onClick={() => setFilter(value)}
       className={cn(
-        "border-2 px-3.5 py-2 font-mono text-xs font-bold tracking-[0.12em] uppercase transition-colors",
+        "border px-3.5 py-2 text-sm font-medium transition-colors",
         filter === value
           ? "border-accent bg-accent text-accent-foreground"
           : "border-border-strong text-foreground-muted hover:text-foreground",

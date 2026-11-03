@@ -2,84 +2,69 @@
 @plugin "@tailwindcss/typography";
 
 /*
- * Neo-brutalist black & red.
+ * Paper, ink, one cobalt.
  *
  * Rules this file encodes, so components don't each invent their own:
- *   - Nothing is rounded. Square corners everywhere, no exceptions.
- *   - Structure is drawn with hard 2px rules, not soft translucent hairlines.
- *   - Depth is a hard offset shadow (no blur), never a gradient or glow.
+ *   - Two type voices: a heavy grotesk for the words that sell (headlines,
+ *     the wordmark, work titles) and a sans for everything else. Mono appears
+ *     only on data — prices, dimensions, dates — never as a "technical" costume.
+ *   - The page is warm paper, not white; text is ink, not black. Structure is
+ *     drawn with 1px hairlines on a few planes of slightly deeper paper. No
+ *     offset shadows, no grain, no grid wallpaper, no glow.
+ *   - Cobalt is the action colour. It sits on buttons, links under the
+ *     pointer and the active work title — not on decoration.
+ *   - The pop palette (red, purple, yellow, pink, lime, blue) is decoration:
+ *     the wordmark's objects and the disciplines' objects. Nothing interactive is coloured
+ *     from it and body text never is.
+ *   - Corners are softly rounded (--radius-*): frames and buttons, not pills.
  *   - One rail width (--rail) and one section rhythm shared by every page.
- *   - Black is a range, not a value: sections sit on the --plane-* steps so a
- *     long page changes pace as it scrolls, and grain makes the black a material.
  *
- * The site is dark-only. The [data-theme="light"] tokens below are kept for a
- * case-study page that needs them, but nothing on the site sets that attribute.
+ * The site is light-only. There is no theme attribute and no toggle.
  */
 
 :root {
-  --background: #000000;
-  --background-elevated: #0d0d0d;
-  --background-elevated-hover: #1a1a1a;
-  --foreground: #ffffff;
-  --foreground-muted: #a3a3a3;
-  --foreground-subtle: #7a7a7a;
-  /* Hairline for dividers inside a block. */
-  --border: #2b2b2b;
-  /* The structural rule: full-contrast, always 2px. */
-  --border-strong: #ffffff;
-  --accent: #ff2b1f;
-  --accent-foreground: #000000;
-  --accent-soft: rgba(255, 43, 31, 0.14);
-  --grid-line: rgba(255, 255, 255, 0.05);
-  /* Hard shadow colour: red on black reads as intent; pure white reads as a glitch. */
-  --shadow-hard: #ff2b1f;
+  /* Warm paper: a touch of yellow in the greys so the colours feel printed on, not lit. */
+  --background: #f6f0e4;
+  --background-elevated: #ede5d5;
+  --background-elevated-hover: #e5dbc8;
+  --foreground: #16130f;
+  --foreground-muted: #57504a;
+  --foreground-subtle: #6e665f;
+  /* Hairline for structure; strong for the few rules that carry weight. */
+  --border: rgba(22, 19, 15, 0.12);
+  --border-strong: rgba(22, 19, 15, 0.5);
+  --accent: #2b3cf0;
+  --accent-hover: #1d2bd4;
+  --accent-foreground: #ffffff;
+  --accent-soft: rgba(43, 60, 240, 0.1);
+  --grid-line: rgba(22, 19, 15, 0.06);
+  --shadow-hard: transparent;
   /*
    * The depth range. Section backgrounds step between these (see Section's
    * `tone`), one step at a time, so neighbouring sections read as separate
    * planes without a visible colour change.
    */
-  --plane-0: #050505;
-  --plane-1: #0a0a0a;
-  --plane-2: #111111;
-  --plane-3: #161616;
-}
+  --plane-0: #f3ece0;
+  --plane-1: #efe7d9;
+  --plane-2: #eae1d0;
+  --plane-3: #e4dac6;
 
-[data-theme="light"] {
-  --background: #ffffff;
-  --background-elevated: #f4f4f4;
-  --background-elevated-hover: #e8e8e8;
-  --foreground: #000000;
-  --foreground-muted: #4a4a4a;
-  --foreground-subtle: #6b6b6b;
-  --border: #d4d4d4;
-  --border-strong: #000000;
-  /* Darker red: #ff2b1f only hits 3.7:1 on white, which fails body text. */
-  --accent: #cc0000;
-  --accent-foreground: #ffffff;
-  --accent-soft: rgba(204, 0, 0, 0.1);
-  --grid-line: rgba(0, 0, 0, 0.06);
-  --shadow-hard: #000000;
-  color-scheme: light;
-}
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 18px;
 
-/*
- * Fallback for the display face while Fraunces loads (see layout.tsx). The
- * numbers are measured, not guessed: at 100px the hero headline is 2314px wide
- * in Fraunces Bold and 1857px in Times New Roman, so the fallback is scaled by
- * 124.6% to wrap on the same words. Ascent and descent are Fraunces' own
- * (97.8% / 25.5%) divided by the same factor, so the baseline lands in the
- * same place. Re-measure if the display font or its weight changes.
- */
-@font-face {
-  font-family: "Fraunces Fallback";
-  src:
-    local("Times New Roman"),
-    local("Noto Serif"),
-    local("Georgia");
-  size-adjust: 124.6%;
-  ascent-override: 78.5%;
-  descent-override: 20.5%;
-  line-gap-override: 0%;
+  /*
+   * The pop palette: the wordmark's objects and the disciplines' objects. Decoration only;
+   * nothing interactive is coloured from this list, and body text never is.
+   * Each is picked to hold its own on paper (the lime and yellow are deeper
+   * than they would be on black).
+   */
+  --pop-red: #ff3b2f;
+  --pop-purple: #7c4dff;
+  --pop-yellow: #ffc226;
+  --pop-pink: #ff4fc3;
+  --pop-lime: #7bd62a;
+  --pop-blue: #2b6cff;
 }
 
 @theme inline {
@@ -92,6 +77,7 @@
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
   --color-plane-0: var(--plane-0);
@@ -100,10 +86,26 @@
   --color-plane-3: var(--plane-3);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-fraunces);
-  --text-display: clamp(3rem, 2.2rem + 4vw, 6.5rem);
-  --text-h1: clamp(2.75rem, 2rem + 3vw, 5rem);
-  --text-h2: clamp(1.875rem, 1.5rem + 1.4vw, 3rem);
+  --font-display: var(--font-bricolage);
+  --color-pop-red: var(--pop-red);
+  --color-pop-purple: var(--pop-purple);
+  --color-pop-yellow: var(--pop-yellow);
+  --color-pop-pink: var(--pop-pink);
+  --color-pop-lime: var(--pop-lime);
+  --color-pop-blue: var(--pop-blue);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
+  /*
+   * Type scale. Display tops out at 6rem (anything larger stops being read
+   * and starts being looked at), h1 at 4.5rem; everything is fluid between
+   * a phone and a desktop. The grotesk is set tight (-0.03em) and short
+   * (leading 0.95) at these sizes; the wordmark has its own clamp.
+   */
+  --text-display: clamp(3rem, 1.9rem + 4.6vw, 6rem);
+  --text-h1: clamp(2.5rem, 1.7rem + 3.2vw, 4.5rem);
+  --text-h2: clamp(1.9rem, 1.45rem + 1.8vw, 3rem);
+  --text-h3: clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
   /* Section openers meant to be read as an image, not as a heading. */
   --text-mega: clamp(3.5rem, 1rem + 9vw, 11rem);
   /* Work titles at display size: a step under mega, so a long single word
@@ -133,60 +135,121 @@
   * {
     border-color: var(--border);
   }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  blockquote,
+  dd {
+    text-wrap: pretty;
+  }
 }
 
 html {
   /* Lenis (see SmoothScroll.tsx) owns scroll easing; native smooth-scroll would double up on hash jumps. */
   scroll-behavior: auto;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* The heading voice: heavy, tight, drawn at the large optical size. */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  font-variation-settings: "opsz" 96;
 }
 
 /*
- * Film grain over the whole page (the layer is a div in the root layout). An SVG
- * turbulence tile, stepped between offsets so it shimmers instead of sliding.
- * At ~4% it is felt rather than seen: it turns flat black into a surface and
- * hides banding in the plane steps. Reduced motion keeps the texture, not the
- * shimmer.
+ * The wordmark's objects (src/components/hero/Wordmark.tsx). Each letter that
+ * became a thing has one job: wobble, spin, bounce or wave. All transforms,
+ * all loops, all cheap; reduced motion collapses them through the global rule.
  */
-.grain {
-  position: fixed;
-  /* The shimmer moves the tile by at most 3% of its own box, so a 6% bleed
-     is enough. -50% made a 2x2-viewport layer that cost real GPU memory on
-     phones for nothing. */
-  inset: -6%;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.04;
-  will-change: transform;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain-shift 0.8s steps(4) infinite;
+.glyph-wobble {
+  animation: glyph-wobble 3.2s ease-in-out infinite;
+  transform-origin: 50% 60%;
+}
+.glyph-spin {
+  animation: glyph-spin 9s linear infinite;
+  transform-origin: 50% 50%;
+}
+.glyph-bounce {
+  animation: glyph-bounce 1.6s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+}
+.glyph-wave {
+  animation: glyph-wave 2.4s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.glyph-tilt {
+  animation: glyph-tilt 4s ease-in-out infinite;
+  transform-origin: 50% 50%;
 }
 
-@keyframes grain-shift {
-  0% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(-3%, 2%);
+@keyframes glyph-wobble {
+  0%,
+  100% {
+    transform: rotate(-6deg) scale(1);
   }
   50% {
-    transform: translate(2%, -3%);
+    transform: rotate(6deg) scale(1.05);
   }
-  75% {
-    transform: translate(-2%, -1%);
+}
+@keyframes glyph-spin {
+  to {
+    transform: rotate(360deg);
   }
+}
+@keyframes glyph-bounce {
+  0%,
   100% {
-    transform: translate(0, 0);
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.14em);
+  }
+}
+@keyframes glyph-wave {
+  0%,
+  100% {
+    transform: skewX(-8deg) scaleY(1);
+  }
+  50% {
+    transform: skewX(8deg) scaleY(1.06);
+  }
+}
+@keyframes glyph-tilt {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
   }
 }
 
+/* The strip under the hero: one row, duplicated, slid by half its width. */
+.marquee-track {
+  animation: marquee 32s linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .grain {
+  .marquee-track {
     animation: none;
   }
 }
@@ -275,21 +338,17 @@ body {
 
 /*
  * Below-the-fold sections skip layout and paint until they come near the
- * viewport. The first layout of the homepage was the single longest task
- * before first paint (670ms at 4x CPU throttle), and most of it was laying out
- * sections nobody could see yet. `auto` remembers the real size once a section
- * has rendered, so scrolling back over it never re-estimates.
+ * viewport. `auto` remembers the real size once a section has rendered, so
+ * scrolling back over it never re-estimates.
  */
 .defer-render {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
 }
 
+/* Kept for the placeholder frames (a preview that isn't cut yet): a flat plane now, no wallpaper. */
 .bg-grid {
-  background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 48px 48px;
+  background-color: var(--background-elevated);
 }
 
 /*
@@ -315,7 +374,7 @@ body {
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(16px);
   }
 }
 
@@ -364,41 +423,14 @@ body {
 }
 
 /*
- * Hard offset shadow + press-in hover. `.brutal` shadows in accent red;
- * `.brutal-fg` shadows in the foreground, for elements that are already red
- * and would otherwise cast an invisible shadow.
+ * `.brutal` used to be a hard offset shadow. Elevation is now a hairline and
+ * a plane step, declared once here, so the older call sites (forms, case
+ * studies) pick up the new treatment without each being edited.
  */
 .brutal,
 .brutal-fg {
-  transition:
-    transform 150ms ease,
-    box-shadow 150ms ease;
-}
-
-.brutal {
-  box-shadow: 5px 5px 0 0 var(--shadow-hard);
-}
-
-.brutal-fg {
-  box-shadow: 5px 5px 0 0 var(--foreground);
-}
-
-.brutal:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 3px 3px 0 0 var(--shadow-hard);
-}
-
-.brutal-fg:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 3px 3px 0 0 var(--foreground);
-}
-
-/* Reduced motion: keep the shadow shift, drop the movement. */
-@media (prefers-reduced-motion: reduce) {
-  .brutal:hover,
-  .brutal-fg:hover {
-    transform: none;
-  }
+  border-radius: var(--radius);
+  transition: background-color 150ms ease;
 }
 
 /* Tailwind Typography reads these vars directly — pointing them at our own tokens means
@@ -407,7 +439,7 @@ body {
   --tw-prose-body: var(--foreground-muted);
   --tw-prose-headings: var(--foreground);
   --tw-prose-lead: var(--foreground-muted);
-  --tw-prose-links: var(--accent);
+  --tw-prose-links: var(--foreground);
   --tw-prose-bold: var(--foreground);
   --tw-prose-counters: var(--foreground-muted);
   --tw-prose-bullets: var(--accent);
@@ -420,6 +452,12 @@ body {
   --tw-prose-pre-bg: var(--background-elevated);
   --tw-prose-th-borders: var(--border-strong);
   --tw-prose-td-borders: var(--border);
+}
+
+.prose a {
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
 }
 
 /*
@@ -436,10 +474,9 @@ body {
 }
 
 .prose thead th {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -448,14 +485,15 @@ body {
  * Syntax highlighting (rehype-pretty-code + Shiki, run at build time).
  *
  * Shiki emits both palettes as --shiki-light / --shiki-dark on every token, so
- * the code block follows the site's theme toggle with no re-highlighting and no
- * client-side JS. Dark is the default; [data-theme="light"] flips it.
+ * the light palette is the one shown; the dark one is unused since the site
+ * is light-only.
  *
  * `keepBackground: false` in prettyCodeOptions drops Shiki's own background so
- * the block uses our surface + 2px rule instead of the theme's colour.
+ * the block uses our surface + hairline instead of the theme's colour.
  */
 .prose pre {
-  border: 2px solid var(--border-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
   background: var(--background-elevated);
   padding: 1.15rem 1.25rem;
   font-size: 0.875rem;
@@ -476,16 +514,13 @@ body {
 }
 
 .prose code span {
-  color: var(--shiki-dark);
-}
-
-[data-theme="light"] .prose code span {
   color: var(--shiki-light);
 }
 
 /* Inline `code` keeps the site's own styling rather than a Shiki token colour. */
 .prose :not(pre) > code {
   border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
   background: var(--background-elevated);
   padding: 0.1rem 0.35rem;
   font-weight: 500;
@@ -493,26 +528,28 @@ body {
 
 /* ```ts title="file.ts" renders a caption bar above the block. */
 .prose [data-rehype-pretty-code-title] {
-  border: 2px solid var(--border-strong);
+  border: 1px solid var(--border-strong);
   border-bottom: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
   background: var(--background-elevated);
   padding: 0.5rem 1.25rem;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--foreground-subtle);
 }
 
 .prose [data-rehype-pretty-code-title] + pre {
   margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 /* ```ts {2,5} marks lines; the accent bar is the only colour in the block. */
 .prose pre code [data-highlighted-line] {
   background: var(--accent-soft);
-  box-shadow: inset 3px 0 0 0 var(--accent);
+  box-shadow: inset 2px 0 0 0 var(--accent);
 }
 
 /*
@@ -521,6 +558,14 @@ body {
  * on it, rather than as a second headline competing with them.
  */
 .text-outline {
-  -webkit-text-stroke: 2px var(--foreground);
+  -webkit-text-stroke: 1px var(--foreground);
   color: transparent;
+}
+
+/* Hide the scrollbar on horizontal snap rows (the work cards on a phone). */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }

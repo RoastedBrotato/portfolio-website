@@ -2,14 +2,25 @@ import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
 
 /**
- * The one label style on the site: a solid red block. Used in every section rail
- * (homepage and case study) so the left edge reads as a single running index.
+ * The one label style on the site: small, quiet, uppercase sans. It sits in
+ * the rail beside a section (homepage and case study) so the left edge reads
+ * as a running index without competing with the heading next to it.
  */
 export function SectionLabel({ children, as: Tag = "h2" }: { children: string; as?: "h2" | "p" }) {
   return (
-    <Tag className="bg-accent text-accent-foreground inline-block px-2.5 py-1 font-mono text-xs leading-[1.5] font-bold tracking-[0.16em] uppercase">
+    <Tag className="text-foreground-subtle inline-flex items-center gap-2 text-xs font-medium tracking-[0.1em] uppercase">
+      <span aria-hidden className="bg-accent h-1.5 w-1.5 rounded-full" />
       {children}
     </Tag>
+  );
+}
+
+/** A running number beside a label, for pages that read as one sequence. */
+export function SectionIndex({ value }: { value: number }) {
+  return (
+    <span className="text-foreground-subtle font-mono text-xs tabular-nums">
+      {String(value).padStart(2, "0")}
+    </span>
   );
 }
 
@@ -30,17 +41,15 @@ export function toneClass(tone: SectionTone = "base") {
 }
 
 /**
- * Page-level section shell — the "Editorial" weight: label in the rail,
- * content on the right, entrance reveals only.
+ * Page-level section shell: label in the rail, content on the right.
  *
  * Every section on every page uses this grid, so the content column sits on one
- * left edge sitewide — including the hero, the closing CTA and the case studies.
+ * left edge sitewide — including the closing CTA and the case studies.
  * Rail width and gutter come from --rail / --rail-gap in globals.css.
  *
  * `tone` puts the section on one of the near-black planes. Neighbouring
  * sections should differ by one step, never jump, so the change of pace is
- * felt rather than noticed. `index` prints a running section number beside the
- * label ("01"), for pages that read as one sequence.
+ * felt rather than noticed.
  */
 export function Section({
   id,
@@ -65,11 +74,7 @@ export function Section({
   return (
     <section
       id={id}
-      className={cn(
-        "border-border-strong defer-render scroll-mt-20 border-t-2 py-20 sm:py-28",
-        tones[tone],
-        className,
-      )}
+      className={cn("defer-render scroll-mt-20 border-t py-16 sm:py-24", tones[tone], className)}
     >
       <Container className="grid grid-cols-1 gap-8 lg:grid-cols-[var(--rail)_1fr] lg:gap-[var(--rail-gap)]">
         {/* justify-between splits label and aside on mobile; at lg the rail stacks
@@ -84,14 +89,5 @@ export function Section({
         <div className="min-w-0">{children}</div>
       </Container>
     </section>
-  );
-}
-
-/** The mono "01" that runs down the rail beside each label. */
-export function SectionIndex({ value }: { value: number }) {
-  return (
-    <span aria-hidden className="text-foreground-muted font-mono text-xs font-bold tracking-[0.16em]">
-      {String(value).padStart(2, "0")}
-    </span>
   );
 }

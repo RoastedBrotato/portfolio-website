@@ -32,7 +32,7 @@ function SearchTrigger({
         setOpen(true);
       }}
       className={cn(
-        "flex h-9 w-9 items-center justify-center text-foreground-muted transition-colors hover:text-foreground",
+        "text-foreground-muted hover:text-foreground flex h-9 w-9 items-center justify-center rounded-md transition-colors",
         className,
       )}
     >
@@ -86,20 +86,18 @@ export function Navbar() {
       // Named so page transitions leave it in place (see globals.css).
       style={{ viewTransitionName: "site-header" }}
       className={cn(
-        "sticky top-0 z-50 w-full transition-colors duration-300",
-        scrolled || open
-          ? "border-b-2 border-border-strong bg-background/90 backdrop-blur-md"
-          : "border-b-2 border-transparent bg-transparent",
+        "sticky top-0 z-50 w-full border-b transition-colors duration-300",
+        scrolled || open ? "bg-background/85 border-border backdrop-blur-md" : "border-transparent bg-transparent",
       )}
     >
       <Container className="flex h-16 items-center justify-between sm:h-20">
         <Link
           href="/"
-          className="group flex items-center gap-2.5 font-mono text-sm font-bold uppercase tracking-[0.08em] text-foreground"
+          className="text-foreground group flex items-center gap-2.5 text-[15px] font-semibold tracking-[-0.01em]"
           onClick={() => setOpen(false)}
         >
           {siteConfig.name}
-          <span className="h-2 w-2 bg-accent transition-transform duration-300 group-hover:scale-150" />
+          <span className="bg-accent h-1.5 w-1.5 rounded-full transition-transform duration-300 group-hover:scale-150" />
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex">
@@ -107,22 +105,21 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="group relative font-mono text-xs uppercase tracking-[0.12em] text-foreground-muted transition-colors hover:text-foreground"
+              className="text-foreground-muted hover:text-foreground text-sm transition-colors"
             >
               {link.label}
-              <span className="absolute -bottom-1.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-300 ease-out group-hover:scale-x-100" />
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-5 lg:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <SearchTrigger />
           {/* Socials only once there's room; below xl they live in the footer and the menu. */}
-          <span className="hidden items-center gap-5 xl:flex">
+          <span className="hidden items-center gap-4 xl:flex">
             <SocialLinks linkClassName="text-foreground-muted transition-colors hover:text-foreground" />
           </span>
           <Button href="/quote" size="md">
-            Get a quote
+            Start a project
           </Button>
         </div>
 
@@ -131,17 +128,17 @@ export function Navbar() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-11 w-11 items-center justify-center border-2 border-border-strong text-foreground lg:hidden"
+          className="border-border-strong text-foreground flex h-11 w-11 items-center justify-center rounded-md border lg:hidden"
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
       </Container>
 
-      {/* Scroll progress: a 2px red line on the header's bottom rule. */}
+      {/* Scroll progress: a hairline of red on the header's bottom rule. */}
       <m.div
         aria-hidden
         style={{ scaleX: progress }}
-        className="bg-accent absolute inset-x-0 -bottom-0.5 h-0.5 origin-left"
+        className="bg-accent absolute inset-x-0 -bottom-px h-px origin-left"
       />
 
       <AnimatePresence>
@@ -151,7 +148,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden border-t-2 border-border-strong bg-background lg:hidden"
+            className="bg-background overflow-hidden border-t lg:hidden"
           >
             <Container className="flex flex-col gap-1 py-4">
               {navLinks.map((link) => (
@@ -159,7 +156,7 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="px-3 py-3 font-mono text-base font-bold uppercase tracking-[0.08em] text-foreground transition-colors hover:bg-background-elevated"
+                  className="text-foreground hover:bg-background-elevated rounded-md px-3 py-3 text-lg font-medium transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -173,7 +170,7 @@ export function Navbar() {
               </div>
               <div className="mt-2 flex flex-col gap-3 px-3">
                 <Button href="/quote" className="w-full" onClick={() => setOpen(false)}>
-                  Get a quote
+                  Start a project
                 </Button>
                 <BookCallButton
                   placement="mobile-menu"

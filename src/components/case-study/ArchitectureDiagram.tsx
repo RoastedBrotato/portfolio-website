@@ -59,7 +59,7 @@ function FlowSteps({ flow, dashed = false }: { flow: ArchitectureFlow; dashed?: 
   return (
     <div className="flex flex-col items-stretch">
       {flow.label && (
-        <span className="mb-5 font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent">
+        <span className="mb-5 text-sm font-medium text-accent">
           {flow.label}
         </span>
       )}
@@ -70,7 +70,7 @@ function FlowSteps({ flow, dashed = false }: { flow: ArchitectureFlow; dashed?: 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.3, delay: i * STEP }}
-            className="w-full border-2 border-border-strong bg-background-elevated px-5 py-3.5 text-center font-mono text-xs font-bold uppercase tracking-[0.08em] text-foreground sm:w-auto sm:min-w-[280px]"
+            className="w-full border border-border-strong bg-background-elevated px-5 py-3.5 text-center text-sm font-medium text-foreground sm:w-auto sm:min-w-[280px]"
           >
             {step}
           </m.div>
@@ -89,7 +89,7 @@ export function ArchitectureDiagram({
   secondary?: ArchitectureFlow;
 }) {
   return (
-    <div className="border-2 border-border-strong bg-grid p-8 sm:p-12">
+    <div className="border border-border-strong bg-grid p-8 sm:p-12">
       <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:justify-center lg:gap-16">
         <div className="flex w-full flex-col items-center lg:w-auto">
           <FlowSteps flow={primary} />

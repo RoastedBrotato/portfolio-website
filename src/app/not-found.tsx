@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <section className="flex min-h-[70svh] items-center">
       <Container className="flex flex-col items-center text-center">
-        <span className="inline-block bg-accent px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent-foreground">
+        <span className="inline-block bg-accent px-2.5 py-1 text-sm font-medium text-accent-foreground">
           404
         </span>
         <h1 className="font-display mt-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

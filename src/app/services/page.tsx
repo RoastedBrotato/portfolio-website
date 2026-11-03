@@ -82,7 +82,7 @@ export default function ServicesPage() {
                 <span className="text-accent font-mono text-sm font-bold tracking-[0.16em]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="border-border-strong text-foreground mt-3 border-t-2 pt-4 font-mono text-sm font-bold tracking-[0.12em] uppercase">
+                <h3 className="border-border-strong text-foreground mt-3 border-t pt-4 text-sm font-medium">
                   {step.title}
                 </h3>
                 <p className="text-foreground-muted mt-3 text-sm leading-relaxed">
@@ -96,7 +96,7 @@ export default function ServicesPage() {
 
       <Section id="faq" label="FAQ">
         {/* <details> keeps every answer in the HTML and keyboard-operable with no JS. */}
-        <div className="divide-border border-border-strong max-w-3xl divide-y-2 border-y-2">
+        <div className="divide-border border-border-strong max-w-3xl divide-y border-y">
           {faqs.map((faq) => (
             <details key={faq.question} className="group">
               <summary className="text-foreground hover:text-accent flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-base font-bold transition-colors [&::-webkit-details-marker]:hidden">

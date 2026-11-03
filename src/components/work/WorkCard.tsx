@@ -6,7 +6,7 @@ import { MediaPreview } from "@/components/work/MediaPreview";
 import { cn } from "@/lib/utils";
 
 const linkClass =
-  "inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors";
+  "inline-flex items-center gap-1.5 text-sm transition-colors";
 
 /** The title goes to the deepest thing there is: the write-up if one exists, otherwise the live piece. */
 function WorkTitle({ item }: { item: WorkItem }) {
@@ -37,12 +37,12 @@ function Meta({ item }: { item: WorkItem }) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
       {item.placeholder ? (
-        <span className="bg-accent text-accent-foreground px-2 py-0.5 font-mono text-[11px] font-bold tracking-[0.14em] uppercase">
+        <span className="bg-accent text-accent-foreground px-2 py-0.5 text-xs font-medium uppercase tracking-[0.08em]">
           Placeholder · dev only
         </span>
       ) : null}
       {item.tags.map((tag) => (
-        <span key={tag} className="text-accent font-mono text-xs font-bold tracking-[0.16em] uppercase">
+        <span key={tag} className="text-foreground-muted text-sm">
           {tag}
         </span>
       ))}
@@ -127,12 +127,12 @@ export function LeadWorkCard({ item }: { item: WorkItem }) {
 export function WorkCard({ item }: { item: WorkItem }) {
   return (
     <article className="group flex flex-col">
-      <div className="border-border-strong border-2" data-cursor={item.caseStudy || item.href ? "View" : undefined}>
+      <div className="border-border-strong border" data-cursor={item.caseStudy || item.href ? "View" : undefined}>
         <MediaPreview media={item.media} sizes="(min-width: 640px) 50vw, 100vw" className="border-0" />
         {/* Caption bar instead of browser chrome: what it is, and when. */}
-        <div className="border-border-strong text-foreground-subtle flex items-center justify-between gap-4 border-t-2 px-4 py-2.5 font-mono text-[11px] tracking-[0.14em] uppercase">
+        <div className="border-border-strong text-foreground-subtle flex items-center justify-between gap-4 border-t px-4 py-2.5 text-xs uppercase tracking-[0.08em]">
           <span className="text-foreground flex items-center gap-2 font-bold">
-            <span aria-hidden className="bg-accent h-1.5 w-1.5" />
+            <span aria-hidden className="bg-accent h-1.5 w-1.5 rounded-full" />
             {item.title}
           </span>
           {item.year ? <span>{item.year}</span> : null}

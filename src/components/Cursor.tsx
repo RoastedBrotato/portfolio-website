@@ -77,11 +77,11 @@ export function Cursor() {
     >
       <div
         className={cn(
-          "bg-accent text-accent-foreground flex items-center justify-center font-mono text-[10px] font-bold tracking-[0.14em] uppercase transition-[width,height,opacity,transform] duration-200 ease-out",
+          "bg-accent text-accent-foreground flex items-center justify-center text-[11px] font-medium transition-[width,height,opacity,transform,border-radius] duration-200 ease-out",
           // Offset so the square sits just below-right of the native pointer.
           "translate-x-3 translate-y-3",
           visible ? "opacity-100" : "opacity-0",
-          label ? "h-7 w-14" : hovering ? "h-4 w-4" : "h-2 w-2",
+          label ? "h-7 w-14 rounded-md" : hovering ? "h-4 w-4 rounded-full" : "h-2 w-2 rounded-full",
         )}
       >
         {label}

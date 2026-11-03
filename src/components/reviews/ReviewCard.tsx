@@ -32,14 +32,14 @@ export function ReviewCard({ review, className }: { review: PublicReview; classN
   return (
     <figure
       className={cn(
-        "border-border-strong bg-background brutal flex flex-col border-2 p-6 sm:p-7",
+        "border-border-strong bg-background flex flex-col rounded-[var(--radius-lg)] border p-6 sm:p-7",
         className,
       )}
     >
       {/* Context before the quote: who's talking, about what. Older reviews
           predate both fields, so either can be missing. */}
       {relationship || review.project ? (
-        <p className="text-foreground-subtle mb-4 font-mono text-xs tracking-[0.12em] uppercase">
+        <p className="text-foreground-subtle mb-4 text-sm">
           {relationship ? <span className="text-accent font-bold">{relationship}</span> : null}
           {relationship && review.project ? " · " : null}
           {review.project ? <span className="normal-case tracking-normal">{review.project}</span> : null}
@@ -58,7 +58,7 @@ export function ReviewCard({ review, className }: { review: PublicReview; classN
           {initials(review.name)}
         </span>
         <div className="min-w-0">
-          <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
+          <p className="text-foreground text-sm font-medium">
             {review.name}
           </p>
           {subtitle ? <p className="text-foreground-subtle mt-0.5 text-xs">{subtitle}</p> : null}

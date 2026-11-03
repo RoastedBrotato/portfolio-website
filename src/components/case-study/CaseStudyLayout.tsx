@@ -47,7 +47,7 @@ export function CaseStudyLayout({
   return (
     <>
       <article>
-        <header className="border-border-strong relative overflow-hidden border-b-2">
+        <header className="border-border-strong relative overflow-hidden border-b">
           <div
             aria-hidden
             className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)]"
@@ -57,7 +57,7 @@ export function CaseStudyLayout({
               <SectionLabel as="p">{project.category}</SectionLabel>
               <Link
                 href="/work"
-                className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.12em] uppercase transition-colors"
+                className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
               >
                 <ArrowLeft size={14} />
                 Back
@@ -113,7 +113,7 @@ export function CaseStudyLayout({
               {project.gallery.map((src) => (
                 <div
                   key={src}
-                  className="border-border-strong bg-plane-3 overflow-hidden border-2 p-3 sm:p-4"
+                  className="border-border-strong bg-plane-3 overflow-hidden border p-3 sm:p-4"
                 >
                   <Image
                     src={src}
@@ -127,7 +127,7 @@ export function CaseStudyLayout({
             </div>
           )}
 
-          <div className="divide-border divide-y-2">
+          <div className="divide-border divide-y">
             <CaseStudySection label="Overview">
               <p>{caseStudy.overview}</p>
             </CaseStudySection>
@@ -145,7 +145,7 @@ export function CaseStudyLayout({
                       key={feature}
                       className="text-foreground-muted flex items-start gap-3 text-sm"
                     >
-                      <span className="bg-accent mt-[0.5em] h-1.5 w-1.5 shrink-0" />
+                      <span className="bg-accent mt-[0.5em] h-1.5 w-1.5 rounded-full shrink-0" />
                       {feature}
                     </li>
                   ))}
@@ -164,7 +164,7 @@ export function CaseStudyLayout({
               <div className="flex flex-col gap-8">
                 {caseStudy.challenges.map((challenge) => (
                   <div key={challenge.title}>
-                    <h3 className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
+                    <h3 className="text-foreground text-sm font-medium">
                       {challenge.title}
                     </h3>
                     <p className="text-foreground-muted mt-2.5 text-base leading-relaxed">
@@ -179,7 +179,7 @@ export function CaseStudyLayout({
               <div className="flex flex-col gap-8">
                 {caseStudy.techDecisions.map((decision) => (
                   <div key={decision.decision}>
-                    <h3 className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
+                    <h3 className="text-foreground text-sm font-medium">
                       {decision.decision}
                     </h3>
                     <p className="text-foreground-muted mt-2.5 text-base leading-relaxed">
@@ -197,13 +197,13 @@ export function CaseStudyLayout({
         </Container>
       </article>
 
-      <nav className="border-border-strong border-t-2">
-        <Container className="divide-border sm:divide-border grid grid-cols-1 divide-y-2 sm:grid-cols-2 sm:divide-x-2 sm:divide-y-0">
+      <nav className="border-border-strong border-t">
+        <Container className="divide-border sm:divide-border grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0">
           <Link
             href={`/work/${prev.slug}`}
             className="group flex flex-col gap-2 py-12 pr-0 sm:pr-10"
           >
-            <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.16em] uppercase transition-colors">
+            <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 text-sm transition-colors">
               <ArrowLeft size={14} />
               Previous
             </span>
@@ -215,7 +215,7 @@ export function CaseStudyLayout({
             href={`/work/${next.slug}`}
             className="group flex flex-col gap-2 py-12 pl-0 text-right sm:items-end sm:pl-10"
           >
-            <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 font-mono text-xs tracking-[0.16em] uppercase transition-colors">
+            <span className="text-foreground-subtle group-hover:text-accent inline-flex items-center gap-1.5 text-sm transition-colors">
               Next
               <ArrowRight size={14} />
             </span>

@@ -8,7 +8,7 @@ import { siteConfig } from "@/data/config";
 
 /**
  * The closing ask. No embedded form — the one form lives on /quote — so this is
- * a headline, a line of copy, "Get a quote", "Book a call" and the email.
+ * a headline, a line of copy, "Start a project", "Book a call" and the email.
  */
 export function ContactCTA({ index, tone }: { index?: number; tone?: SectionTone }) {
   return (
@@ -16,7 +16,7 @@ export function ContactCTA({ index, tone }: { index?: number; tone?: SectionTone
       <RevealText
         as="h2"
         trigger="inView"
-        className="font-display text-h1 text-foreground max-w-3xl leading-[1.05] font-bold tracking-tight"
+        className="font-display text-h1 text-foreground max-w-[14ch]"
       >
         {[
           { text: "Tell" },
@@ -28,23 +28,23 @@ export function ContactCTA({ index, tone }: { index?: number; tone?: SectionTone
       </RevealText>
 
       <Reveal delay={0.1}>
-        <p className="text-foreground-muted mt-6 max-w-xl text-lg leading-relaxed">
-          A landing page that people remember, a brand site with some motion in it, or a 3D
-          product showcase — send a short brief and I&apos;ll reply within a day with questions or
-          a quote.
+        <p className="text-foreground-muted mt-6 max-w-[48ch] text-lg leading-relaxed">
+          A site for a new business, a rebuild of one that isn&apos;t working, or a web app your
+          team runs on. Send a short brief and you&apos;ll have a reply within one working day — with
+          questions, or a price.
         </p>
 
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <Button href="/quote" size="lg">
-            Get a quote
-            <ArrowRight size={16} />
+            Start a project
+            <ArrowRight size={18} />
           </Button>
           <BookCallButton placement="contact" size="lg" variant="secondary" />
         </div>
 
         <a
           href={`mailto:${siteConfig.email}`}
-          className="text-foreground-muted decoration-accent hover:text-foreground mt-8 inline-block text-sm underline decoration-2 underline-offset-4 transition-colors"
+          className="text-foreground-muted hover:text-foreground mt-8 inline-block text-sm underline decoration-[var(--border-strong)] underline-offset-4 transition-colors hover:decoration-accent"
         >
           {siteConfig.email}
         </a>

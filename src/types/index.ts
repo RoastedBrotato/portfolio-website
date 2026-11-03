@@ -209,6 +209,19 @@ export interface WorkItem {
   /** One line. The card has room for nothing longer. */
   description: string;
   tags: string[];
+  /** Featured pieces fill the homepage reel and index, in array order. */
+  featured?: boolean;
+  /** What kind of thing it is, for a buyer: "Dealer site · EN/AR". */
+  kind?: string;
+  /** Where the client is: "Doha, Qatar". */
+  location?: string;
+  /** What was done — "Design and build", "Build" — so scope is never implied. */
+  scope?: string;
+  /**
+   * Full-page captures of the live site, desktop (16:9) and phone (1:2),
+   * under /public/work/<slug>/. Drives the showreel and the index stage.
+   */
+  shots?: { desktop: string; mobile: string };
   /** Omit while the clip isn't cut yet — the card shows a "preview coming" frame. */
   media?: Media;
   /** The live piece (external). */
@@ -274,15 +287,3 @@ export interface QuoteRequest {
   read: boolean;
 }
 
-/** A fact on the proof strip, shown on the homepage until real reviews exist. */
-export interface ProofItem {
-  /** The big line, e.g. "10 active clients". */
-  stat: string;
-  /** What it refers to — one short sentence. */
-  detail: string;
-  /** Where to check it: a live site, a repo. */
-  href?: string;
-  linkLabel?: string;
-  /** Placeholder slot: shown by `next dev` only, never in a build. */
-  placeholder?: boolean;
-}

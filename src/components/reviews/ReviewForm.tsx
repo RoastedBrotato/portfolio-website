@@ -23,8 +23,8 @@ export function ReviewForm() {
 
   if (state.status === "success") {
     return (
-      <div className="border-border-strong bg-background brutal border-2 p-7">
-        <p className="text-foreground flex items-center gap-2.5 font-mono text-sm font-bold tracking-[0.1em] uppercase">
+      <div className="border-border-strong bg-background border p-7">
+        <p className="text-foreground flex items-center gap-2.5 text-sm font-medium">
           <Check size={18} className="text-accent" />
           Submitted
         </p>
@@ -48,7 +48,7 @@ export function ReviewForm() {
       {/* First, because it frames everything below it — and it's the one thing
           a reader of the finished review most wants to know. */}
       <fieldset>
-        <legend className="text-foreground-muted mb-2 block font-mono text-xs font-bold tracking-[0.14em] uppercase">
+        <legend className="text-foreground-muted mb-2 block text-sm font-medium">
           How do you know me?
         </legend>
         <div className="flex flex-wrap gap-2">
@@ -62,7 +62,7 @@ export function ReviewForm() {
                 defaultChecked={state.values?.relationship === option.value}
                 className="peer sr-only"
               />
-              <span className="border-border-strong text-foreground-muted hover:text-foreground peer-checked:border-accent peer-checked:bg-accent peer-checked:text-accent-foreground peer-focus-visible:outline-accent inline-block border-2 px-3.5 py-2 font-mono text-xs font-bold tracking-[0.12em] uppercase transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+              <span className="border-border-strong text-foreground-muted hover:text-foreground peer-checked:border-accent peer-checked:bg-accent peer-checked:text-accent-foreground peer-focus-visible:outline-accent inline-block border px-3.5 py-2 text-sm font-medium transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
                 {option.label}
               </span>
             </label>
@@ -175,7 +175,7 @@ export function ReviewForm() {
       </div>
 
       {state.status === "error" && state.message ? (
-        <p className="border-accent text-accent mt-6 border-2 px-3.5 py-2.5 text-sm" role="alert">
+        <p className="border-accent text-accent mt-6 border px-3.5 py-2.5 text-sm" role="alert">
           {state.message}
         </p>
       ) : null}

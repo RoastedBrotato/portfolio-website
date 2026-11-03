@@ -27,7 +27,7 @@ export default function LabPage() {
         intro="Experiments, creative challenges and AI-tool tests. Some become client work; most just teach me something. Rough edges included."
         aside={
           entries.length > 0 ? (
-            <p className="text-foreground-subtle font-mono text-xs tracking-[0.12em] uppercase">
+            <p className="text-foreground-subtle text-sm">
               {entries.length} {entries.length === 1 ? "entry" : "entries"}
             </p>
           ) : null
@@ -53,20 +53,20 @@ export default function LabPage() {
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                         {entry.placeholder ? (
-                          <span className="bg-accent text-accent-foreground px-2 py-0.5 font-mono text-[11px] font-bold tracking-[0.14em] uppercase">
+                          <span className="bg-accent text-accent-foreground px-2 py-0.5 text-xs font-medium uppercase tracking-[0.08em]">
                             Placeholder · dev only
                           </span>
                         ) : null}
                         <time
                           dateTime={entry.date}
-                          className="text-foreground-subtle font-mono text-xs tracking-[0.08em] uppercase"
+                          className="text-foreground-subtle text-xs uppercase tracking-[0.08em]"
                         >
                           {formatDate(entry.date)}
                         </time>
                         {entry.tags?.map((tag) => (
                           <span
                             key={tag}
-                            className="text-accent font-mono text-xs font-bold tracking-[0.16em] uppercase"
+                            className="text-accent text-sm font-medium"
                           >
                             {tag}
                           </span>

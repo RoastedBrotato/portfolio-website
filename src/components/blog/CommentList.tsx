@@ -19,11 +19,11 @@ export function CommentList({ comments }: { comments: PublicPostComment[] }) {
   }
 
   return (
-    <ol className="divide-border border-border-strong max-w-2xl divide-y-2 border-y-2">
+    <ol className="divide-border border-border-strong max-w-2xl divide-y border-y">
       {comments.map((comment) => (
         <li key={comment.id} className="py-6">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <p className="text-foreground font-mono text-sm font-bold tracking-[0.08em] uppercase">
+            <p className="text-foreground text-sm font-medium">
               {comment.name}
             </p>
             <time

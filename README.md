@@ -21,6 +21,26 @@ npm run start   # serve the production build locally
 npm run lint    # ESLint
 ```
 
+## The homepage (November 2026 redesign)
+
+Hero, work, what it is made of, what it costs, the ask. The visual system is in
+`src/app/globals.css` — Bricolage Grotesque at 800 for the wordmark and every heading, Geist for
+text, Geist Mono for data only; 1px hairlines on planes of warm paper; cobalt for actions; a pop
+palette (red, purple, yellow, pink, lime, blue) for the wordmark's objects and the disciplines' objects only.
+
+- **The wordmark** ("creative developer", `src/components/hero/Wordmark.tsx`) swaps five letters
+  for animated SVG objects. It is inline SVG and CSS keyframes, so it paints with the page.
+- **The work list** (`src/components/work/HoverList.tsx`) is names only; the site appears beside
+  the pointer on hover (a clip where `media` is a video, the desktop capture otherwise) and as a
+  thumbnail per row on touch screens. Featured work is whatever has `featured: true` in
+  `src/data/work.ts`, each with `shots` captured under `public/work/<slug>/`.
+- **The disciplines** (`src/components/sections/Disciplines.tsx`) are a numbered index: five
+  ruled rows, each a big word carrying one of the wordmark's objects (cube, ring, wave, cross,
+  pill) and one line. Hovering a row colours the word and nudges the object.
+- **The showreel** composition in `src/remotion/` is kept for rendering an MP4 for ads
+  (`npm i -D @remotion/cli` then `npx remotion render src/remotion/index.ts Showreel out/showreel.mp4`);
+  it no longer plays on the site.
+
 ## Where to edit things
 
 Everything you're likely to change lives in `src/data/`:
@@ -28,7 +48,8 @@ Everything you're likely to change lives in `src/data/`:
 | File | Controls |
 |---|---|
 | `src/data/config.ts` | Your name, email, GitHub/LinkedIn URLs, resume path, site URL |
-| `src/data/projects.ts` | The 3 featured projects and their full case-study content (problem, solution, architecture, challenges, tech decisions, outcome) |
+| `src/data/work.ts` | The client sites: the five `featured` ones fill the homepage reel and index; the rest show on /work |
+| `src/data/projects.ts` | The engineering case studies and their full write-ups (problem, solution, architecture, challenges, tech decisions, outcome) |
 | `src/data/services.ts` | The 4 "What I Build" service cards |
 | `src/data/experience.ts` | Your work history timeline |
 | `src/data/techStack.ts` | The grouped technology lists in "Toolbox" |
@@ -254,8 +275,10 @@ src/
     project/                ProjectCard (engineering strip card), ProjectVisual (screenshot frame)
     case-study/              CaseStudyLayout (engineering), CreativeStudyLayout (creative pieces),
                               ArchitectureDiagram
-    scene/                   React Three Fiber: HeroScene + HeroBackdrop (tiered hero), speaker/
-                              (the Quarr One model, studio lighting, configurator and launch scenes)
+    hero/                    Wordmark (the animated "creative developer") + Marquee
+    work/                    HoverList (names that reveal the site on hover), WorkCard, MediaPreview
+    scene/speaker/           React Three Fiber: the Quarr One model, studio lighting, configurator
+                              and launch scenes for /lab
     lab/                     Configurator and LaunchPage, the two /lab demos
     ui/                      Reusable primitives — Button, Badge, Container,
                               Section/SectionLabel, ExperienceTimeline, Reveal/RevealText,
@@ -267,18 +290,21 @@ src/
 
 ## Design system notes
 
-Neo-brutalist black & red. The rules are encoded in `src/app/globals.css` so components don't
-each invent their own — read that file's header comment before adding UI.
+Paper, ink, one cobalt, a handful of pop colours. The rules are encoded in `src/app/globals.css` so
+components don't each invent their own — read that file's header comment before adding UI. In
+short: Bricolage Grotesque 800 for headlines and work titles, Geist for text, Geist Mono only on
+data; 1px hairlines; soft radii (`--radius-*`); no offset shadows, grain, grid wallpaper or glow;
+cobalt only on actions; the pop palette only on the wordmark's and disciplines' objects.
 
 **Colour.** CSS variables mapped into Tailwind via `@theme inline` (`bg-background`,
-`text-foreground-muted`, `border-border-strong`, `text-accent`, …). The site is dark-only — there
-is no theme toggle. `[data-theme="light"]` tokens are kept for a page that might need them (its
-accent is a darker `#cc0000`, since `#ff2b1f` only reaches 3.7:1 on white), but nothing sets the
-attribute. Still use `bg-foreground/x`, never `bg-white/x`, so that option stays open.
+`text-foreground-muted`, `border-border-strong`, `text-accent`, …). The site is light-only — there
+is no theme toggle and no theme attribute. The background is warm paper (`#f6f0e4`), not white, and
+text is ink (`#16130f`), not black. Still use `bg-foreground/x`, never `bg-black/x`, so a palette
+change stays a one-file change.
 
-**Depth.** Black is a range: `--plane-0` … `--plane-3` (`#050505` → `#161616`, `bg-plane-*`).
-`Section` takes a `tone` that puts it on one of them; neighbouring sections differ by one step.
-A fixed film-grain layer (`.grain`, in the root layout) sits over everything at 4%.
+**Depth.** Paper is a range: `--plane-0` … `--plane-3` (`bg-plane-*`), each a step deeper. `Section` takes a `tone`
+that puts it on one of them; neighbouring sections differ by one step. Elevation is a hairline and
+a plane step, never a shadow (the one exception is the cast shadow under the phone on the stage).
 
 **Section weights.** Every section is one of three:
 
@@ -307,17 +333,17 @@ case-study section — so the content column sits on the same left edge on every
 shift when you navigate from `/work` into a case study. Nested label columns (e.g. the About
 stack list) use `8rem`. Don't introduce a third width.
 
-**Structure.** 2px `border-border-strong` rules separate sections; 1px `border-border` hairlines
-divide rows *inside* a section. Depth is the `.brutal` / `.brutal-fg` hard offset shadow (no
-blur) for UI; the one gradient is the scrim under the lead work title. Nothing is rounded — there are no `rounded-*` classes in the
-codebase and new UI shouldn't add any.
+**Structure.** 1px `border-border` hairlines separate sections and divide rows inside them;
+`border-border-strong` is the slightly brighter hairline for frames and inputs. Depth is a plane
+step, never a shadow. Frames, cards and buttons are rounded with `--radius-sm` / `--radius` /
+`--radius-lg` (`rounded-md`, `rounded-[var(--radius-lg)]`); pills are for small controls only.
 
 **Oversized type.** `.text-outline` (globals.css) strokes display type instead of filling it.
 The reviews marquee alternates solid and outlined words so a wall of 13rem type reads as texture
 behind the cards sitting on it rather than as a competing headline. It is the only place that
 should need it.
 
-**Labels.** `SectionLabel` (solid red block, mono, uppercase) is the section-heading style, with
+**Labels.** `SectionLabel` (small uppercase sans with a cobalt dot) is the section-heading style, with
 an optional mono `index` ("01") beside it on pages that read as one sequence. Sections do not get
 an eyebrow + serif heading + description stack. Large type is reserved for the hero, the lead work
 title (`text-mega`), the "What I build" rows and the closing CTA.
@@ -330,7 +356,7 @@ navbar is named `site-header` so it holds still.
 > declarations outrank every layered one, so a bare `*` rule silently beats `border-border-strong`
 > and every other border-colour utility — which is exactly what it did until it was wrapped.
 
-- `prefers-reduced-motion` is handled globally in `globals.css`, including the `.brutal` press.
+- `prefers-reduced-motion` is handled globally in `globals.css`; the reel and the work stage drop to stills.
 - No CSS/JS animation or icon libraries beyond Framer Motion and `lucide-react`. `lucide-react`
   dropped brand icons from its core set, so GitHub/LinkedIn glyphs are small local SVGs in
   `src/components/ui/icons.tsx`.
@@ -372,7 +398,7 @@ information. Search `src/data/` for `TODO` to find what's still open:
   screens — swap in full-resolution captures when convenient. A project's `gallery` field
   (`src/types/index.ts`) renders extra screenshots on its case-study page beneath the main cover
   image; `image` alone is enough if you don't have extras.
-- **Favicon** — `src/app/icon.tsx` now generates one from the site's own palette (dark background,
-  accent-colored "WA" monogram), replacing the old default Next.js icon.
+- **Favicon** — `src/app/icon.tsx` now generates one from the site's own palette (paper background,
+  a cobalt dot), replacing the old default Next.js icon.
 - **OG image** — `src/app/opengraph-image.tsx` generates the social preview from `siteConfig`, no
   action needed unless you want a different design.

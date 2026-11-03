@@ -24,7 +24,7 @@ export default function ConfiguratorPage() {
           </>
         }
       />
-      <section className="border-border-strong border-b-2">
+      <section className="border-border-strong border-b">
         <Configurator />
       </section>
     </>

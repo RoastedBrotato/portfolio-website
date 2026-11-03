@@ -36,31 +36,31 @@ export function PackageCard({
     <article
       id={id}
       className={cn(
-        "bg-background flex h-full scroll-mt-24 flex-col border-2 p-6 sm:p-8",
-        highlighted ? "border-accent brutal" : "border-border-strong",
+        "bg-background flex h-full scroll-mt-24 flex-col rounded-[var(--radius-lg)] border p-6 sm:p-8",
+        highlighted ? "border-accent" : "border-border-strong",
       )}
     >
       <h3 className="font-display text-foreground text-2xl font-bold tracking-tight">{name}</h3>
       <p className="text-foreground-muted mt-3 text-base leading-relaxed">{outcome}</p>
 
       {price !== undefined || timeline ? (
-        <dl className="border-border mt-6 grid grid-cols-2 gap-4 border-y-2 py-5">
+        <dl className="border-border mt-6 grid grid-cols-2 gap-4 border-y py-5">
           {price !== undefined ? (
             <div>
-              <dt className="text-foreground-subtle font-mono text-[11px] tracking-[0.14em] uppercase">
+              <dt className="text-foreground-subtle text-xs uppercase tracking-[0.08em]">
                 Starting from
               </dt>
-              <dd className="text-foreground mt-1.5 font-mono text-xl font-bold">
+              <dd className="text-foreground mt-1.5 font-mono text-xl font-medium tabular-nums">
                 {price}
               </dd>
             </div>
           ) : null}
           {timeline ? (
             <div>
-              <dt className="text-foreground-subtle font-mono text-[11px] tracking-[0.14em] uppercase">
+              <dt className="text-foreground-subtle text-xs uppercase tracking-[0.08em]">
                 Typical timeline
               </dt>
-              <dd className="text-foreground mt-1.5 font-mono text-xl font-bold">{timeline}</dd>
+              <dd className="text-foreground mt-1.5 font-mono text-xl font-medium tabular-nums">{timeline}</dd>
             </div>
           ) : null}
         </dl>
@@ -72,7 +72,7 @@ export function PackageCard({
             key={item}
             className="text-foreground-muted flex items-start gap-3 text-sm leading-relaxed"
           >
-            <span aria-hidden className="bg-accent mt-[0.55em] h-1.5 w-1.5 shrink-0" />
+            <span aria-hidden className="bg-accent mt-[0.55em] h-1.5 w-1.5 rounded-full shrink-0" />
             {item}
           </li>
         ))}

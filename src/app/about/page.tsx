@@ -44,7 +44,7 @@ export default function AboutPage() {
       <Writing />
 
       <Section id="elsewhere" label="Elsewhere" tone="plane-1">
-        <ul className="divide-border border-border-strong max-w-2xl divide-y border-y-2">
+        <ul className="divide-border border-border-strong max-w-2xl divide-y border-y">
           {elsewhere.map((item) => (
             <li key={item.href}>
               <Link
@@ -52,7 +52,7 @@ export default function AboutPage() {
                 className="group flex items-center justify-between gap-6 py-5"
               >
                 <span>
-                  <span className="text-foreground group-hover:text-accent block font-mono text-sm font-bold tracking-[0.12em] uppercase transition-colors">
+                  <span className="text-foreground group-hover:text-accent block text-sm font-medium transition-colors">
                     {item.label}
                   </span>
                   <span className="text-foreground-muted mt-1 block text-sm">{item.detail}</span>

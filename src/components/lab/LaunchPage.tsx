@@ -72,7 +72,7 @@ function Waitlist() {
 
   if (sent) {
     return (
-      <p className="border-accent text-foreground border-2 p-6 text-base leading-relaxed" role="status">
+      <p className="border-accent text-foreground border p-6 text-base leading-relaxed" role="status">
         Thanks — though nothing was sent. Quarr One is a fictional product and this form is part of
         the demo. If you want a page like this for something real, that part works.
       </p>
@@ -97,7 +97,7 @@ function Waitlist() {
         placeholder="you@example.com"
         // Not a real list: nothing is collected, so don't let a browser autofill a real address.
         autoComplete="off"
-        className="border-border-strong bg-background text-foreground placeholder:text-foreground-subtle focus:border-accent h-14 flex-1 border-2 px-4 text-base outline-none"
+        className="border-border-strong bg-background text-foreground placeholder:text-foreground-subtle focus:border-accent h-14 flex-1 border px-4 text-base outline-none"
       />
       <Button type="submit" size="lg">
         Join the waitlist
@@ -137,7 +137,7 @@ export function LaunchPage() {
       {/* Opener */}
       <section className="relative overflow-hidden">
         <Container className="flex min-h-[80svh] flex-col justify-end py-16 sm:py-24">
-          <p className="text-accent font-mono text-xs font-bold tracking-[0.16em] uppercase">
+          <p className="text-accent text-sm font-medium">
             Quarr One · bookshelf speaker
           </p>
           <h1 className="font-display text-mega text-foreground mt-4 leading-[0.9] font-bold tracking-tight">
@@ -152,7 +152,7 @@ export function LaunchPage() {
       </section>
 
       {/* The pinned sequence: 400svh of scroll, one sticky frame. */}
-      <section ref={pinned} className="border-border-strong relative h-[400svh] border-t-2">
+      <section ref={pinned} className="border-border-strong relative h-[400svh] border-t">
         <div className="sticky top-0 h-svh overflow-hidden">
           <div className="absolute inset-0">
             {scene ? (
@@ -198,12 +198,12 @@ export function LaunchPage() {
       </section>
 
       {/* The numbers */}
-      <section className="border-border-strong border-t-2 py-20 sm:py-28">
+      <section className="border-border-strong border-t py-20 sm:py-28">
         <Container>
           <dl className="grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
             {NUMBERS.map(([value, label], i) => (
               <Reveal key={label} delay={i * 0.06}>
-                <dt className="text-foreground-subtle font-mono text-[11px] tracking-[0.14em] uppercase">{label}</dt>
+                <dt className="text-foreground-subtle text-xs uppercase tracking-[0.08em]">{label}</dt>
                 <dd className="font-display text-foreground mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
                   <CountUp value={value} />
                 </dd>
@@ -214,7 +214,7 @@ export function LaunchPage() {
       </section>
 
       {/* Waitlist */}
-      <section className="border-border-strong bg-plane-2 border-t-2 py-20 sm:py-28">
+      <section className="border-border-strong bg-plane-2 border-t py-20 sm:py-28">
         <Container className="max-w-3xl">
           <h2 className="font-display text-h1 text-foreground leading-[1.05] font-bold tracking-tight">
             Ships when it exists.
@@ -226,7 +226,7 @@ export function LaunchPage() {
         </Container>
       </section>
 
-      <section className="border-border-strong border-t-2 py-16">
+      <section className="border-border-strong border-t py-16">
         <Container className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-foreground-muted max-w-xl text-base leading-relaxed">
             This page is a demo of the Immersive Landing Page package: a pinned, scroll-driven 3D
