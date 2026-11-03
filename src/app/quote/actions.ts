@@ -57,9 +57,7 @@ function labelFor(options: readonly { value: string; label: string }[], value: s
 }
 
 const SUCCESS_MESSAGE =
-  "Got it — thanks. I'll reply within one working day, usually sooner, from " +
-  siteConfig.email +
-  ".";
+  "Naisu. I'll read it tonight and reply tomorrow, from " + siteConfig.email + ".";
 
 export async function submitQuote(
   _prevState: QuoteFormState,

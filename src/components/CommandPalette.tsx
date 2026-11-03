@@ -96,7 +96,7 @@ export function CommandPaletteProvider({
         />
         <CommandList className="max-h-80 overflow-y-auto p-2">
           <CommandEmpty className="py-10 text-center text-sm text-foreground-subtle">
-            No results found.
+            Nothing with that name. Try a page, a project or a post.
           </CommandEmpty>
 
           <CommandGroup heading="Sections" className={groupHeadingClass}>

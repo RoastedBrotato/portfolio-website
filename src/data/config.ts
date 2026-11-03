@@ -5,7 +5,9 @@ export const siteConfig: SiteConfig = {
   name: "Waleed Ajaz",
   // Shows in the hero rail, the footer and the OG images.
   role: "Creative Developer",
-  tagline: "Immersive websites, interactive 3D and the full-stack engineering underneath them.",
+  // The hero's one sentence under the thesis (docs/voice.md).
+  tagline:
+    "Websites with motion and 3D on top and proper engineering underneath, from one developer.",
   email: "waleed@alsufun.com",
   github: "https://github.com/RoastedBrotato",
   linkedin: "https://www.linkedin.com/in/waleedajaz/",

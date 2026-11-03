@@ -81,7 +81,7 @@ Accessibility 100, SEO 100 and Best practices 96 are unchanged from the earlier 
 **Content only the owner can supply (blocks ads):**
 - Prices in `src/data/pricing.ts`, **two per package** since regional pricing landed: `startingFrom: { pk, intl }`, PKR for visitors in Pakistan and USD elsewhere. **Draft market rates are live** (Rs 150k / 400k / 550k; $2,500 / $6,000 / $8,000, marked `// DRAFT — market rate, Oct 2026`) pending the owner's review. The budget bands in `budgetRangesByRegion` bracket them as they stand; revisit if the prices move much. Region is decided client-side before paint from the time zone (`Asia/Karachi` → PKR), with a visible switch that remembers the choice; pages stay static. See `src/lib/region.ts`.
 - Year, and ideally a write-up (`study`), for the three client pieces in `work.ts`. Without a study they link straight to the live site.
-- Hero headline: still the pre-redesign line, marked DRAFT. Alternatives are in a comment in `Hero.tsx`.
+- ~~Hero headline~~ Decided (13 Oct 2026): "Make it interesting. Make it work." The thesis, the enemy and the avoid/prefer list are in `docs/voice.md`; every copy surface was rewritten against it. Still open from that pass: the demonstration device (the hero scene at full tier beside the fallback tier, captioned), which is a build, not copy.
 - Third proof item in `proof.ts` is a dev-only placeholder; the strip ships with two cards.
 
 **Performance:**

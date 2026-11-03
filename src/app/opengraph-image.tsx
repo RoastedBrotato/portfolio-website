@@ -7,6 +7,6 @@ export const contentType = ogContentType;
 export default function Image() {
   return renderOgImage({
     tag: siteConfig.role,
-    headline: "Websites people remember, engineered to last.",
+    headline: "Make it interesting. Make it work.",
   });
 }

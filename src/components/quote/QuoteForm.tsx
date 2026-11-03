@@ -255,7 +255,7 @@ export function QuoteForm({
               required
               invalid={Boolean(stepOneErrors.projectType ?? errors?.projectType)}
               defaultValue={values?.projectType ?? defaultProjectType}
-              placeholder="Choose one"
+              placeholder="Pick the closest one"
               options={projectTypes}
             />
           </Field>
