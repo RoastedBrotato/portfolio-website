@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { Mark } from "@/components/brand/Logo";
 
 export default function NotFound() {
   return (
     <section className="flex min-h-[70svh] items-center">
       <Container className="flex flex-col items-center text-center">
+        <Mark className="glyph-wobble mb-8 h-12 w-auto" />
         <span className="inline-block bg-accent px-2.5 py-1 text-sm font-medium text-accent-foreground">
           404
         </span>

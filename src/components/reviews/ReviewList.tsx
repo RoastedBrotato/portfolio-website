@@ -50,12 +50,13 @@ export function ReviewList({ reviews }: { reviews: PublicReview[] }) {
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      {/* pt-5 is headroom for the stickers on the first row. */}
+      <div className="grid grid-cols-1 gap-7 pt-5 md:grid-cols-2 md:items-start">
         {shown.map((review, i) => (
-          // h-full on both so the two cards in a row share a height —
-          // without it a short review leaves a ragged hole beside a long one.
-          <Reveal key={review.id} delay={Math.min(i * 0.06, 0.24)} className="h-full">
-            <ReviewCard review={review} className="h-full" />
+          // items-start, not equal heights: pinned cards are the size of their
+          // words, and a short one stretched to match a long one is mostly air.
+          <Reveal key={review.id} delay={Math.min(i * 0.06, 0.24)}>
+            <ReviewCard review={review} index={i} />
           </Reveal>
         ))}
       </div>

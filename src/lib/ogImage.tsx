@@ -1,27 +1,54 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { ImageResponse } from "next/og";
+import { brand, mark } from "@/data/brand";
 import { siteConfig } from "@/data/config";
 
 /*
- * A still of the hero scene (public/og/hero.jpg, 1200 × 630), captured from the
- * live site: the slab field with the red light off to the right, empty on the
- * left where the headline goes. Inlined as a data URL because the card is
- * rendered at build time, with no server to fetch it from. Re-capture it when
- * the scene changes.
+ * The two faces the page uses, as static TTFs for Satori (it reads font
+ * files, not next/font). Both are the Google Fonts builds under the SIL Open
+ * Font License: Bricolage Grotesque at 800 for the headline and the name,
+ * Geist at 500 for everything else. Read once at module load — the cards are
+ * rendered at build time, with no server to fetch from.
  */
-const heroStill = `data:image/jpeg;base64,${readFileSync(
-  path.join(process.cwd(), "public/og/hero.jpg"),
-).toString("base64")}`;
+const font = (file: string) => readFileSync(path.join(process.cwd(), "src/assets/fonts", file));
+const bricolage = font("BricolageGrotesque-800.ttf");
+const geist = font("Geist-500.ttf");
 
 /** Shared by every route's opengraph-image.tsx. */
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
+/** The mark, drawn with literal colours (Satori can't read CSS variables). */
+function OgMark({ height, tone }: { height: number; tone: "ink" | "paper" }) {
+  return (
+    <svg
+      viewBox={mark.viewBox}
+      width={(height * mark.width) / mark.height}
+      height={height}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d={mark.path} stroke={brand.ink} strokeWidth={mark.outline} />
+      <path d={mark.path} stroke={tone === "paper" ? brand.paper : brand.cobalt} strokeWidth={mark.stroke} />
+      {tone === "ink" && <path d={mark.gloss} stroke={brand.gloss} strokeWidth={mark.glossWidth} />}
+    </svg>
+  );
+}
+
+/** Long headlines (a case study's title and outcome) step down rather than wrap off the card. */
+function headlineSize(text: string) {
+  if (text.length > 80) return 52;
+  if (text.length > 44) return 64;
+  return 80;
+}
+
 /**
- * The site's share card: the hero scene behind a red tag and one big line —
- * so a link in an Instagram DM or a LinkedIn post shows the thing the site
- * sells, not just a description of it.
+ * The site's share card, on the site's paper: the lockup top-left, a cobalt
+ * tag over one big line, availability and the address along the bottom, and the
+ * mark again, large and tipped over, bleeding off the right edge — so a link
+ * in a DM or a LinkedIn post looks like the site it leads to.
  */
 export function renderOgImage({ tag, headline }: { tag: string; headline: string }) {
   return new ImageResponse(
@@ -31,68 +58,92 @@ export function renderOgImage({ tag, headline }: { tag: string; headline: string
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-        padding: "80px",
-        backgroundColor: "#000000",
+        justifyContent: "space-between",
+        padding: "60px 72px 56px",
+        backgroundColor: brand.paper,
+        color: brand.ink,
+        fontFamily: "Geist",
         position: "relative",
+        overflow: "hidden",
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain <img> only. */}
-      <img
-        src={heroStill}
-        alt=""
-        width={ogSize.width}
-        height={ogSize.height}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-      />
-      {/* Keeps the headline on black whatever the still shows behind it. */}
       <div
         style={{
           position: "absolute",
-          inset: 0,
+          right: -150,
+          top: 130,
           display: "flex",
-          backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 55%, rgba(0,0,0,0.1) 100%)",
+          transform: "rotate(-8deg)",
         }}
-      />
+      >
+        <OgMark height={400} tone="ink" />
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <OgMark height={38} tone="ink" />
+        <div
+          style={{
+            display: "flex",
+            fontFamily: "Bricolage Grotesque",
+            fontWeight: 800,
+            fontSize: 34,
+            letterSpacing: -1,
+          }}
+        >
+          {siteConfig.name}
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", maxWidth: 790 }}>
+        <div
+          style={{
+            display: "flex",
+            fontSize: 19,
+            fontWeight: 500,
+            letterSpacing: 3,
+            textTransform: "uppercase",
+            color: "#ffffff",
+            backgroundColor: brand.cobalt,
+            padding: "8px 14px",
+            borderRadius: 6,
+            alignSelf: "flex-start",
+          }}
+        >
+          {tag}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            marginTop: 28,
+            fontFamily: "Bricolage Grotesque",
+            fontWeight: 800,
+            fontSize: headlineSize(headline),
+            lineHeight: 1,
+            letterSpacing: -2.5,
+          }}
+        >
+          {headline}
+        </div>
+      </div>
+
       <div
         style={{
           display: "flex",
+          justifyContent: "space-between",
           fontSize: 22,
-          fontWeight: 500,
-          letterSpacing: 4,
-          textTransform: "uppercase",
-          color: "#ffffff",
-          backgroundColor: "#2b3cf0",
-          padding: "8px 14px",
-          alignSelf: "flex-start",
+          color: brand.muted,
         }}
       >
-        {tag}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          marginTop: 28,
-          fontSize: 64,
-          fontWeight: 600,
-          color: "#ffffff",
-          maxWidth: 950,
-          lineHeight: 1.1,
-        }}
-      >
-        {headline}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          marginTop: 36,
-          fontSize: 26,
-          color: "#a3a3a3",
-        }}
-      >
-        {siteConfig.name} · {siteConfig.role}
+        <div style={{ display: "flex" }}>{`${siteConfig.availability} · ${siteConfig.location}`}</div>
+        <div style={{ display: "flex" }}>{siteConfig.siteUrl.replace(/^https?:\/\//, "")}</div>
       </div>
     </div>,
-    { ...ogSize },
+    {
+      ...ogSize,
+      fonts: [
+        { name: "Bricolage Grotesque", data: bricolage, style: "normal", weight: 800 },
+        { name: "Geist", data: geist, style: "normal", weight: 500 },
+      ],
+    },
   );
 }

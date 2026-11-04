@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <title>Waleed Ajaz</title>
+  <rect width="180" height="180" rx="40" fill="#2b3cf0"/>
+  <g transform="translate(28 36.5) scale(1.0333)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 14 34 74 60 28 86 74 108 14" stroke="#16130f" stroke-width="26"/>
+    <path d="M12 14 34 74 60 28 86 74 108 14" stroke="#f6f0e4" stroke-width="17"/>
+  </g>
+</svg>

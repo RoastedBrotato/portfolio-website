@@ -10,6 +10,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { BookCallButton } from "@/components/ui/BookCallButton";
 import { SocialLinks } from "@/components/ui/SocialLinks";
+import { Logo } from "@/components/brand/Logo";
 import { useCommandPalette } from "@/components/CommandPalette";
 import { useLenis } from "@/components/SmoothScroll";
 import { cn } from "@/lib/utils";
@@ -93,11 +94,12 @@ export function Navbar() {
       <Container className="flex h-16 items-center justify-between sm:h-20">
         <Link
           href="/"
-          className="text-foreground group flex items-center gap-2.5 text-[15px] font-semibold tracking-[-0.01em]"
+          aria-label={`${siteConfig.name} — home`}
+          className="text-foreground group flex items-center text-[17px]"
           onClick={() => setOpen(false)}
         >
-          {siteConfig.name}
-          <span className="bg-accent h-1.5 w-1.5 rounded-full transition-transform duration-300 group-hover:scale-150" />
+          {/* The mark swells and tips under the pointer, like the wordmark's objects. */}
+          <Logo markClassName="transition-transform duration-300 ease-out group-hover:-rotate-6 group-hover:scale-110" />
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex">

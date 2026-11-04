@@ -100,7 +100,7 @@ Accessibility 100, SEO 100 and Best practices 96 are unchanged from the earlier 
 ### 0.4 Handoff notes
 
 - **Re-cutting clips.** Pieces are recorded from the live sites in headless Chrome on the real GPU (`channel: "chrome"`, `--use-angle=d3d11`; SwiftShader runs at ~2 fps and is useless for video), then trimmed and encoded with `ffmpeg -c:v libx264 -crf 27 -movflags +faststart`. Hide the site header and the cursor companion (`[class*='z-[90]']`) when recording this site's own pages, or the footage shows the site inside itself.
-- **OG still.** Re-capture `public/og/hero.jpg` (1200 × 630, scene only, light off to the right) whenever the hero scene changes.
+- **OG card.** Drawn on paper from the mark and the vendored fonts (`src/lib/ogImage.tsx`); nothing to re-capture.
 - **One scroll system.** Lenis owns scroll; every scroll-linked effect (hero scene, launch sequence, nav progress) reads native scroll or Framer's `useScroll`, both of which work under Lenis. No GSAP was needed.
 - **Three.js stays out of the main bundle.** Scenes load through `next/dynamic` with `ssr: false`; anything a page needs from the speaker (colourways) lives in `colorways.ts`, which imports no three.
 - **React Compiler lint.** Mutating values from `useMemo` or props inside `useFrame` fails `react-hooks/immutability`; use refs created lazily inside the frame callback (see `HeroScene.tsx`) or read from the R3F `state` argument.
@@ -214,7 +214,7 @@ Toggle and `next-themes` removed. Site is dark-only; light tokens kept in CSS, u
 
 ### F10. The share card showed the problem too — **resolved**
 Every OG image now renders over a still of the hero scene. Per-route cards exist for home, work, each case study, about, services, lab and quote.
-*Maintenance:* re-capture `public/og/hero.jpg` when the scene changes.
+*Maintenance:* none; the card is drawn from `src/data/brand.ts` and the vendored fonts.
 
 ### F11. Smaller issues
 

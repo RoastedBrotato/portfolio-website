@@ -12,7 +12,9 @@
  *     drawn with 1px hairlines on a few planes of slightly deeper paper. No
  *     offset shadows, no grain, no grid wallpaper, no glow.
  *   - Cobalt is the action colour. It sits on buttons, links under the
- *     pointer and the active work title — not on decoration.
+ *     pointer and the active work title — not on decoration. It is also the
+ *     colour of the mark (src/data/brand.ts), which is the one place it is
+ *     drawn rather than clicked.
  *   - The pop palette (red, purple, yellow, pink, lime, blue) is decoration:
  *     the wordmark's objects and the disciplines' objects. Nothing interactive is coloured
  *     from it and body text never is.
@@ -170,6 +172,19 @@ body {
   letter-spacing: -0.03em;
   line-height: 0.95;
   font-variation-settings: "opsz" 96;
+}
+
+/*
+ * The name beside the mark (src/components/brand/Logo.tsx): the display face
+ * at 800, set by the parent's font-size. No opsz override here — at 16–17px
+ * the face should draw at its text optical size, not the headline one.
+ */
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 /*

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { SocialLinks } from "@/components/ui/SocialLinks";
+import { Logo } from "@/components/brand/Logo";
 import { siteConfig } from "@/data/config";
 import { Container } from "@/components/ui/Container";
 
@@ -16,6 +17,7 @@ const footerLinks = [
   { label: "Blog", href: "/blog" },
   { label: "Reviews", href: "/reviews" },
   { label: "Start a project", href: "/quote" },
+  { label: "Brand", href: "/brand" },
 ];
 
 export function Footer() {
@@ -25,10 +27,9 @@ export function Footer() {
     <footer className="defer-render bg-plane-0 border-t">
       <Container className="grid grid-cols-1 gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[var(--rail)_1fr_auto] lg:gap-[var(--rail-gap)]">
         <div>
-          <p className="text-foreground flex items-center gap-2.5 text-[15px] font-semibold tracking-[-0.01em]">
-            {siteConfig.name}
-            <span aria-hidden className="bg-accent h-1.5 w-1.5 rounded-full" />
-          </p>
+          <Link href="/" aria-label={`${siteConfig.name} — home`} className="text-foreground inline-flex text-[16px]">
+            <Logo />
+          </Link>
           <p className="text-foreground-subtle mt-1 text-sm">{siteConfig.role}</p>
         </div>
 

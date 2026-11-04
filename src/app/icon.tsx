@@ -1,9 +1,13 @@
 import { ImageResponse } from "next/og";
+import { brand, mark } from "@/data/brand";
 
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-/** No initials, no wordmark — the cobalt dot the navbar uses as its mark. */
+/**
+ * The favicon: the mark on paper (src/data/brand.ts). No gloss at this size —
+ * a two-pixel highlight only reads as a flaw in a tab strip.
+ */
 export default function Icon() {
   return new ImageResponse(
     <div
@@ -13,10 +17,20 @@ export default function Icon() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#f6f0e4",
+        background: brand.paper,
       }}
     >
-      <div style={{ width: 16, height: 16, background: "#2b3cf0", borderRadius: 4 }} />
+      <svg
+        viewBox={mark.viewBox}
+        width={26}
+        height={19}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d={mark.path} stroke={brand.ink} strokeWidth={mark.outline} />
+        <path d={mark.path} stroke={brand.cobalt} strokeWidth={mark.stroke} />
+      </svg>
     </div>,
     { ...size },
   );

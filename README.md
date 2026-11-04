@@ -37,6 +37,11 @@ palette (red, purple, yellow, pink, lime, blue) for the wordmark's objects and t
 - **The disciplines** (`src/components/sections/Disciplines.tsx`) are a numbered index: five
   ruled rows, each a big word carrying one of the wordmark's objects (cube, ring, wave, cross,
   pill) and one line. Hovering a row colours the word and nudges the object.
+- **The brand** lives in `src/data/brand.ts` (the mark's geometry and the colours as literals) and
+  `src/components/brand/Logo.tsx` (`Mark` and the `Logo` lockup). The navbar, footer, favicon
+  (`src/app/icon.tsx`), Apple icon, share cards (`src/lib/ogImage.tsx`, drawn on paper with the
+  vendored TTFs in `src/assets/fonts/`) and the `/brand` press-kit page all draw from it; the
+  downloadable files are in `public/brand/`.
 - **The showreel** composition in `src/remotion/` is kept for rendering an MP4 for ads
   (`npm i -D @remotion/cli` then `npx remotion render src/remotion/index.ts Showreel out/showreel.mp4`);
   it no longer plays on the site.

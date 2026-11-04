@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, ChevronDown } from "lucide-react";
+import { Mark } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
 import { BookCallButton } from "@/components/ui/BookCallButton";
 import { Field, inputClass } from "@/components/ui/FormField";
@@ -192,8 +193,8 @@ export function QuoteForm({
     return (
       <div className="border-border-strong bg-background max-w-2xl border p-7" role="status">
         <p className="text-foreground flex items-center gap-2.5 text-sm font-medium">
-          {/* The red square mark, landing. */}
-          <span aria-hidden className="bg-accent mark-in h-3 w-3" />
+          {/* The mark, landing. */}
+          <Mark className="mark-in h-4 w-auto" />
           Request sent
           <Check size={18} className="text-accent" />
         </p>
