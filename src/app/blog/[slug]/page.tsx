@@ -15,6 +15,7 @@ import { CommentList } from "@/components/blog/CommentList";
 import { getAdjacentPosts, getAllPosts, getPostBySlug } from "@/data/blog";
 import { commentsEnabled, getPostComments } from "@/lib/comments";
 import { formatDate } from "@/lib/utils";
+import { articleGraph, JsonLd, pageMetadata } from "@/lib/seo";
 
 /*
  * Still prerendered, but no longer fully static: approved comments are read at
@@ -39,16 +40,13 @@ export async function generateMetadata({
     return {};
   }
 
-  return {
+  return pageMetadata({
     title: post.title,
     description: post.description,
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      publishedTime: post.date,
-    },
-  };
+    path: `/blog/${slug}`,
+    type: "article",
+    publishedTime: post.date,
+  });
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -65,6 +63,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <article>
+      <JsonLd data={articleGraph(post)} />
       <header className="border-border-strong relative overflow-hidden border-b">
         <div
           aria-hidden

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { pageMetadata } from "@/lib/seo";
+import { JsonLd, pageMetadata, servicesGraph } from "@/lib/seo";
 import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
@@ -11,11 +11,12 @@ import { TrackView } from "@/components/TrackView";
 import { RegionPrice } from "@/components/pricing/RegionPrice";
 import { RegionSwitch } from "@/components/pricing/RegionPricing";
 import { customQuote, faqs, packages, processSteps } from "@/data/pricing";
+import { siteConfig } from "@/data/config";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Services",
+  title: "Web Design & Development Services",
   description:
-    "Packages for immersive landing pages, brand websites and interactive 3D product showcases — what's included, typical timelines and starting prices.",
+    "Web design and development packages from a creative developer in Doha and Islamabad: immersive landing pages, brand websites and interactive 3D product showcases — what's included, timelines and starting prices.",
   path: "/services",
 });
 
@@ -28,6 +29,16 @@ export default function ServicesPage() {
   return (
     <>
       <TrackView event="pricing_view" />
+      <JsonLd
+        data={servicesGraph(
+          [...packages, customQuote].map((pkg) => ({
+            name: pkg.name,
+            description: pkg.outcome,
+            url: `${siteConfig.siteUrl}/services#${pkg.id}`,
+          })),
+          faqs,
+        )}
+      />
 
       <PageHeader
         label="Services"

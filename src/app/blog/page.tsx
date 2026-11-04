@@ -7,11 +7,18 @@ import { RevealText } from "@/components/ui/RevealText";
 import { SectionLabel } from "@/components/ui/Section";
 import { getAllPosts } from "@/data/blog";
 import { formatDate } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+const base = pageMetadata({
   title: "Blog",
   description: "Notes from the work, the road, and the occasional yap.",
+  path: "/blog",
+});
+
+export const metadata: Metadata = {
+  ...base,
   alternates: {
+    ...base.alternates,
     types: { "application/rss+xml": "/blog/rss.xml" },
   },
 };

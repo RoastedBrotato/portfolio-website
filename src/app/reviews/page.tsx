@@ -7,12 +7,14 @@ import { SectionLabel } from "@/components/ui/Section";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
 import { ReviewList } from "@/components/reviews/ReviewList";
 import { getPublishedReviews, reviewsEnabled } from "@/lib/reviews";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Reviews",
   description:
     "What clients and collaborators say about working with me — and a place to add yours.",
-};
+  path: "/reviews",
+});
 
 /*
  * On-demand revalidation from the admin actions is what normally refreshes this

@@ -25,6 +25,7 @@ import { RegionSync } from "@/components/pricing/RegionPricing";
 import { REGION_SCRIPT } from "@/lib/region";
 import { MotionProvider } from "@/components/MotionProvider";
 import { siteConfig } from "@/data/config";
+import { JsonLd, siteGraph } from "@/lib/seo";
 import { getAllPosts } from "@/data/blog";
 import { projects } from "@/data/projects";
 
@@ -53,7 +54,12 @@ const bricolage = Bricolage_Grotesque({
   display: "swap",
 });
 
-const title = `${siteConfig.name} — ${siteConfig.role}`;
+/*
+ * The <title> carries what someone searching for the service types, not just
+ * the name: the role, the work and where it's done. Pages override it through
+ * the template below; this is the homepage's and the fallback.
+ */
+const title = `${siteConfig.name} — ${siteConfig.role} · Websites, Web Apps & 3D in Doha and Islamabad`;
 const description =
   "Websites and web apps that win clients: brand sites, bilingual corporate sites, landing pages and SaaS for businesses in Qatar and Pakistan — designed, built and live in weeks. Start a project.";
 
@@ -118,6 +124,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Picks the price region before first paint, so no one sees the
             other currency flash first. See src/lib/region.ts. */}
         <script dangerouslySetInnerHTML={{ __html: REGION_SCRIPT }} />
+        {/* Who runs the site and what the business is, for every page's graph. */}
+        <JsonLd data={siteGraph()} />
       </head>
       {/* min-h-dvh, not min-h-full: the sticky footer needs to measure against
           the viewport, not against a percentage of <html> — which is `auto`
